@@ -1,0 +1,11 @@
+<projekt> 
+	<titel>Bachelorarbeit</titel> 
+	<typ>Bachelorarbeit</typ>
+	<version>1.0</version> 
+	<autoren>Darmin Spahic</autoren>
+	<angefangen>x.xx.xxxx</angefangen>
+	<abgabe>x.xx.xxxx</abgabe> 
+	<veranstaltung>Abschlusskolloquium, SS 2018</veranstaltung>
+	<institution>Institut für Computerlinguistik, Ruprecht-Karls-Universität Heidelberg</institution>
+	<abstract>...</abstract> 
+</projekt>
