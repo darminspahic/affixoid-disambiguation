@@ -1,0 +1,11 @@
+# Mon Mar  5 14:41:19 CET 2018
+Bilderbuch	Ideal
+Blitz	Geschwindigkeit
+Bombe	Hervorragendes
+Glanz	Auffälligkeit
+Heide	Intensität
+Jahrhundert	Bemerkenswertes
+Qualität	hoheGüte
+Schwein	Steigerung/Obszönes
+Spitze	Qualität/Intensität
+Traum	Wunsch
