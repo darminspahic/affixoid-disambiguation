@@ -411,7 +411,7 @@ Bomben-Arbeitsplatz	Bombe	Hervorragendes	Y
 Bombenarsenal	Bombe	Sprengkörper	N
 Bombenattacke	Bombe	Sprengkörper	N
 Bomben-Attentäter	Bombe	Sprengkörper	N
-BOMBEN-ATTENTAT		Sprengkörper	N
+BOMBEN-ATTENTAT	Bombe	Sprengkörper	N
 Bombenattrappe	Bombe	Sprengkörper	N
 Bombenauftakt	Bombe	Hervorragendes	Y
 Bombenbastelei	Bombe	Sprengkörper	N
@@ -1204,7 +1204,7 @@ Jahrhundertzeitzeuge	Jahrhundert	Zeitraum	N
 Jahrhundertzeugin	Jahrhundert	Zeitraum	N
 Jahrhundertziffer	Jahrhundert	Zeitraum	N
 Jahrhundertzug	Jahrhundert	Bemerkenswertes	Y
-Qualitaetsbewusstsein		Gütegrad	N
+Qualitätsbewusstsein	Qualität	Gütegrad	N
 Qualitätenlehre	Qualität	Gütegrad	N
 Qualitätsabbau	Qualität	Gütegrad	N
 Qualitätsabteilung	Qualität	Gütegrad	N
@@ -1404,7 +1404,7 @@ Qualitätszuwachs	Qualität	Gütegrad	N
 Qualitätszweifel	Qualität	Gütegrad	N
 Qualitätszweig	Qualität	Gütegrad	N
 Qualitäturteil	Qualität	Gütegrad	N
-Qualtitätswein	Qualität	hoheGüte	N
+Qualitätswein	Qualität	hoheGüte	N
 Schweineabgase	Schwein	Tier	N
 Schweineafter	Schwein	Tier	N
 Schweine-Albtraum	Schwein	Tier	N
@@ -1612,7 +1612,7 @@ Spitzenanalyst	Spitze	Qualität	Y
 Spitzenanalytik	Spitze	Qualität	Y
 Spitzenanlage	Spitze	Qualität	Y
 Spitzen-Arbeitgeberverband	Spitze	Führung	N
-SPITZENARCHITEKTUR		Qualität	Y
+SPITZENARCHITEKTUR	Spitze	Qualität	Y
 Spitzen-Atomwissenschaftler	Spitze	Qualität	Y
 Spitzenauslese	Spitze	Qualität	Y
 Spitzenausstellung	Spitze	Qualität	Y
