@@ -18,7 +18,8 @@ Version: 1.0
 """
 
 # Import dependencies
-import sys, os
+import sys
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -46,8 +47,8 @@ def affixoid_statistics(affixoid_inventory, data_file_path):
     # Empty lists for collecting data
     affixoids_inventory = []
     affixoids_counter_list = []
-    affixoids_Y_counter_list = []
-    affixoids_N_counter_list = []
+    affixoids_y_counter_list = []
+    affixoids_n_counter_list = []
 
     # print('Extracting affixoid statistics from:', data_file_path, 'to:', DATA_FILES_OUTPUT_PATH)
 
@@ -61,8 +62,8 @@ def affixoid_statistics(affixoid_inventory, data_file_path):
 
     for a in affixoids_inventory:
         line_counter = 0
-        Y_counter = 0
-        N_counter = 0
+        y_counter = 0
+        n_counter = 0
         with open(data_file_path, 'r', encoding='utf-8') as f:
             for line in f:
                 line = line.split()
@@ -71,12 +72,12 @@ def affixoid_statistics(affixoid_inventory, data_file_path):
                     if len(line) < 4:
                         print('Missing data for: ', line)
                     if line[3] == 'Y':
-                        Y_counter += 1
+                        y_counter += 1
                     if line[3] == 'N':
-                        N_counter += 1
+                        n_counter += 1
             affixoids_counter_list.append(line_counter)
-            affixoids_Y_counter_list.append(Y_counter)
-            affixoids_N_counter_list.append(N_counter)
+            affixoids_y_counter_list.append(y_counter)
+            affixoids_n_counter_list.append(n_counter)
 
     with open(data_file_path, 'r', encoding='utf-8') as f:
         line_counter = 0
@@ -86,11 +87,11 @@ def affixoid_statistics(affixoid_inventory, data_file_path):
 
     print('Data length: ', line_counter)
     print('Data per candidate: ', affixoids_counter_list)
-    print('Y candidate: ', affixoids_Y_counter_list)
-    print('N candidate: ', affixoids_N_counter_list)
+    print('Y candidate: ', affixoids_y_counter_list)
+    print('N candidate: ', affixoids_n_counter_list)
     print(sum(affixoids_counter_list))
 
-    return [affixoids_inventory, affixoids_counter_list, affixoids_Y_counter_list, affixoids_N_counter_list]
+    return [affixoids_inventory, affixoids_counter_list, affixoids_y_counter_list, affixoids_n_counter_list]
 
 
 def plot_statistics(arguments, title):
@@ -108,10 +109,10 @@ def plot_statistics(arguments, title):
 
     """
 
-    N = len(arguments[0])
+    n = len(arguments[0])
     y_candidates = arguments[2]
 
-    ind = np.arange(N)  # the x locations for the groups
+    ind = np.arange(n)  # the x locations for the groups
     width = 0.35  # the width of the bars
 
     fig, ax = plt.subplots()
@@ -143,24 +144,46 @@ def plot_statistics(arguments, title):
 
 # Disable print
 def disable_print():
+    """ This function disables printing.
+
+        Args:
+
+        Returns:
+            none
+
+        Example:
+            >>> disable_print()
+
+    """
     sys.stdout = open(os.devnull, 'w')
 
 
 # Enable print
 def enable_print():
+    """ This function enables printing.
+
+            Args:
+
+            Returns:
+                none
+
+            Example:
+                >>> enable_print()
+
+        """
     sys.stdout = sys.__stdout__
 
 
 if __name__ == "__main__":
     # disable_print()
     print('Extracting prefixoids:')
-    arguments_1 = affixoid_statistics(DATA_FILES_PATH + 'prefixoid_inventory.txt',
-                        DATA_FILES_PATH + 'binary_unique_instance_label_pairs_prefixoids.csv.affixoidal_status.tsv')
+    arguments_1 = affixoid_statistics(DATA_FILES_PATH + 'prefixoid_inventory.txt', DATA_FILES_PATH +
+                                      'binary_unique_instance_label_pairs_prefixoids.csv.affixoidal_status.tsv')
     plot_statistics(arguments_1, 'prefixoid')
 
     print('--------------------')
 
     print('Extracting suffixoids:')
-    arguments_2 = affixoid_statistics(DATA_FILES_PATH + 'suffixoid_inventory.txt',
-                        DATA_FILES_PATH + 'binary_unique_instance_label_pairs_suffixoids.csv.affixoidal_status.tsv')
+    arguments_2 = affixoid_statistics(DATA_FILES_PATH + 'suffixoid_inventory.txt', DATA_FILES_PATH +
+                                      'binary_unique_instance_label_pairs_suffixoids.csv.affixoidal_status.tsv')
     plot_statistics(arguments_2, 'suffixoid')
