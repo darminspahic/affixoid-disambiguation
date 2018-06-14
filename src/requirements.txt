@@ -1,0 +1,6 @@
+numpy
+matplotlib
+# beautifulsoup4
+# lxml
+# scipy
+# scikit-learn
