@@ -134,10 +134,12 @@ def transform_to_binary(class_name):
 
 
 if __name__ == "__main__":
-    prefixoids = feature_extractor(DATA_FILES_PATH_FINAL + 'binary_unique_instance_prefixoid_segmentations.txt')
-    print(prefixoids)
-    # compare_files(DATA_FILES_PATH + 'binary_unique_instance_label_pairs_prefixoids.csv.affixoidal_status.tsv', DATA_FILES_PATH + 'prefixoid_segmentations_smor.txt.manual_splits.tsv', True)
-    # compare_files(DATA_FILES_PATH + 'binary_unique_instance_label_pairs_suffixoids.csv.affixoidal_status.tsv', DATA_FILES_PATH + 'suffixoid_segmentations_smor.txt.manual_splits.tsv', True)
+    # prefixoids = feature_extractor(DATA_FILES_PATH_FINAL + 'binary_unique_instance_prefixoid_segmentations.txt')
+    # print(prefixoids)
+    compare_files(DATA_FILES_PATH + 'binary_unique_instance_label_pairs_prefixoids.csv.affixoidal_status.tsv', DATA_FILES_PATH_FINAL + 'binary_unique_instance_prefixoid_segmentations.txt', True)
+    compare_files(DATA_FILES_PATH + 'binary_unique_instance_label_pairs_prefixoids.csv.affixoidal_status.tsv', DATA_FILES_PATH + 'prefixoid_segmentations_smor.txt.manual_splits.tsv', True)
+    compare_files(DATA_FILES_PATH + 'binary_unique_instance_label_pairs_suffixoids.csv.affixoidal_status.tsv', DATA_FILES_PATH_FINAL + 'binary_unique_instance_suffixoid_segmentations.txt', True)
+    compare_files(DATA_FILES_PATH + 'binary_unique_instance_label_pairs_suffixoids.csv.affixoidal_status.tsv', DATA_FILES_PATH + 'suffixoid_ segmentations_smor.txt.manual_splits.tsv', True)
     # compare_files(DATA_FILES_PATH + 'binary_unique_instance_label_pairs_prefixoids.csv.affixoidal_status.tsv', DATA_FILES_PATH + 'prefixoid_segmentations_smor.txt.manual_splits.tsv', False)
     # compare_files(DATA_FILES_PATH + 'binary_unique_instance_label_pairs_suffixoids.csv.affixoidal_status.tsv', DATA_FILES_PATH + 'suffixoid_segmentations_smor.txt.manual_splits.tsv', False)
 
