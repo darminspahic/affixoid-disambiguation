@@ -1,6 +1,8 @@
 numpy
+scipy
+scikit-learn
 matplotlib
-# beautifulsoup4
+duden
+beautifulsoup4
+requests
 # lxml
-# scipy
-# scikit-learn
