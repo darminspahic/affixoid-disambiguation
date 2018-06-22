@@ -2,6 +2,7 @@ numpy
 scipy
 scikit-learn
 matplotlib
+pygermanet
 duden
 beautifulsoup4
 requests
