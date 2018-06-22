@@ -537,7 +537,6 @@ Geschoßbolzen	Bolzen	Projektil	N
 Gesellschaftshengst	Hengst	Mann	Y
 Gesellschaftsikone	Ikone	Verkörperung	Y
 Gesetzeshengst	Hengst	Mann	Y
-Gesondheetsapostel	Apostel	Befürworter	Y
 Gestammeldreck	Dreck	niedrigeQualität	Y
 Gestütshengst	Hengst	Tier	N
 Gesundheitsapostel	Apostel	Befürworter	Y
@@ -1496,7 +1495,6 @@ Silberhengst	Hengst	Tier	N
 Sitcomikone	Ikone	Verkörperung	Y
 Sittenapostel	Apostel	Befürworter	Y
 Sittlichkeitsapostel	Apostel	Befürworter	Y
-Sitzgurtbolzen	Guru	Stift	N
 Skandalikone	Ikone	Verkörperung	Y
 Skaterikone	Ikone	Verkörperung	Y
 Skilaufikone	Ikone	Verkörperung	Y
@@ -1540,7 +1538,6 @@ Spielzeitikone	Ikone	Verkörperung	Y
 Spießerschweine	Schwein	Schimpfwort	Y
 Spitzenhengst	Hengst	Tier	N
 Splatterfilmguru	Guru	Experte	Y
-Splattergott	Gott	Experte	Y
 Splatterguru	Guru	Experte	Y
 Splatterpapst	Papst	Autorität	Y
 Sportapostel	Apostel	Befürworter	Y
@@ -1642,8 +1639,7 @@ Tempobolzen	Bolzen	hohesMaß	N
 Tendaguru	Guru	UNV	N
 Tennisguru	Guru	Experte	Y
 Tennisikone	Ikone	Verkörperung	Y
-@Terragigaguru	Guru	Experte	Y
-Terragigaguru	Guru	UNV	N
+Terragigaguru	Guru	Experte	N
 Terrorguru	Guru	Experte	Y
 Testosteronbolzen	Bolzen	hohesMaß	N
 Teufelsbolzen	Bolzen	hohesMaß	N
