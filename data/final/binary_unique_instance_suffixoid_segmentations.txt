@@ -146,7 +146,7 @@ Bewegungsguru	Bewegung|Guru	Guru	Experte	Y
 Bewegungsikone	Bewegung|Ikone	Ikone	Verkörperung	Y
 Beziehungsguru	Beziehung|Guru	Guru	Experte	Y
 Bezirksapostel	Bezirk|Apostel	Apostel	Religion	N
-Bhaishajyaguru	Bhaishajya|Guru	Religion	N
+Bhaishajyaguru	Bhaishajya|Guru	Guru	Religion	N
 Bhaishavaguru	UNKNOWN	Guru	UNV	N
 Biergartenguru	Biergarten|Guru	Guru	Experte	Y
 Bierguru	Bier|Guru	Guru	Experte	Y
