@@ -18,12 +18,12 @@ Version: 1.0
 """
 
 import sys
-import os
-import duden
-import requests
+# import os
+# import duden
+# import requests
 import numpy as np
 import matplotlib.pyplot as plt
-from bs4 import BeautifulSoup
+# from bs4 import BeautifulSoup
 
 ################
 # PATH SETTINGS
@@ -251,63 +251,63 @@ class AffixoidClassifier:
 
         plt.show()
 
-    def search_duden_frequency(self, words_inventory):
-        if type(words_inventory) != list:
-            words_inventory = words_inventory.split()
-
-        def get_first_result(word):
-            duden_url = 'http://www.duden.de/suchen/dudenonline/'
-            r = requests.get(duden_url + word)
-            data = r.text
-            soup = BeautifulSoup(data, 'html.parser')
-            try:
-                main_sec = soup.find('section', id='block-duden-tiles-0')
-                a_tags = [h2.a for h2 in main_sec.find_all('h2')]
-                # print(a_tags[0].text)
-                if a_tags[0].text == word:
-                    return a_tags[0].get('href').split('/')[-1]
-                else:
-                    return 0
-            except AttributeError:
-                return 0
-
-        # needed for duden module
-        def replace_umlauts(word_list):
-            umlaute = {'ä': 'ae', 'ö': 'oe', 'ü': 'ue', 'Ä': 'Ae', 'Ö': 'Oe', 'Ü': 'Ue', 'ß': 'ss'}
-            if type(word_list) == list:
-                new_list = []
-                for word in word_list:
-                    no_umlaut = word.translate({ord(k): v for k, v in umlaute.items()})
-                    new_list.append(no_umlaut)
-
-                if len(word_list) == len(new_list):
-                    return new_list
-                else:
-                    print('List error')
-            if type(word_list) == str:
-                return word_list.translate({ord(k): v for k, v in umlaute.items()})
-            else:
-                print('Replace Umlauts works only on strings and lists')
-
-        words_inventory = replace_umlauts(words_inventory)
-        frequency_list = []
-
-        for w in words_inventory:
-            words = duden.get(w)
-            if words:
-                try:
-                    frequency_list.append(words.frequency)
-                except AttributeError:
-                    frequency_list.append(0)
-            else:
-                first_word = get_first_result(w)
-                words = duden.get(first_word)
-                try:
-                    frequency_list.append(words.frequency)
-                except AttributeError:
-                    frequency_list.append(0)
-
-        return frequency_list
+    # def search_duden_frequency(self, words_inventory):
+    #     if type(words_inventory) != list:
+    #         words_inventory = words_inventory.split()
+    #
+    #     def get_first_result(word):
+    #         duden_url = 'http://www.duden.de/suchen/dudenonline/'
+    #         r = requests.get(duden_url + word)
+    #         data = r.text
+    #         soup = BeautifulSoup(data, 'html.parser')
+    #         try:
+    #             main_sec = soup.find('section', id='block-duden-tiles-0')
+    #             a_tags = [h2.a for h2 in main_sec.find_all('h2')]
+    #             # print(a_tags[0].text)
+    #             if a_tags[0].text == word:
+    #                 return a_tags[0].get('href').split('/')[-1]
+    #             else:
+    #                 return 0
+    #         except AttributeError:
+    #             return 0
+    #
+    #     # needed for duden module
+    #     def replace_umlauts(word_list):
+    #         umlaute = {'ä': 'ae', 'ö': 'oe', 'ü': 'ue', 'Ä': 'Ae', 'Ö': 'Oe', 'Ü': 'Ue', 'ß': 'ss'}
+    #         if type(word_list) == list:
+    #             new_list = []
+    #             for word in word_list:
+    #                 no_umlaut = word.translate({ord(k): v for k, v in umlaute.items()})
+    #                 new_list.append(no_umlaut)
+    #
+    #             if len(word_list) == len(new_list):
+    #                 return new_list
+    #             else:
+    #                 print('List error')
+    #         if type(word_list) == str:
+    #             return word_list.translate({ord(k): v for k, v in umlaute.items()})
+    #         else:
+    #             print('Replace Umlauts works only on strings and lists')
+    #
+    #     words_inventory = replace_umlauts(words_inventory)
+    #     frequency_list = []
+    #
+    #     for w in words_inventory:
+    #         words = duden.get(w)
+    #         if words:
+    #             try:
+    #                 frequency_list.append(words.frequency)
+    #             except AttributeError:
+    #                 frequency_list.append(0)
+    #         else:
+    #             first_word = get_first_result(w)
+    #             words = duden.get(first_word)
+    #             try:
+    #                 frequency_list.append(words.frequency)
+    #             except AttributeError:
+    #                 frequency_list.append(0)
+    #
+    #     return frequency_list
 
 
 if __name__ == "__main__":
@@ -371,9 +371,9 @@ if __name__ == "__main__":
         feature_1_suffixoids.append(item_1)
         feature_2_suffixoids.append(item_2)
         feature_3_suffixoids.append(item_3)
-    print(len(feature_1_suffixoids))
-    print(len(feature_2_suffixoids))
-    print(len(feature_3_suffixoids))
+    # print(len(feature_1_suffixoids))
+    # print(len(feature_2_suffixoids))
+    # print(len(feature_3_suffixoids))
 
     # counter = 0
     # features = []
