@@ -189,7 +189,7 @@ class AffixoidClassifier:
         else:
             return [word, word]
 
-    def extract_frequency(self, word, dictionary):
+    def extract_frequency(self, word, dictionary, return_as_vector=False):
         """ This function extracts frequencies for a given word from a dictionary
 
             Args:
@@ -203,6 +203,9 @@ class AffixoidClassifier:
                 >>> self.extract_frequency('Bilderbuch', {'Bilderbuch':30})
 
         """
+        if return_as_vector:
+            return list(dictionary.values())
+
         if word in dictionary.keys():
             value = dictionary[word]
             return int(value)
@@ -509,8 +512,7 @@ if __name__ == "__main__":
     # print(features)
     # print(feature_1_suffixoids[233], feature_2_suffixoids[233], feature_3_suffixoids[233])
 
-    germanet_supersenses = PREFIXOIDS.read_file_to_list(DATA_RESSOURCES_PATH+'GermaNet/supersenses.txt')
-    germanet_supersenses_list = PREFIXOIDS.create_frequency_dictionary(DATA_RESSOURCES_PATH+'GermaNet/supersenses.txt')
-    print(sorted(germanet_supersenses))
+    # germanet_supersenses = PREFIXOIDS.read_file_to_list(DATA_RESSOURCES_PATH+'GermaNet/supersenses.txt')
+    germanet_supersenses_list = {'Allgemein': 0, 'Bewegung': 0, 'Gefuehl': 0, 'Geist': 0, 'Gesellschaft': 25, 'Koerper': 0, 'Menge': 0, 'natPhaenomen': 0, 'Ort': 0, 'Pertonym': 0, 'Perzeption': 0, 'privativ': 0, 'Relation': 0, 'Substanz': 0, 'Verhalten': 0, 'Zeit': 0, 'Artefakt': 0, 'Attribut': 0, 'Besitz': 0, 'Form': 0, 'Geschehen': 0, 'Gruppe': 0, 'Kognition': 0, 'Kommunikation': 0, 'Mensch': 0, 'Motiv': 0, 'Nahrung': 0, 'natGegenstand': 0, 'Pflanze': 0, 'Tier': 0, 'Tops': 0, 'Koerperfunktion': 0, 'Konkurrenz': 0, 'Kontakt': 0, 'Lokation': 0, 'Schoepfung': 0, 'Veraenderung': 0, 'Verbrauch': 0}
     print(germanet_supersenses_list)
-
+    print(PREFIXOIDS.extract_frequency('Gesellschaft', germanet_supersenses_list, True))
