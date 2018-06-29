@@ -115,7 +115,10 @@ class AffixoidClassifier:
         with open(affixoid_file, 'r', encoding='utf-8') as f:
             for line in f:
                 word = line.strip().split()
-                file_as_list.append(word)
+                if len(word) > 1:
+                    file_as_list.append(word)
+                else:
+                    file_as_list.append(word[0])
 
         return file_as_list
 
@@ -230,7 +233,10 @@ class AffixoidClassifier:
             for line in f:
                 word = line.strip().split()
                 dict_key = word[0]
-                dict_value = word[1]
+                if len(word) > 1:
+                    dict_value = word[1]
+                else:
+                    dict_value = 0
                 dictionary.update({dict_key: dict_value})
 
         return dictionary
@@ -440,7 +446,6 @@ if __name__ == "__main__":
     # print(feature_5_prefixoids)
     # print(len(feature_5_prefixoids))
 
-    # print(feature_1_prefixoids[50], feature_2_prefixoids[50], feature_3_prefixoids[50])
     # PREFIXOIDS.write_list_to_file(prefixoid_inventory, 'prefix-out.txt')
 
     """
@@ -487,8 +492,8 @@ if __name__ == "__main__":
     # print(len(feature_3_suffixoids))
     # print(feature_4_suffixoids)
     # print(len(feature_4_suffixoids))
-    print(feature_5_suffixoids)
-    print(len(feature_5_suffixoids))
+    # print(feature_5_suffixoids)
+    # print(len(feature_5_suffixoids))
 
     # SUFFIXOIDS.write_list_to_file(suffixoid_inventory, 'suffix-out.txt')
 
@@ -503,3 +508,9 @@ if __name__ == "__main__":
     #     counter += 1
     # print(features)
     # print(feature_1_suffixoids[233], feature_2_suffixoids[233], feature_3_suffixoids[233])
+
+    germanet_supersenses = PREFIXOIDS.read_file_to_list(DATA_RESSOURCES_PATH+'GermaNet/supersenses.txt')
+    germanet_supersenses_list = PREFIXOIDS.create_frequency_dictionary(DATA_RESSOURCES_PATH+'GermaNet/supersenses.txt')
+    print(sorted(germanet_supersenses))
+    print(germanet_supersenses_list)
+
