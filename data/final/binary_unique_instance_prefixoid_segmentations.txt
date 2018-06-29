@@ -224,7 +224,7 @@ Blitzbewertung	Blitz|Bewertung	Blitz	Geschwindigkeit	Y
 Blitzbingo	Blitz|Bingo	Blitz	Geschwindigkeit	Y
 Blitzblähung	Blitz|Blähung	Blitz	Geschwindigkeit	Y
 Blitzblume	Blitz|Blume	Blitz	Physik	N
-Blitzbodenkarton	Blitzboden|Karton	Blitz	UNV	N
+Blitzbodenkarton	Blitzboden|Karton	Blitz	Physik	N
 Blitzbomber	Blitz|Bomber	Blitz	Geschwindigkeit	Y
 Blitzbrief	Blitz|Brief	Blitz	Geschwindigkeit	Y
 Blitzbrille	Blitz|Brille	Blitz	Physik	N
@@ -379,7 +379,7 @@ Blitz-Tiebreak	Blitz|Tiebreak	Blitz	Geschwindigkeit	Y
 Blitztipp	Blitz|Tipp	Blitz	Geschwindigkeit	Y
 Blitz-Titelkampf	Blitz|Titelkampf	Blitz	Geschwindigkeit	Y
 Blitztor	Blitz|Tor	Blitz	Geschwindigkeit	Y
-Blitz-Totem	Blitz|Totem	Blitz	UNV	N
+Blitz-Totem	Blitz|Totem	Blitz	Physik	N
 Blitzträger	Blitz|Träger	Blitz	Physik	N
 Blitztreffen	Blitz|Treffen	Blitz	Geschwindigkeit	Y
 Blitzübersichtskarte	Blitz|Übersichtskarte	Blitz	Physik	N
@@ -515,7 +515,7 @@ Bombenneigung	Bombe|Neigung	Bombe	Sprengkörper	N
 Bombenneurose	Bombe|Neurose	Bombe	Sprengkörper	N
 Bombenopfergräberfeld	Bombenopfer|Gräberfeld	Bombe	Sprengkörper	N
 Bombenopfer	Bombe|Opfer	Bombe	Sprengkörper	N
-Bombenpeter	UNKNOWN	Bombe	Sprengkörper	N
+Bombenpeter	Bombe|Peter	Bombe	Sprengkörper	N
 Bombenplatte	Bombe|Platte	Bombe	Hervorragendes	Y
 Bombenplatz	Bombe|Platz	Bombe	Sprengkörper	N
 Bombenpolitik	Bombe|Politik	Bombe	Hervorragendes	Y
@@ -693,7 +693,7 @@ Glanzkür	Glanz|Kür	Glanz	Auffälligkeit	Y
 Glanzkuren	Glanz|Kur	Glanz	Leuchten	N
 Glanzlauf	Glanz|Lauf	Glanz	Auffälligkeit	Y
 Glanzleder	Glanz|Leder	Glanz	Leuchten	N
-Glanzleggings	UNKNOWN	Glanz	Leuchten	N
+Glanzleggings	Glanz|Leggings	Glanz	Leuchten	N
 Glanzleinen	Glanz|Leinen	Glanz	Leuchten	N
 Glanzleinwand	Glanz|Leinwand	Glanz	Leuchten	N
 Glanzleistung	Glanz|Leistung	Glanz	Auffälligkeit	Y
@@ -961,7 +961,7 @@ Heidenspaß	Heide|Spaß	Heide	Intensität	Y
 Heidenspinner	Heide|Spinner	Heide	Glaube	N
 Heidenspuk	Heide|Spuk	Heide	Glaube	N
 Heidenstamm	Heide|Stamm	Heide	Glaube	N
-Heidenstecker	Heide|Stecker	Heide	UNV	N
+Heidenstecker	Heide|Stecker	Heide	Glaube	N
 Heidenstein	Heide|Stein	Heide	Glaube	N
 Heidenstieg	Heide|steigen	Heide	Glaube	N
 Heidenstolz	Heide|Stolz	Heide	Intensität	Y
@@ -1227,12 +1227,12 @@ Qualitätsbewertungskriterium	Qualitätsbewertung|Kriterium	Qualität	Gütegrad	
 Qualitäts-Coach	Qualitäts|Coach	Qualität	Gütegrad	N
 Qualitätsdrang	Qualität|Drang	Qualität	hoheGüte	Y
 Qualitätsdruck	Qualität|Druck	Qualität	Gütegrad	N
-Qualitätsdübel	UNKNOWN	Qualität	hoheGüte	Y
+Qualitätsdübel	Qualität|Dübel	Qualität	hoheGüte	Y
 Qualitätsdumping	Qualität|Dumping	Qualität	Gütegrad	N
 Qualitätsebene	Qualität|Ebene	Qualität	Gütegrad	N
 Qualitätseffekt	Qualität|Effekt	Qualität	Gütegrad	N
 Qualitätsentscheidung	Qualität|Entscheidung	Qualität	Gütegrad	N
-Qualitätsent­wicklung	UNKNOWN	Qualität	Gütegrad	N
+Qualitätsent­wicklung	Qualität|Entwicklung	Qualität	Gütegrad	N
 Qualitätsentwicklungsplan	Qualitätsentwicklung|Plan	Qualität	Gütegrad	N
 Qualitätsentwicklungsprogramm	Qualitätsentwicklung|Programm	Qualität	Gütegrad	N
 Qualitätsentwicklungssystem	Qualitätsentwicklung|System	Qualität	Gütegrad	N
@@ -1840,7 +1840,7 @@ Traum-Bike	Traum|Bike	Traum	Wunsch	Y
 Traumblatt	Traum|Blatt	Traum	Schlaf	N
 Traumblau	Traum|Blau	Traum	Wunsch	Y
 Traumblicke	Traum|Blick	Traum	Wunsch	Y
-Traumbolide	Traum|Bolide	Traum	UNV	N
+Traumbolide	Traum|Bolide	Traum	Wunsch	N
 Traumboot	Traum|Boot	Traum	Wunsch	Y
 Traumbuch	Traum|Buch	Traum	Schlaf	N
 Traumbündnis	Traum|Bündnis	Traum	Wunsch	Y
@@ -1969,7 +1969,7 @@ Traumstory	Traum|Story	Traum	Wunsch	Y
 Traumstrand	Traum|Strand	Traum	Wunsch	Y
 Traumstrauß	Traum|Strauß	Traum	Wunsch	Y
 Traumstücke	Traum|Stück	Traum	Wunsch	Y
-Traumsuse	Traum|Suse	Traum	UNV	N
+Traumsuse	Traum|Suse	Traum	Schlaf	N
 Traumsymbol	Traum|Symbol	Traum	Schlaf	N
 Traumszenario	Traum|Szenario	Traum	Wunsch	Y
 Traumtagebuch	Traum|Tagebuch	Traum	Schlaf	N

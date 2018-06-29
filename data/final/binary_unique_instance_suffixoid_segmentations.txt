@@ -121,7 +121,7 @@ Baumpapst	Baum|Papst	Papst	Autorität	Y
 Baustellendreck	Baustelle|Dreck	Dreck	Schmutz	N
 Bayernapostel	Bayern|Apostel	Apostel	Religion	N
 Bayernkönig	Bayern|König	König	Monarch	N
-Beas-Satguru	UNKNOWN	Guru	UNV	N
+Beas-Satguru	Beas-Sat|Guru	Guru	Religion	N
 Befestigungsbolzen	Befestigung|Bolzen	Bolzen	Stift	N
 Beflissenheitsapostel	Beflissenheit|Apostel	Apostel	Befürworter	Y
 Befruchtungsguru	Befruchtung|Guru	Guru	Experte	Y
@@ -146,8 +146,8 @@ Bewegungsguru	Bewegung|Guru	Guru	Experte	Y
 Bewegungsikone	Bewegung|Ikone	Ikone	Verkörperung	Y
 Beziehungsguru	Beziehung|Guru	Guru	Experte	Y
 Bezirksapostel	Bezirk|Apostel	Apostel	Religion	N
-Bhaishajyaguru	Bhaishajya|Guru	Guru	Religion	N
-Bhaishavaguru	UNKNOWN	Guru	UNV	N
+Bhaisajyaguru	Bhaisajya|Guru	Guru	Religion	N
+Bhaishavaguru	Bhaishava|Guru	Guru	Religion	N
 Biergartenguru	Biergarten|Guru	Guru	Experte	Y
 Bierguru	Bier|Guru	Guru	Experte	Y
 Bierkönig	Bier|König	König	Wichtigkeit	Y
@@ -254,7 +254,7 @@ Dekadenzbolzen	Dekadenz|Bolzen	Bolzen	hohesMaß	N
 Deklamationsapostel	Deklamation|Apostel	Apostel	Befürworter	Y
 Demenzbolzen	Demenz|Bolzen	Bolzen	hohesMaß	N
 Deregulierungsapostel	Deregulierung|Apostel	Apostel	Befürworter	Y
-DerMoralapostel	UNKNOWN	Apostel	Befürworter	Y
+DerMoralapostel	DerMoral|Apostel	Apostel	Befürworter	Y
 Designguru	Design|Guru	Guru	Experte	Y
 Designikone	Design|Ikone	Ikone	Verkörperung	Y
 Deutschenapostel	Deutscher|Apostel	Apostel	Religion	N
@@ -269,7 +269,7 @@ Dichtungspapst	Dichtung|Papst	Papst	Autorität	Y
 Dieseldreck	Diesel|Dreck	Dreck	Schmutz	N
 Dieselpapst	Diesel|Papst	Papst	Autorität	Y
 Dieselschweine	Diesel|Schwein	Schwein	Schimpfwort	Y
-Dimetikone	UNKNOWN	Ikone	UNV	N
+Dimetikone	Dimet|Ikone	Ikone	UNV	N
 Diplomatenpapsts	Diplomat|Papst	Papst	Kirche	N
 Discounter-dreck	Discounter|Dreck	Dreck	niedrigeQualität	Y
 Diskohengst	Disko|Hengst	Hengst	Mann	Y
@@ -317,7 +317,7 @@ Dummheitsapostel	Dummheit|Apostel	Apostel	Befürworter	Y
 Dunkelkammerpapst	Dunkelkammer|Papst	Papst	Autorität	Y
 Durchhaltedreck	durchhalten|Dreck	Dreck	niedrigeQualität	Y
 Durchhalteikone	durchhalten|Ikone	Ikone	Verkörperung	Y
-Durschnittsdreck	UNV	Dreck	niedrigeQualität	Y
+Durschnittsdreck	Durschnitt|Dreck	Dreck	niedrigeQualität	Y
 Ebergott	Eber|Gott	Gott	Religion	N
 Edelstahlbolzen	Edelstahl|Bolzen	Bolzen	Stift	N
 Effizienzapostel	Effizienz|Apostel	Apostel	Befürworter	Y
@@ -444,7 +444,6 @@ Flirtgott	Flirt|Gott	Gott	Experte	Y
 Fluggott	Flug|Gott	Gott	Experte	Y
 Flugzeugikone	Flugzeug|Ikone	Ikone	Verkörperung	Y
 Flussdreck	Fluss|Dreck	Dreck	Schmutz	N
-Flüssigsilikone	UNV	Ikone	UNV	N
 Flusskönig	Fluss|König	König	Monarch	N
 Flußkönig	Fluss|König	König	Monarch	N
 Fohlenhengst	Fohlen|Hengst	Hengst	Tier	N
@@ -490,8 +489,8 @@ Fußballapostel	Fußball|Apostel	Apostel	Befürworter	Y
 Fußballguru	Fußball|Guru	Guru	Experte	Y
 Fussballikone	Fußball|Ikone	Ikone	Verkörperung	Y
 Fußbodendreck	Fußboden|Dreck	Dreck	Schmutz	N
-Fussekguru	UNV	Guru	Experte	Y
-GaLaguru	UNV	Guru	UNV	N
+Fussekguru	Fussek|Guru	Guru	Experte	Y
+GaLaguru	Gala|Guru	Guru	Experte	N
 Gameguru	Game|Guru	Guru	Experte	Y
 Gangsterkönig	Gangster|König	König	Wichtigkeit	Y
 Gänsedreck	Gans|Dreck	Dreck	Kot	N
@@ -541,7 +540,7 @@ Gestütshengst	Gestüt|Hengst	Hengst	Tier	N
 Gesundheitsapostel	Gesundheit|Apostel	Apostel	Befürworter	Y
 Gesundheitsguru	Gesundheit|Guru	Guru	Experte	Y
 Gesundheitspapst	Gesundheit|Papst	Papst	Autorität	Y
-Gesunheitsapostel	UNV	Apostel	Befürworter	Y
+Gesunheitsapostel	Gesundheit|Apostel	Apostel	Befürworter	Y
 Gewaltapostel	Gewalt|Apostel	Apostel	Befürworter	Y
 Gewaltfreiheitsapostel	Gewaltfreiheit|Apostel	Apostel	Befürworter	Y
 Gewerbedreck	Gewerbe|Dreck	Dreck	Schmutz	N
@@ -602,7 +601,7 @@ Gummibolzen	Gummi|Bolzen	Bolzen	Stift	N
 Gummidreck	Gummi|Dreck	Dreck	Schmutz	N
 Gurkenkönig	Gurke|König	König	Monarch	N
 Gurkenpapst	Gurke|Papst	Papst	Autorität	Y
-guruguru	UNV	Guru	UNV	N
+guruguru	Guru|Guru	Guru	Experte	N
 Gutmenschendreck	Gutmensch|Dreck	Dreck	niedrigeQualität	Y
 Hackerikone	Hacker|Ikone	Ikone	Verkörperung	Y
 Hafihengst	Hafi|Hengst	Hengst	Tier	N
@@ -617,11 +616,10 @@ Hamsterdreck	Hamster|Dreck	Dreck	Kot	N
 Handballikone	Handball|Ikone	Ikone	Verkörperung	Y
 Hangagott	Hanga|Gott	Gott	Religion	N
 Hängebauchschweins	Hängebauch|Schwein	Schwein	Tier	N
-Hängebauschweine	UNV	Schwein	Tier	N
+Hängebauschweine	Hängebauch|Schweine	Schwein	Tier	N
 Hannoveranerhengst	Hannoveraner|Hengst	Hengst	Tier	N
 Haptagott	Hapta|Gott	Gott	Religion	N
 Hasenkönig	Hase|König	König	Monarch	N
-@hasenkönig	UNV	König	UNV	N
 Hassapostel	Hass|Apostel	Apostel	Befürworter	Y
 Hassbolzen	Hass|Bolzen	Bolzen	hohesMaß	N
 Hastgott	Hast|Gott	Gott	Religion	N
@@ -719,7 +717,7 @@ Investmentguru	Investment|Guru	Guru	Experte	Y
 Investmentikone	Investment|Ikone	Ikone	Verkörperung	Y
 Investorenikone	Investor|Ikone	Ikone	Verkörperung	Y
 Islandhengst	Island|Hengst	Hengst	Tier	N
-Jagadguru	UNV	Guru	UNV	N
+Jagadguru	Jagad|Guru	Guru	Religion	N
 Jagdgott	Jagd|Gott	Gott	Religion	N
 Jägergott	Jäger|Gott	Gott	Religion	N
 Jahresdreck	Jahr|Dreck	Dreck	Schmutz	N
@@ -727,7 +725,7 @@ Jahresgott	Jahr|Gott	Gott	Religion	N
 Jahrhundertpapst	Jahrhundert|Papst	Papst	Kirche	N
 Jährlingshengst	Jährling|Hengst	Hengst	Tier	N
 Jahrtausendpapst	Jahrtausend|Papst	Papst	Kirche	N
-jasomirgott	UNV	Gott	Fehlt	N
+jasomirgott	Jasomir|Gott	Gott	Fehlt	N
 Jazzpapst	Jazz|Papst	Papst	Autorität	Y
 Jelinekdreck	Jelinek|Dreck	Dreck	niedrigeQualität	Y
 Jenseitsapostel	Jenseits|Apostel	Apostel	Befürworter	Y
@@ -742,10 +740,10 @@ Jugendpapst	Jugend|Papst	Papst	Kirche	N
 Junghengst	jung|Hengst	Hengst	Tier	N
 Jungschweines	jung|Schwein	Schwein	Tier	N
 Juristenpapst	Jurist|Papst	Papst	Autorität	Y
-Juruguru	UNV	Guru	UNV	N
+Juruguru	Juru|Guru	Guru	UNV	N
 Justizschwein	Justiz|Schwein	Schwein	Schimpfwort	Y
 Kabarettikone	Kabarett|Ikone	Ikone	Verkörperung	Y
-Kadunduguru	UNV	Guru	UNV	N
+Kadunduguru	Kadundu|Guru	Guru	UNV	N
 Käfergott	Käfer|Gott	Gott	Religion	N
 Kaffeeautomatenpapst	Kaffeeautomat|Papst	Papst	Autorität	Y
 Kaffeedreck	Kaffee|Dreck	Dreck	Schmutz	N
@@ -819,7 +817,7 @@ Knochenpapst	Knochen|Papst	Papst	Autorität	Y
 Knuddelschwein	knuddeln|Schwein	Schwein	Tier	N
 Kohledreck	Kohle|Dreck	Dreck	Schmutz	N
 Kohlrabiapostel	Kohlrabi|Apostel	Apostel	Befürworter	Y
-Koko-pok-guru	UNV	Guru	UNV	N
+Koko-pok-guru	Koko-pok|Guru	Guru	UNV	N
 Kolbenbolzen	Kolben|Bolzen	Bolzen	Stift	N
 Kollegenschweine	Kollege|Schwein	Schwein	Schimpfwort	Y
 Kommerzdreck	Kommerz|Dreck	Dreck	niedrigeQualität	Y
@@ -1071,7 +1069,7 @@ Motorbefestigungsbolzen	Motorbefestigung|Bolzen	Bolzen	Stift	N
 Motorenpapst	Motor|Papst	Papst	Autorität	Y
 Motorradhengst	Motorrad|Hengst	Hengst	Mann	Y
 Motorsportikone	Motorsport|Ikone	Ikone	Verkörperung	Y
-Mövendreck	UNV	Dreck	Kot	N
+Mövendreck	Möve|Dreck	Dreck	Kot	N
 Möwendreck	Möwe|Dreck	Dreck	Kot	N
 Mückendreck	Mücke|Dreck	Dreck	Kot	N
 Müllkönig	Müll|König	König	Wichtigkeit	Y
@@ -1237,7 +1235,7 @@ Politikschweine	Politik|Schwein	Schwein	Schimpfwort	Y
 Polizeigott	Polizei|Gott	Gott	Experte	Y
 Polizistenschweine	Polizist|Schwein	Schwein	Schimpfwort	Y
 Poltergott	poltern|Gott	Gott	Religion	N
-Polygott	UNV	Gott	UNV	N
+Polygott	Poly|Gott	Gott	UNV	N
 Pomadenhengst	Pomade|Hengst	Hengst	Mann	Y
 Pommernapostel	Pommern|Apostel	Apostel	Religion	N
 Popdichterikone	Popdichter|Ikone	Ikone	Verkörperung	Y
@@ -1382,7 +1380,7 @@ Sachsenschwein	Sachse|Schwein	Schwein	Schimpfwort	Y
 Sambagott	Samba|Gott	Gott	Experte	Y
 Sängerikone	Sänger|Ikone	Ikone	Verkörperung	Y
 Sängerpapst	Sänger|Papst	Papst	Autorität	Y
-Satuguru	UNV	Guru	UNV	N
+Satuguru	Satu|Guru	Guru	Religion	N
 Säulenapostel	Säule|Apostel	Apostel	Religion	N
 Schachkönig	Schach|König	König	Spiel	N
 Schäferschwein	Schäfer|Schwein	Schwein	Tier	N
@@ -1439,7 +1437,7 @@ Schreibergott	Schreiber|Gott	Gott	Experte	Y
 Schreibguru	schreiben|Guru	Guru	Experte	Y
 Schreibstubenhengst	Schreibstube|Hengst	Hengst	Mann	Y
 Schreibtischhengst	Schreibtisch|Hengst	Hengst	Mann	Y
-Schreissdreck	UNV	Dreck	niedrigeQualität	Y
+Schreissdreck	Schreiss|Dreck	Dreck	niedrigeQualität	Y
 Schriftgott	Schrift|Gott	Gott	Religion	N
 Schriftikone	Schrift|Ikone	Ikone	Verkörperung	Y
 Schrottgott	Schrott|Gott	Gott	Religion	N
@@ -1614,7 +1612,7 @@ Superpromihengst	Superpromi|Hengst	Hengst	Mann	Y
 Superschwein	super|Schwein	Schwein	Tier	N
 Surferikone	Surfer|Ikone	Ikone	Verkörperung	Y
 Sylvesterhengst	Sylvester|Hengst	Hengst	Mann	Y
-Symandreck	UNV	Dreck	UNV	N
+Symandreck	Syman|Dreck	Dreck	UNV	N
 Sympathiebolzen	Sympathie|Bolzen	Bolzen	hohesMaß	N
 Synchronisationsikone	Synchronisation|Ikone	Ikone	Verkörperung	Y
 Synthiegott	Synthie|Gott	Gott	Experte	Y
@@ -1635,10 +1633,10 @@ Tempeldreck	Tempel|Dreck	Dreck	Schmutz	N
 Tempelgott	Tempel|Gott	Gott	Religion	N
 Temperamentsbolzen	Temperament|Bolzen	Bolzen	hohesMaß	N
 Tempobolzen	Tempo|Bolzen	Bolzen	hohesMaß	N
-Tendaguru	UNV	Guru	UNV	N
+Tendaguru	Tenda|Guru	Guru	UNV	N
 Tennisguru	Tennis|Guru	Guru	Experte	Y
 Tennisikone	Tennis|Ikone	Ikone	Verkörperung	Y
-Terragigaguru	UNV	Guru	Experte	N
+Terragigaguru	Terragiga|Guru	Guru	Experte	N
 Terrorguru	Terror|Guru	Guru	Experte	Y
 Testosteronbolzen	Testosteron|Bolzen	Bolzen	hohesMaß	N
 Teufelsbolzen	Teufel|Bolzen	Bolzen	hohesMaß	N
