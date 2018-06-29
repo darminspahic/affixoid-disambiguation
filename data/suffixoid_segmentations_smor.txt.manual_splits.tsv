@@ -82,7 +82,7 @@ Atompapst	Atom|Papst
 Aufhängebolzen	aufhängen|Bolzen
 Aufklärungsapostel	Aufklärung|Apostel
 Aufklärungsikone	Aufklärung|Ikone
-Aufklärungspapst	AufklärungPapst
+Aufklärungspapst	Aufklärung|Papst
 Aufruhrgott	Aufruhr|Gott
 Aufstiegsgott	Aufstieg|Gott
 Augendreck	Auge|Dreck
@@ -121,7 +121,7 @@ Baumpapst	Baum|Papst
 Baustellendreck	Baustelle|Dreck
 Bayernapostel	Bayern|Apostel
 Bayernkönig	Bayern|König
-Beas-Satguru	UNKNOWN
+Beas-Satguru	Beas-Sat|Guru
 Befestigungsbolzen	Befestigung|Bolzen
 Beflissenheitsapostel	Beflissenheit|Apostel
 Befruchtungsguru	Befruchtung|Guru
@@ -146,8 +146,8 @@ Bewegungsguru	Bewegung|Guru
 Bewegungsikone	Bewegung|Ikone
 Beziehungsguru	Beziehung|Guru
 Bezirksapostel	Bezirk|Apostel
-Bhaishajyaguru	UNKNOWN
-Bhaishavaguru	UNKNOWN
+Bhaisajyaguru	Bhaisajya|Guru
+Bhaishavaguru	Bhaishava|Guru
 Biergartenguru	Biergarten|Guru
 Bierguru	Bier|Guru
 Bierkönig	Bier|König
@@ -254,7 +254,7 @@ Dekadenzbolzen	Dekadenz|Bolzen
 Deklamationsapostel	Deklamation|Apostel
 Demenzbolzen	Demenz|Bolzen
 Deregulierungsapostel	Deregulierung|Apostel
-DerMoralapostel	UNKNOWN
+DerMoralapostel	DerMoral|Apostel
 Designguru	Design|Guru
 Designikone	Design|Ikone
 Deutschenapostel	Deutscher|Apostel
@@ -269,7 +269,7 @@ Dichtungspapst	Dichtung|Papst
 Dieseldreck	Diesel|Dreck
 Dieselpapst	Diesel|Papst
 Dieselschweine	Diesel|Schwein
-Dimetikone	UNKNOWN
+Dimetikone	Dimet|Ikone
 Diplomatenpapsts	Diplomat|Papst
 Discounter-dreck	Discounter|Dreck
 Diskohengst	Disko|Hengst
@@ -317,7 +317,7 @@ Dummheitsapostel	Dummheit|Apostel
 Dunkelkammerpapst	Dunkelkammer|Papst
 Durchhaltedreck	durchhalten|Dreck
 Durchhalteikone	durchhalten|Ikone
-Durschnittsdreck	UNV
+Durschnittsdreck	Durschnitt|Dreck
 Ebergott	Eber|Gott
 Edelstahlbolzen	Edelstahl|Bolzen
 Effizienzapostel	Effizienz|Apostel
@@ -444,7 +444,6 @@ Flirtgott	Flirt|Gott
 Fluggott	Flug|Gott
 Flugzeugikone	Flugzeug|Ikone
 Flussdreck	Fluss|Dreck
-Flüssigsilikone	UNV
 Flusskönig	Fluss|König
 Flußkönig	Fluss|König
 Fohlenhengst	Fohlen|Hengst
@@ -490,8 +489,8 @@ Fußballapostel	Fußball|Apostel
 Fußballguru	Fußball|Guru
 Fussballikone	Fußball|Ikone
 Fußbodendreck	Fußboden|Dreck
-Fussekguru	UNV
-GaLaguru	UNV
+Fussekguru	Fussek|Guru
+GaLaguru	Gala|Guru
 Gameguru	Game|Guru
 Gangsterkönig	Gangster|König
 Gänsedreck	Gans|Dreck
@@ -541,7 +540,7 @@ Gestütshengst	Gestüt|Hengst
 Gesundheitsapostel	Gesundheit|Apostel
 Gesundheitsguru	Gesundheit|Guru
 Gesundheitspapst	Gesundheit|Papst
-Gesunheitsapostel	UNV
+Gesunheitsapostel	Gesundheit|Apostel
 Gewaltapostel	Gewalt|Apostel
 Gewaltfreiheitsapostel	Gewaltfreiheit|Apostel
 Gewerbedreck	Gewerbe|Dreck
@@ -602,7 +601,7 @@ Gummibolzen	Gummi|Bolzen
 Gummidreck	Gummi|Dreck
 Gurkenkönig	Gurke|König
 Gurkenpapst	Gurke|Papst
-guruguru	UNV
+guruguru	Guru|Guru
 Gutmenschendreck	Gutmensch|Dreck
 Hackerikone	Hacker|Ikone
 Hafihengst	Hafi|Hengst
@@ -617,11 +616,10 @@ Hamsterdreck	Hamster|Dreck
 Handballikone	Handball|Ikone
 Hangagott	Hanga|Gott
 Hängebauchschweins	Hängebauch|Schwein
-Hängebauschweine	UNV
+Hängebauschweine	Hängebauch|Schweine
 Hannoveranerhengst	Hannoveraner|Hengst
 Haptagott	Hapta|Gott
 Hasenkönig	Hase|König
-@hasenkönig	UNV
 Hassapostel	Hass|Apostel
 Hassbolzen	Hass|Bolzen
 Hastgott	Hast|Gott
@@ -719,7 +717,7 @@ Investmentguru	Investment|Guru
 Investmentikone	Investment|Ikone
 Investorenikone	Investor|Ikone
 Islandhengst	Island|Hengst
-Jagadguru	UNV
+Jagadguru	Jagad|Guru
 Jagdgott	Jagd|Gott
 Jägergott	Jäger|Gott
 Jahresdreck	Jahr|Dreck
@@ -727,7 +725,7 @@ Jahresgott	Jahr|Gott
 Jahrhundertpapst	Jahrhundert|Papst
 Jährlingshengst	Jährling|Hengst
 Jahrtausendpapst	Jahrtausend|Papst
-jasomirgott	UNV
+jasomirgott	Jasomir|Gott
 Jazzpapst	Jazz|Papst
 Jelinekdreck	Jelinek|Dreck
 Jenseitsapostel	Jenseits|Apostel
@@ -1071,7 +1069,7 @@ Motorbefestigungsbolzen	Motorbefestigung|Bolzen
 Motorenpapst	Motor|Papst
 Motorradhengst	Motorrad|Hengst
 Motorsportikone	Motorsport|Ikone
-Mövendreck	UNV
+Mövendreck	Möve|Dreck
 Möwendreck	Möwe|Dreck
 Mückendreck	Mücke|Dreck
 Müllkönig	Müll|König
@@ -1382,7 +1380,7 @@ Sachsenschwein	Sachse|Schwein
 Sambagott	Samba|Gott
 Sängerikone	Sänger|Ikone
 Sängerpapst	Sänger|Papst
-Satuguru	UNV
+Satuguru	Satu|Guru
 Säulenapostel	Säule|Apostel
 Schachkönig	Schach|König
 Schäferschwein	Schäfer|Schwein
@@ -1439,7 +1437,7 @@ Schreibergott	Schreiber|Gott
 Schreibguru	schreiben|Guru
 Schreibstubenhengst	Schreibstube|Hengst
 Schreibtischhengst	Schreibtisch|Hengst
-Schreissdreck	UNV
+Schreissdreck	Schreiss|Dreck
 Schriftgott	Schrift|Gott
 Schriftikone	Schrift|Ikone
 Schrottgott	Schrott|Gott
@@ -1494,6 +1492,7 @@ Silberhengst	Silber|Hengst
 Sitcomikone	Sitcom|Ikone
 Sittenapostel	Sitte|Apostel
 Sittlichkeitsapostel	Sittlichkeit|Apostel
+Sitzgurtbolzen	Sitzgurt|Bolzen
 Skandalikone	Skandal|Ikone
 Skaterikone	Skater|Ikone
 Skilaufikone	Skilauf|Ikone
@@ -1537,6 +1536,7 @@ Spielzeitikone	Spielzeit|Ikone
 Spießerschweine	Spießer|Schwein
 Spitzenhengst	Spitze|Hengst
 Splatterfilmguru	Splatterfilm|Guru
+Splattergott    Splatter|Gott
 Splatterguru	Splatter|Guru
 Splatterpapst	Splatter|Papst
 Sportapostel	Sport|Apostel
@@ -1638,7 +1638,7 @@ Tempobolzen	Tempo|Bolzen
 Tendaguru	UNV
 Tennisguru	Tennis|Guru
 Tennisikone	Tennis|Ikone
-Terragigaguru	UNV
+Terragigaguru	Terragiga|Guru
 Terrorguru	Terror|Guru
 Testosteronbolzen	Testosteron|Bolzen
 Teufelsbolzen	Teufel|Bolzen

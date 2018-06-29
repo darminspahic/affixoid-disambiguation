@@ -82,7 +82,7 @@ Atompapst	Atom|Papst	Papst	Autorität	Y
 Aufhängebolzen	aufhängen|Bolzen	Bolzen	Stift	N
 Aufklärungsapostel	Aufklärung|Apostel	Apostel	Befürworter	Y
 Aufklärungsikone	Aufklärung|Ikone	Ikone	Verkörperung	Y
-Aufklärungspapst	AufklärungPapst	Papst	Autorität	Y
+Aufklärungspapst	Aufklärung|Papst	Papst	Autorität	Y
 Aufruhrgott	Aufruhr|Gott	Gott	Religion	N
 Aufstiegsgott	Aufstieg|Gott	Gott	Experte	Y
 Augendreck	Auge|Dreck	Dreck	Schmutz	N
@@ -1492,6 +1492,7 @@ Silberhengst	Silber|Hengst	Hengst	Tier	N
 Sitcomikone	Sitcom|Ikone	Ikone	Verkörperung	Y
 Sittenapostel	Sitte|Apostel	Apostel	Befürworter	Y
 Sittlichkeitsapostel	Sittlichkeit|Apostel	Apostel	Befürworter	Y
+Sitzgurtbolzen	Sitzgurt|Bolzen Bolzen	Stift	N
 Skandalikone	Skandal|Ikone	Ikone	Verkörperung	Y
 Skaterikone	Skater|Ikone	Ikone	Verkörperung	Y
 Skilaufikone	Skilauf|Ikone	Ikone	Verkörperung	Y
@@ -1535,6 +1536,7 @@ Spielzeitikone	Spielzeit|Ikone	Ikone	Verkörperung	Y
 Spießerschweine	Spießer|Schwein	Schwein	Schimpfwort	Y
 Spitzenhengst	Spitze|Hengst	Hengst	Tier	N
 Splatterfilmguru	Splatterfilm|Guru	Guru	Experte	Y
+Splattergott    Splatter|Gott	Gott	Experte	Y
 Splatterguru	Splatter|Guru	Guru	Experte	Y
 Splatterpapst	Splatter|Papst	Papst	Autorität	Y
 Sportapostel	Sport|Apostel	Apostel	Befürworter	Y

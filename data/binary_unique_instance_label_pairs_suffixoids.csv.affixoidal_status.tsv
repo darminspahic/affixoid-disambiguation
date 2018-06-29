@@ -146,8 +146,8 @@ Bewegungsguru	Guru	Experte	Y
 Bewegungsikone	Ikone	Verkörperung	Y
 Beziehungsguru	Guru	Experte	Y
 Bezirksapostel	Apostel	Religion	N
-Bhaishajyaguru	Guru	Religion	N
-Bhaishavaguru	Guru	UNV	N
+Bhaisajyaguru	Guru	Religion	N
+Bhaishavaguru	Guru	Religion	N
 Biergartenguru	Guru	Experte	Y
 Bierguru	Guru	Experte	Y
 Bierkönig	König	Wichtigkeit	Y
@@ -444,7 +444,6 @@ Flirtgott	Gott	Experte	Y
 Fluggott	Gott	Experte	Y
 Flugzeugikone	Ikone	Verkörperung	Y
 Flussdreck	Dreck	Schmutz	N
-Flüssigsilikone	Ikone	UNV	N
 Flusskönig	König	Monarch	N
 Flußkönig	König	Monarch	N
 Fohlenhengst	Hengst	Tier	N
@@ -602,7 +601,7 @@ Gummibolzen	Bolzen	Stift	N
 Gummidreck	Dreck	Schmutz	N
 Gurkenkönig	König	Monarch	N
 Gurkenpapst	Papst	Autorität	Y
-guruguru	Guru	UNV	N
+guruguru	Guru	Experte	N
 Gutmenschendreck	Dreck	niedrigeQualität	Y
 Hackerikone	Ikone	Verkörperung	Y
 Hafihengst	Hengst	Tier	N
@@ -621,7 +620,6 @@ Hängebauschweine	Schwein	Tier	N
 Hannoveranerhengst	Hengst	Tier	N
 Haptagott	Gott	Religion	N
 Hasenkönig	König	Monarch	N
-@hasenkönig	König	UNV	N
 Hassapostel	Apostel	Befürworter	Y
 Hassbolzen	Bolzen	hohesMaß	N
 Hastgott	Gott	Religion	N
@@ -719,7 +717,7 @@ Investmentguru	Guru	Experte	Y
 Investmentikone	Ikone	Verkörperung	Y
 Investorenikone	Ikone	Verkörperung	Y
 Islandhengst	Hengst	Tier	N
-Jagadguru	Guru	UNV	N
+Jagadguru	Guru	Religion	N
 Jagdgott	Gott	Religion	N
 Jägergott	Gott	Religion	N
 Jahresdreck	Dreck	Schmutz	N
@@ -1494,6 +1492,7 @@ Silberhengst	Hengst	Tier	N
 Sitcomikone	Ikone	Verkörperung	Y
 Sittenapostel	Apostel	Befürworter	Y
 Sittlichkeitsapostel	Apostel	Befürworter	Y
+Sitzgurtbolzen	Bolzen	Stift	N
 Skandalikone	Ikone	Verkörperung	Y
 Skaterikone	Ikone	Verkörperung	Y
 Skilaufikone	Ikone	Verkörperung	Y
@@ -1537,6 +1536,7 @@ Spielzeitikone	Ikone	Verkörperung	Y
 Spießerschweine	Schwein	Schimpfwort	Y
 Spitzenhengst	Hengst	Tier	N
 Splatterfilmguru	Guru	Experte	Y
+Splattergott	Gott	Experte	Y
 Splatterguru	Guru	Experte	Y
 Splatterpapst	Papst	Autorität	Y
 Sportapostel	Apostel	Befürworter	Y
