@@ -21,10 +21,13 @@ import sys
 # import os
 # import duden
 # import requests
+import re
 import numpy as np
 import matplotlib.pyplot as plt
 # from bs4 import BeautifulSoup
 from sklearn.metrics.pairwise import cosine_similarity
+from pygermanet import load_germanet
+ger = load_germanet()
 
 ################
 # PATH SETTINGS
@@ -195,6 +198,7 @@ class AffixoidClassifier:
             Args:
                 word (str): Word
                 dictionary (dict): Dictionary with frequencies
+                return_as_vector
 
             Returns:
                 A frequency for a given word from a dictionary
@@ -402,6 +406,51 @@ class AffixoidClassifier:
 
         return cosine_similarity([word_1_vec], [word_2_vec])[0][0]
 
+    def search_germanet(self, word, gn_supersenses_dict):
+        """ This function ...
+
+            Args:
+                word (string): 'Bilderbuchhochzeit'
+                gn_supersenses_dict (dict):
+
+            Returns:
+                Vector
+
+            Example:
+                >>> self.search_germanet()
+
+        """
+
+        gn_supersenses_dict_copy = gn_supersenses_dict.copy()
+
+        regex = r"\(([^)]+)\)"
+        r = r"(?<=\()(.*?)(?=\.)"
+        word_synset = ger.synsets(word)
+        print(word_synset)
+        match_word = re.findall(regex, str(word_synset))
+
+        if match_word:
+            print(match_word, '>>>', word)
+            for mt in match_word:
+                m = ger.synset(mt).hypernym_paths
+                print(m)
+                for i in m:
+                    # print(i)
+                    for x in i:
+                        # print(x)
+                        ma = re.findall(r, str(x))
+                        # print(ma)
+                        if str(ma[0]) in gn_supersenses_dict.keys():
+                            print(str(ma[0]), 1)
+                            gn_supersenses_dict_copy.update({str(ma[0]): 1})
+        else:
+            pass
+
+        print(list(gn_supersenses_dict_copy.values()))
+        print('===================================')
+
+        return list(gn_supersenses_dict_copy.values())
+
 
 if __name__ == "__main__":
     """
@@ -416,12 +465,16 @@ if __name__ == "__main__":
     print('Total:\t', sum(y_prefixoids_inventory.values()) + sum(n_prefixoids_inventory.values()))
     print(len(prefixoid_inventory))
     # PREFIXOIDS.plot_statistics(y_prefixoids_inventory, n_prefixoids_inventory, 'Prefixoids')
+    germanet_supersenses_dict = {'Allgemein': 0, 'Bewegung': 0, 'Gefühl': 0, 'Geist': 0, 'Gesellschaft': 0, 'Körper': 0, 'Menge': 0, 'natürliches Phänomen': 0, 'Ort': 0, 'Pertonym Adjektiv': 0, 'Wahrnehmung': 0, 'privativspezifisch': 0, 'Relation': 0, 'Substanz': 0, 'Verhalten': 0, 'Zeit': 0, 'Artefakt': 0, 'Attribut': 0, 'Besitz': 0, 'Form': 0, 'Geschehen': 0, 'Gruppe': 0, 'Kognition': 0, 'Kommunikation': 0, 'Mensch': 0, 'Motiv': 0, 'Nahrung': 0, 'natürlicher Gegenstand': 0, 'Pflanze': 0, 'Tier': 0, 'Tops': 0, 'Körperfunktionsverb': 0, 'Konkurrenz': 0, 'Kontakt': 0, 'Lokation': 0, 'Kreatur': 0, 'Veränderung': 0, 'Verbrauch': 0}
 
     feature_1_prefixoids = []  # binary indicator, if affixoid
-    feature_2_prefixoids = []  # frequency
-    feature_3_prefixoids = []
-    feature_4_prefixoids = []
-    feature_5_prefixoids = []
+    feature_2_prefixoids = []  # frequency of complex word
+    feature_3_prefixoids = []  # frequency of first part
+    feature_4_prefixoids = []  # frequency of second part
+    feature_5_prefixoids = []  # cosine similarity between complex word and head
+    feature_6_prefixoids = []  # vector of GermaNet supersenses for complex word
+    feature_7_prefixoids = []  # vector of GermaNet supersenses for first part
+    feature_8_prefixoids = []  # vector of GermaNet supersenses for second part
     feature_3_prefixoids_formations = PREFIXOIDS.create_frequency_dictionary(DATA_PATH+FREQUENCY_PREFIXOID_FORMATIONS)
     feature_3_prefixoids_lemmas = PREFIXOIDS.create_frequency_dictionary(DATA_PATH+FREQUENCY_PREFIXOID_LEMMAS)
     feature_3_prefixoids_heads = PREFIXOIDS.create_frequency_dictionary(DATA_PATH+FREQUENCY_PREFIXOID_HEADS)
@@ -432,12 +485,18 @@ if __name__ == "__main__":
         item_2 = PREFIXOIDS.extract_frequency(i[0], feature_3_prefixoids_formations)
         item_3 = PREFIXOIDS.extract_frequency(i[-3], feature_3_prefixoids_lemmas)  # PREFIXOIDS.split_word_at_pipe(i[1])[0]
         item_4 = PREFIXOIDS.extract_frequency(PREFIXOIDS.split_word_at_pipe(i[1])[1], feature_3_prefixoids_heads)
-        item_5 = PREFIXOIDS.calculate_cosine_similarity(i[0], PREFIXOIDS.split_word_at_pipe(i[1])[0], feature_5_prefixoid_vector_dict)
+        item_5 = PREFIXOIDS.calculate_cosine_similarity(i[0], PREFIXOIDS.split_word_at_pipe(i[1])[0], feature_5_prefixoid_vector_dict)  # reverse for SUFFIXOIDS
+        item_6 = PREFIXOIDS.search_germanet(i[0], germanet_supersenses_dict)
+        item_7 = PREFIXOIDS.search_germanet(PREFIXOIDS.split_word_at_pipe(i[1])[0], germanet_supersenses_dict)
+        item_8 = PREFIXOIDS.search_germanet(PREFIXOIDS.split_word_at_pipe(i[1])[1], germanet_supersenses_dict)
         feature_1_prefixoids.append(item_1)
         feature_2_prefixoids.append(item_2)
         feature_3_prefixoids.append(item_3)
         feature_4_prefixoids.append(item_4)
         feature_5_prefixoids.append(item_5)
+        feature_6_prefixoids.append(item_6)
+        feature_7_prefixoids.append(item_7)
+        feature_8_prefixoids.append(item_8)
     # print(feature_1_prefixoids)
     # print(len(feature_1_prefixoids))
     # print(feature_2_prefixoids)
@@ -448,8 +507,15 @@ if __name__ == "__main__":
     # print(len(feature_4_prefixoids))
     # print(feature_5_prefixoids)
     # print(len(feature_5_prefixoids))
-
-    # PREFIXOIDS.write_list_to_file(prefixoid_inventory, 'prefix-out.txt')
+    # print(feature_6_prefixoids)
+    # print(len(feature_6_prefixoids))
+    # print(feature_7_prefixoids)
+    # print(len(feature_7_prefixoids))
+    # print(feature_8_prefixoids)
+    # print(len(feature_8_prefixoids))
+    zip_prefixoid_features = zip(prefixoid_inventory, feature_1_prefixoids, feature_2_prefixoids,
+                        feature_3_prefixoids, feature_4_prefixoids, feature_5_prefixoids,
+                        feature_6_prefixoids, feature_7_prefixoids, feature_8_prefixoids)
 
     """
         SUFFIXOIDS
@@ -471,6 +537,9 @@ if __name__ == "__main__":
     feature_3_suffixoids = []
     feature_4_suffixoids = []
     feature_5_suffixoids = []
+    feature_6_suffixoids = []
+    feature_7_suffixoids = []
+    feature_8_suffixoids = []
     feature_3_suffixoids_formations = PREFIXOIDS.create_frequency_dictionary(DATA_PATH + FREQUENCY_SUFFIXOID_FORMATIONS)
     feature_3_suffixoids_lemmas = SUFFIXOIDS.create_frequency_dictionary(DATA_PATH + FREQUENCY_SUFFIXOID_LEMMAS)
     feature_3_suffixoids_modifiers = SUFFIXOIDS.create_frequency_dictionary(DATA_PATH + FREQUENCY_SUFFIXOID_MODIFIERS)
@@ -482,11 +551,17 @@ if __name__ == "__main__":
         item_3 = SUFFIXOIDS.extract_frequency(i[-3], feature_3_suffixoids_lemmas)
         item_4 = SUFFIXOIDS.extract_frequency(SUFFIXOIDS.split_word_at_pipe(i[1])[0], feature_3_suffixoids_modifiers)
         item_5 = SUFFIXOIDS.calculate_cosine_similarity(i[0], SUFFIXOIDS.split_word_at_pipe(i[1])[1], feature_5_suffixoids_vector_dict)
+        item_6 = SUFFIXOIDS.search_germanet(i[0], germanet_supersenses_dict)
+        item_7 = SUFFIXOIDS.search_germanet(SUFFIXOIDS.split_word_at_pipe(i[1])[0], germanet_supersenses_dict)
+        item_8 = SUFFIXOIDS.search_germanet(SUFFIXOIDS.split_word_at_pipe(i[1])[1], germanet_supersenses_dict)
         feature_1_suffixoids.append(item_1)
         feature_2_suffixoids.append(item_2)
         feature_3_suffixoids.append(item_3)
         feature_4_suffixoids.append(item_4)
         feature_5_suffixoids.append(item_5)
+        feature_6_suffixoids.append(item_6)
+        feature_7_suffixoids.append(item_7)
+        feature_8_suffixoids.append(item_8)
     # print(feature_1_suffixoids)
     # print(len(feature_1_suffixoids))
     # print(feature_2_suffixoids)
@@ -497,22 +572,61 @@ if __name__ == "__main__":
     # print(len(feature_4_suffixoids))
     # print(feature_5_suffixoids)
     # print(len(feature_5_suffixoids))
+    # print(feature_6_suffixoids)
+    # print(len(feature_6_suffixoids))
+    # print(feature_7_suffixoids)
+    # print(len(feature_7_suffixoids))
+    # print(feature_8_suffixoids)
+    # print(len(feature_8_suffixoids))
+    zip_suffixoid_features = zip(suffixoid_inventory, feature_1_suffixoids, feature_2_suffixoids,
+                                 feature_3_suffixoids, feature_4_suffixoids, feature_5_suffixoids,
+                                 feature_6_suffixoids, feature_7_suffixoids, feature_8_suffixoids)
 
     # SUFFIXOIDS.write_list_to_file(suffixoid_inventory, 'suffix-out.txt')
 
-    # counter = 0
-    # features = []
-    # for i in prefixoid_inventory:
-    #     f1 = feature_1_prefixoids[counter]
-    #     f2 = feature_2_prefixoids[counter]
-    #     f3 = feature_3_prefixoids[counter]
-    #     f4 = i[-1]
-    #     features.append([f1, f2, f3, f4])
-    #     counter += 1
-    # print(features)
-    # print(feature_1_suffixoids[233], feature_2_suffixoids[233], feature_3_suffixoids[233])
+    def test_case():
+        print(germanet_supersenses_dict)
+        print(PREFIXOIDS.transform_to_binary('Y'))
+        print(PREFIXOIDS.extract_frequency('Bilderbuchabsturz', feature_3_prefixoids_formations))
+        print(PREFIXOIDS.extract_frequency(PREFIXOIDS.split_word_at_pipe('Bilderbuch|Absturz')[0], feature_3_prefixoids_lemmas))
+        print(PREFIXOIDS.extract_frequency(PREFIXOIDS.split_word_at_pipe('Bilderbuch|Absturz')[1], feature_3_prefixoids_heads))
+        print(PREFIXOIDS.calculate_cosine_similarity('Bilderbuchabsturz', PREFIXOIDS.split_word_at_pipe('Bilderbuch|Absturz')[0], feature_5_prefixoid_vector_dict))
+        print(PREFIXOIDS.search_germanet('Bilderbuchabsturz', germanet_supersenses_dict))
+        print(PREFIXOIDS.search_germanet(PREFIXOIDS.split_word_at_pipe('Bilderbuch|Absturz')[0], germanet_supersenses_dict))
+        print(PREFIXOIDS.search_germanet(PREFIXOIDS.split_word_at_pipe('Bilderbuch|Absturz')[1], germanet_supersenses_dict))
 
-    # germanet_supersenses = PREFIXOIDS.read_file_to_list(DATA_RESSOURCES_PATH+'GermaNet/supersenses.txt')
-    germanet_supersenses_list = {'Allgemein': 0, 'Bewegung': 0, 'Gefuehl': 0, 'Geist': 0, 'Gesellschaft': 25, 'Koerper': 0, 'Menge': 0, 'natPhaenomen': 0, 'Ort': 0, 'Pertonym': 0, 'Perzeption': 0, 'privativ': 0, 'Relation': 0, 'Substanz': 0, 'Verhalten': 0, 'Zeit': 0, 'Artefakt': 0, 'Attribut': 0, 'Besitz': 0, 'Form': 0, 'Geschehen': 0, 'Gruppe': 0, 'Kognition': 0, 'Kommunikation': 0, 'Mensch': 0, 'Motiv': 0, 'Nahrung': 0, 'natGegenstand': 0, 'Pflanze': 0, 'Tier': 0, 'Tops': 0, 'Koerperfunktion': 0, 'Konkurrenz': 0, 'Kontakt': 0, 'Lokation': 0, 'Schoepfung': 0, 'Veraenderung': 0, 'Verbrauch': 0}
-    print(germanet_supersenses_list)
-    print(PREFIXOIDS.extract_frequency('Gesellschaft', germanet_supersenses_list, True))
+    # test_case()
+
+    def write_features_to_file(instances_file, labels_file, zip_file):
+
+        f = open(instances_file, 'w', encoding='utf-8')
+        f2 = open(labels_file, 'w', encoding='utf-8')
+
+        counter = 0
+
+        for item in zip_file:
+
+            i = [item[1], item[2], item[3], item[4], item[5]]
+
+            for a in item[6]:
+                i.append(a)
+
+            for b in item[7]:
+                i.append(b)
+
+            for c in item[8]:
+                i.append(c)
+
+            print(i)
+
+            f.write(str(i) + ',\n')
+            f2.write(str(item[1]) + ',')
+            counter += 1
+
+        print('Instances written to: ', instances_file)
+        print('Labels written to: ', labels_file)
+        f.close()
+        f2.close()
+
+    write_features_to_file(DATA_FEATURES_PATH+'prefix-instances.txt', DATA_FEATURES_PATH+'prefix-labels.txt', zip_prefixoid_features)
+    write_features_to_file(DATA_FEATURES_PATH+'suffix-instances.txt', DATA_FEATURES_PATH+'suffix-labels.txt', zip_suffixoid_features)
