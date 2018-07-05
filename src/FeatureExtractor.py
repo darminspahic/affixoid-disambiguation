@@ -19,18 +19,17 @@ Version: 1.0
 """
 
 import sys
-import nltk
-# import os
+import os
 # import duden
 # import requests
 import re
 import numpy as np
 import matplotlib.pyplot as plt
 import ast
-# from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup
 from sklearn.metrics.pairwise import cosine_similarity
-from pygermanet import load_germanet
-ger = load_germanet()
+# from pygermanet import load_germanet
+# ger = load_germanet()
 
 ################
 # PATH SETTINGS
@@ -56,6 +55,18 @@ FAST_TEXT_PREFIXOID_VECTORS = 'fastText/prefixoid-fastText-vectors.txt'
 FAST_TEXT_SUFFIXOID_VECTORS = 'fastText/suffixoid-fastText-vectors.txt'
 
 SENTIMERGE_POLARITY = 'SentiMerge/sentimerge.txt'
+
+################
+# GermaNet
+################
+GERMANET_XML_PATH = 'modules/GN_V120_XML/'
+
+"""GermaNet Supersenses"""
+GN_SUPERSENSES = {'Allgemein': 0, 'Bewegung': 0, 'Gefuehl': 0, 'Geist': 0, 'Gesellschaft': 0, 'Koerper': 0, 'Menge': 0, 'natPhaenomen': 0, 'Ort': 0, 'Pertonym': 0, 'Perzeption': 0, 'privativ': 0, 'Relation': 0, 'Substanz': 0, 'Verhalten': 0, 'Zeit': 0, 'Artefakt': 0, 'Attribut': 0, 'Besitz': 0, 'Form': 0, 'Geschehen': 0, 'Gruppe': 0, 'Kognition': 0, 'Kommunikation': 0, 'Mensch': 0, 'Motiv': 0, 'Nahrung': 0, 'natGegenstand': 0, 'Pflanze': 0, 'Tier': 0, 'Tops': 0, 'Koerperfunktion': 0, 'Konkurrenz': 0, 'Kontakt': 0, 'Lokation': 0, 'Schoepfung': 0, 'Veraenderung': 0, 'Verbrauch': 0}
+
+"""To prevent unnecessary parsing, use words already found"""
+GN_PREF_FORMATIONS = ['Blitzgerät', 'Blitzkarriere', 'Blitzkrieg', 'Blitzkurs', 'Blitzlampe', 'Blitzröhre', 'Blitzschach', 'Blitzschlag', 'Bombenabwurf', 'Bombenalarm', 'Bombendrohung', 'Bombenexplosion', 'Bombenleger', 'Bombennacht', 'Bombenopfer', 'Bombenschacht', 'Bombenschaden', 'Bombensplitter', 'Bombenteppich', 'Bombentest', 'Bombentrichter', 'Glanzente', 'Glanzleistung', 'Glanzlicht', 'Glanzpunkt', 'Glanzrolle', 'Glanzstoff', 'Glanzstück', 'Glanzzeit', 'Jahrhundertfeier', 'Jahrhunderthälfte', 'Jahrhunderthochwasser', 'Jahrhundertsommer', 'Jahrhundertwechsel', 'Qualitätsbewusstsein', 'Qualitätskriterium', 'Qualitätsprüfung', 'Qualitätsstandard', 'Qualitätsverbesserung', 'Qualitätswein', 'Qualitätszuwachs', 'Schweineblut', 'Schweinebraten', 'Schweinefleisch', 'Schweinehaltung', 'Schweinehirte', 'Schweinepest', 'Spitzenfunktionär', 'Spitzenkandidatin', 'Spitzenkoch', 'Spitzenläufer', 'Spitzenleistung', 'Spitzenplatz', 'Spitzenreiter', 'Spitzenspiel', 'Spitzensportler', 'Spitzenverband', 'Spitzenverdiener', 'Spitzenverein', 'Spitzenwert', 'Traummädchen', 'Traumwelt']
+GN_SUFF_FORMATIONS = ['Börsenguru', 'Burgunderkönig', 'Bürohengst', 'Dänenkönig', 'Donnergott', 'Dreikönig', 'Feenkönig', 'Feuergott', 'Froschkönig', 'Gegenkönig', 'Gegenpapst', 'Gotenkönig', 'Gottkönig', 'Großkönig', 'Hausschwein', 'Herzkönig', 'Himmelsgott', 'Hochkönig', 'Hunnenkönig', 'Kleinkönig', 'Langobardenkönig', 'Liebesgott', 'Märchenkönig', 'Marienikone', 'Meeresgott', 'Moralapostel', 'Normannenkönig', 'Perserkönig', 'Preußenkönig', 'Priesterkönig', 'Rattenkönig', 'Schlagbolzen', 'Schöpfergott', 'Schützenkönig', 'Schwedenkönig', 'Slawenapostel', 'Sonnenkönig', 'Stammapostel', 'Torschützenkönig', 'Unterkönig', 'Vizekönig', 'Vogelkönig', 'Wachtelkönig', 'Warzenschwein', 'Westgotenkönig', 'Wettergott', 'Wildschwein', 'Winterkönig', 'Zaunkönig', 'Zuchthengst', 'Zwergenkönig']
 
 
 class FeatureExtractor:
@@ -410,23 +421,43 @@ class FeatureExtractor:
 
         """
 
-        word_1_vec = fast_text_vector_dict[word_1]
-        word_2_vec = fast_text_vector_dict[word_2]
+        try:
+            word_1_vec = fast_text_vector_dict[word_1]
+            word_2_vec = fast_text_vector_dict[word_2]
+            return cosine_similarity([word_1_vec], [word_2_vec])[0][0]
 
-        # print(word_1_vec)
-        # print(word_2_vec)
-        # print(word_1, word_2, cosine_similarity([word_1_vec], [word_2_vec])[0][0])
-        # print("================")
+        except KeyError:
+            print('Words not found in fastText vector dictionary')
+            return 0
 
-        return cosine_similarity([word_1_vec], [word_2_vec])[0][0]
+    def parse_germanet(self, germanet_directory):
+        """TODO"""
 
-    def search_germanet(self, word, gn_supersenses_dict):
+        xml_content = []
+
+        for root, dirnames, filenames in os.walk(germanet_directory):
+            for filename in filenames:
+                if (filename.startswith('adj') or filename.startswith('nomen') or filename.startswith('verben')) and filename.endswith('.xml'):
+                    fname = os.path.join(root, filename)
+                    print('Reading file into memory: {}'.format(fname))
+                    with open(fname, 'r', encoding='utf-8') as input_xml:
+                        print('Parsing xml: {}'.format(fname))
+                        soup = BeautifulSoup(input_xml, 'lxml-xml')
+                        xml_content.append(soup)
+
+        print('Files from {}'.format(germanet_directory), 'ready to parse.')
+
+        return xml_content
+
+    def search_germanet(self, word, gn_supersenses_dict, xml_soup, return_single_word=False):
         """ This function searches through GermaNet for supersenses noted in germanet_supersenses_dict
             and returns a vector with binary indicator where the sense has been found.
 
             Args:
                 word (string): 'Bilderbuchhochzeit'
                 gn_supersenses_dict (dict): Dictionary with GermaNet supersenses
+                xml_soup (list): Parsed xml files with Beautiful soup
+                return_single_word (bool): Return single word when set to true
 
             Returns:
                 Vector with length of germanet_supersenses_dict.values()
@@ -438,30 +469,50 @@ class FeatureExtractor:
 
         print('Searching for: ', word)
 
+        found_word = ''
+        found_supersense = ''
+
         gn_supersenses_dict_copy = gn_supersenses_dict.copy()
 
-        reg_1 = r"\(([^)]+)\)"
-        reg_2 = r"(?<=\()(.*?)(?=\.)"
-        word_synset = ger.synsets(word)
-        # print(word_synset)
-        match_word = re.findall(reg_1, str(word_synset))
+        if return_single_word:
+            for item in xml_soup:
+                all_synsets = item.find_all('synset')
+                for syn in all_synsets:
+                    supersense = syn.get('class')
+                    all_forms = syn.find_all('orthForm')
+                    # all_modifiers = syn.find_all('modifier')
+                    # all_heads = syn.find_all('head')
+                    for form in all_forms:
+                        if form.get_text() == word:
+                            found_word = word
+                            found_supersense = supersense
+                            gn_supersenses_dict_copy.update({supersense: 1})
 
-        if match_word:
-            print('Synset found: ', match_word, '>>>', word)
-            for mt in match_word:
-                m = ger.synset(mt).hypernym_paths
-                print(m)
-                for sn in m:
-                    print(sn)
-                    for s in sn:
-                        print(s)
-                        ma = re.findall(reg_2, str(s))
-                        print(ma)
-                        if str(ma[0]) in gn_supersenses_dict.keys():
-                            print(str(ma[0]), 1)
-                            gn_supersenses_dict_copy.update({str(ma[0]): 1})
+            if len(found_supersense) > 0:
+                print('Word found:', found_word)
+                return found_word
+            else:
+                print('Word:', word, 'not found in GermaNet')
+                return False
+
         else:
-            print('Synset not found:', word)
+            for item in xml_soup:
+                all_synsets = item.find_all('synset')
+                for syn in all_synsets:
+                    supersense = syn.get('class')
+                    all_forms = syn.find_all('orthForm')
+                    # all_modifiers = syn.find_all('modifier')
+                    # all_heads = syn.find_all('head')
+                    for form in all_forms:
+                        if form.get_text() == word:
+                            found_word = word
+                            found_supersense = supersense
+                            gn_supersenses_dict_copy.update({supersense: 1})
+
+            if len(found_supersense) > 0:
+                print(word, 'supersense >', found_supersense)
+            else:
+                print('Supersense for:', word, 'not found in GermaNet')
 
         return list(gn_supersenses_dict_copy.values())
 
@@ -513,13 +564,19 @@ class FeatureExtractor:
         if from_germanet:
             print('Searching in GermaNet')
             for x in sorted_cosine_similarity_dict:
-                print('Similar word found: ', x[0])
-                print('Cosine similarity: ', x[1])
-                word_synset_cs = ger.synsets(x[0])
-                if word_synset_cs:
-                    print(word_synset_cs)
-                    most_similar_word = x[0]
-                    break
+                if word_1 not in GN_PREF_FORMATIONS or i not in GN_SUFF_FORMATIONS:
+                    print('Word not in GN dicts. Continuing...')
+                    continue
+                else:
+                    print('Similar word in fastText dictionary: ', x[0])
+                    print('Cosine similarity: ', x[1])
+                    # TODO: Fix this
+                    gn_word = self.search_germanet(x[0], gn_supersenses_dict=GN_SUPERSENSES, xml_soup=germanet_xml, return_single_word=True)
+                    if gn_word:
+                        print(gn_word)
+                        most_similar_word = x[0]
+                        #break
+                        return most_similar_word
         else:
             print('Searching in polarity_dict')
             for x in sorted_cosine_similarity_dict:
@@ -528,9 +585,8 @@ class FeatureExtractor:
                 if x[0] in polarity_dict.keys():
                     print('Most similar word from polarity dictionary:', x[0])
                     most_similar_word = x[0]
-                    break
-
-        return most_similar_word
+                    # break
+                    return most_similar_word
 
     def create_polarity_dict(self, polarity_file):
         """TODO"""
@@ -551,7 +607,7 @@ class FeatureExtractor:
         return dictionary
 
     def extract_polarity(self, word, polarity_dict):
-        """TODO"""
+        """TODO Docstrings"""
         # try:
         #     value = polarity_dict[word]
         #     v = ast.literal_eval(value)
@@ -580,28 +636,12 @@ class Style:
 
 
 if __name__ == "__main__":
-    germanet_supersenses_dict = {'Allgemein': 0, 'Bewegung': 0, 'Gefühl': 0, 'Geist': 0, 'Gesellschaft': 0,
-                                 'Körper': 0, 'Menge': 0, 'natürliches Phänomen': 0, 'Ortschaft': 0, 'Pertonym Adjektiv': 0,
-                                 'Wahrnehmung': 0, 'privativspezifisch': 0, 'Relation': 0, 'Substanz': 0, 'Verhalten': 0,
-                                 'Zeit': 0, 'Artefakt': 0, 'Attribut': 0, 'Besitz': 0, 'Form': 0,
-                                 'Geschehen': 0, 'Gruppe': 0, 'Kognition': 0, 'Kommunikation': 0, 'Mensch': 0,
-                                 'Motiv': 0, 'Nahrung': 0, 'natürlicher Gegenstand': 0, 'Pflanze': 0,
-                                 'Tier': 0, 'Tops': 0, 'Körperfunktionsverb': 0, 'Konkurrenz': 0, 'Kontakt': 0,
-                                 'Lokation': 0, 'Kreatur': 0, 'Veränderung': 0, 'Verbrauch': 0}
-
-    gn_dict = {'Allgemein': 0, 'Bewegung': 0, 'Gefuehl': 0, 'Geist': 0, 'Gesellschaft': 0,
-               'Koerper': 0, 'Menge': 0, 'natPhaenomen': 0, 'Ort': 0, 'Pertonym': 0,
-               'Perzeption': 0, 'privativ': 0, 'Relation': 0, 'Substanz': 0, 'Verhalten': 0,
-               'Zeit': 0, 'Artefakt': 0, 'Attribut': 0, 'Besitz': 0, 'Form': 0,
-               'Geschehen': 0, 'Gruppe': 0, 'Kognition': 0, 'Kommunikation': 0, 'Mensch': 0,
-               'Motiv': 0, 'Nahrung': 0, 'natGegenstand': 0, 'Pflanze': 0, 'Tier': 0,
-               'Tops': 0, 'Koerperfunktion': 0, 'Konkurrenz': 0, 'Kontakt': 0, 'Lokation': 0,
-               'Schoepfung': 0, 'Veraenderung': 0, 'Verbrauch': 0}
     """
         PREFIXOIDS
     """
     PREF = FeatureExtractor('Prefixoids')
     pref_inventory_list = PREF.read_file_to_list(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE)
+    suff_inventory_list = PREF.read_file_to_list(DATA_FINAL_PATH + FINAL_SUFFIXOID_FILE)
     y_pref_dict = PREF.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE, 'Y')
     n_pref_dict = PREF.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE, 'N')
     print('Y:\t', y_pref_dict)
@@ -609,6 +649,7 @@ if __name__ == "__main__":
     print('Total:\t', sum(y_pref_dict.values()) + sum(n_pref_dict.values()))
     print(len(pref_inventory_list))
     # PREF.plot_statistics(y_pref_dict, n_pref_dict, 'Prefixoids')
+    germanet_xml = PREF.parse_germanet(GERMANET_XML_PATH)
 
     f0_pref_list = []  # prefix coded into dictionary
     f1_pref_list = []  # binary indicator, if affixoid
@@ -629,47 +670,56 @@ if __name__ == "__main__":
     f5_pref_vector_dict = PREF.create_vector_dictionary(DATA_RESSOURCES_PATH + FAST_TEXT_PREFIXOID_VECTORS)
     f9_pref_polarity_dict = PREF.create_polarity_dict(DATA_RESSOURCES_PATH + SENTIMERGE_POLARITY)
 
-    # for i in pref_inventory_list:
-    #     f0 = PREF.extract_frequency(i[-3], y_pref_dict, True)  # y_pref_dict or n_pref_dict
-    #     f1 = PREF.transform_class_name_to_binary(i[-1])
-    #     f2 = PREF.extract_frequency(i[0], f2_pref_formations)
-    #     f3 = PREF.extract_frequency(PREF.split_word_at_pipe(i[1])[0], f3_pref_lemmas)
-    #     f4 = PREF.extract_frequency(PREF.split_word_at_pipe(i[1])[1], f4_pref_heads)
-    #     f5 = PREF.calculate_cosine_similarity(i[0], PREF.split_word_at_pipe(i[1])[0], f5_pref_vector_dict)  # reverse for SUFFIXOIDS
-    #     f6 = PREF.search_germanet(i[0], germanet_supersenses_dict)
-    #     i_similar_gn = PREF.return_similar_cosine_word(i[0], i[1], f5_pref_vector_dict)
-    #     i_similar_gn_syn = PREF.search_germanet(i_similar_gn, germanet_supersenses_dict)
-    #     if sum(f6) < 1:
-    #         f6 = i_similar_gn_syn
-    #     f7 = PREF.search_germanet(PREF.split_word_at_pipe(i[1])[0], germanet_supersenses_dict)
-    #     if sum(f7) < 1:
-    #         f7 = i_similar_gn_syn
-    #     f8 = PREF.search_germanet(PREF.split_word_at_pipe(i[1])[1], germanet_supersenses_dict)
-    #     if sum(f8) < 1:
-    #         f8 = i_similar_gn_syn
-    #     f9 = PREF.extract_polarity(i[0], f9_pref_polarity_dict)
-    #     i_similar_pol = PREF.return_similar_cosine_word(i[0], i[1], f5_pref_vector_dict, False, polarity_dict=f9_pref_polarity_dict)
-    #     i_similar_pol_value = PREF.extract_polarity(i_similar_pol, f9_pref_polarity_dict)
-    #     if f9 == 0:
-    #         f9 = i_similar_pol_value
-    #     f10 = PREF.extract_polarity(PREF.split_word_at_pipe(i[1])[0], f9_pref_polarity_dict)
-    #     if f10 == 0:
-    #         f10 = i_similar_pol_value
-    #     f11 = PREF.extract_polarity(PREF.split_word_at_pipe(i[1])[1], f9_pref_polarity_dict)
-    #     if f11 == 0:
-    #         f11 = i_similar_pol_value
-    #     f0_pref_list.append(f0)
-    #     f1_pref_list.append(f1)
-    #     f2_pref_list.append(f2)
-    #     f3_pref_list.append(f3)
-    #     f4_pref_list.append(f4)
-    #     f5_pref_list.append(f5)
-    #     f6_pref_list.append(f6)
-    #     f7_pref_list.append(f7)
-    #     f8_pref_list.append(f8)
-    #     f9_pref_list.append(f9)
-    #     f10_pref_list.append(f10)
-    #     f11_pref_list.append(f11)
+    germanet_inventory = {}
+
+    for i in pref_inventory_list:
+        f0 = PREF.extract_frequency(i[-3], y_pref_dict, True)  # y_pref_dict or n_pref_dict
+        f1 = PREF.transform_class_name_to_binary(i[-1])
+        f2 = PREF.extract_frequency(i[0], f2_pref_formations)
+        f3 = PREF.extract_frequency(PREF.split_word_at_pipe(i[1])[0], f3_pref_lemmas)
+        f4 = PREF.extract_frequency(PREF.split_word_at_pipe(i[1])[1], f4_pref_heads)
+        f5 = PREF.calculate_cosine_similarity(i[0], PREF.split_word_at_pipe(i[1])[0], f5_pref_vector_dict)  # reverse for SUFFIXOIDS
+        f6 = ''
+        i_similar_gn = ''
+        i_similar_gn_word = ''
+        i_similar_gn_syn = ''
+        if i in GN_PREF_FORMATIONS or i in GN_SUFF_FORMATIONS:
+            f6 = PREF.search_germanet(i[0], GN_SUPERSENSES, germanet_xml)
+        else:
+            i_similar_gn = PREF.return_similar_cosine_word(i[0], i[1], f5_pref_vector_dict)
+            i_similar_gn_word = PREF.search_germanet(i_similar_gn, GN_SUPERSENSES, germanet_xml, return_single_word=True)
+            i_similar_gn_syn = PREF.search_germanet(i_similar_gn_word, GN_SUPERSENSES, germanet_xml)
+        if sum(f6) < 1:
+            f6 = i_similar_gn_syn
+        f7 = PREF.search_germanet(PREF.split_word_at_pipe(i[1])[0], GN_SUPERSENSES, germanet_xml)
+        if sum(f7) < 1:
+            f7 = i_similar_gn_syn
+        f8 = PREF.search_germanet(PREF.split_word_at_pipe(i[1])[1], GN_SUPERSENSES, germanet_xml)
+        if sum(f8) < 1:
+            f8 = i_similar_gn_syn
+        f9 = PREF.extract_polarity(i[0], f9_pref_polarity_dict)
+        i_similar_pol = PREF.return_similar_cosine_word(i[0], i[1], f5_pref_vector_dict, False, polarity_dict=f9_pref_polarity_dict)
+        i_similar_pol_value = PREF.extract_polarity(i_similar_pol, f9_pref_polarity_dict)
+        if f9 == 0:
+            f9 = i_similar_pol_value
+        f10 = PREF.extract_polarity(PREF.split_word_at_pipe(i[1])[0], f9_pref_polarity_dict)
+        if f10 == 0:
+            f10 = i_similar_pol_value
+        f11 = PREF.extract_polarity(PREF.split_word_at_pipe(i[1])[1], f9_pref_polarity_dict)
+        if f11 == 0:
+            f11 = i_similar_pol_value
+        f0_pref_list.append(f0)
+        f1_pref_list.append(f1)
+        f2_pref_list.append(f2)
+        f3_pref_list.append(f3)
+        f4_pref_list.append(f4)
+        f5_pref_list.append(f5)
+        f6_pref_list.append(f6)
+        f7_pref_list.append(f7)
+        f8_pref_list.append(f8)
+        f9_pref_list.append(f9)
+        f10_pref_list.append(f10)
+        f11_pref_list.append(f11)
     # print(f0_pref_list)
     # print(len(f0_pref_list))
     # print(f1_pref_list)
@@ -694,9 +744,6 @@ if __name__ == "__main__":
     # print(len(f10_pref_list))
     # print(f11_pref_list)
     # print(len(f11_pref_list))
-
-    # print(f9_pref_polarity_dict)
-    # print('Frequency', PREF.return_similar_cosine_word('Blitzeinbruch', 'Blitz|Einbruch', f5_pref_vector_dict, False, polarity_dict=f9_pref_polarity_dict))
 
     """Write files"""
     # PREF.write_list_to_file(f0_pref_list, DATA_FEATURES_PATH + 'f0_pref.txt')
@@ -724,11 +771,12 @@ if __name__ == "__main__":
         t3 = PREF.extract_frequency(PREF.split_word_at_pipe(splitword)[0], f3_pref_lemmas)
         t4 = PREF.extract_frequency(PREF.split_word_at_pipe(splitword)[1], f4_pref_heads)
         t5 = PREF.calculate_cosine_similarity(word, PREF.split_word_at_pipe(splitword)[0], f5_pref_vector_dict)  # reverse for SUFFIXOIDS
-        t6 = PREF.search_germanet(word, germanet_supersenses_dict)
+        t6 = PREF.search_germanet(word, GN_SUPERSENSES, germanet_xml)
         t_similar_gn = PREF.return_similar_cosine_word(word, splitword, f5_pref_vector_dict)
-        t_similar_gn_syn = PREF.search_germanet(t_similar_gn, germanet_supersenses_dict)
-        t7 = PREF.search_germanet(PREF.split_word_at_pipe(splitword)[0], germanet_supersenses_dict)
-        t8 = PREF.search_germanet(PREF.split_word_at_pipe(splitword)[1], germanet_supersenses_dict)
+        t_similar_gn_word = PREF.search_germanet(t_similar_gn, GN_SUPERSENSES, germanet_xml, return_single_word=True)
+        t_similar_gn_syn = PREF.search_germanet(t_similar_gn_word, GN_SUPERSENSES, germanet_xml)
+        t7 = PREF.search_germanet(PREF.split_word_at_pipe(splitword)[0], GN_SUPERSENSES, germanet_xml)
+        t8 = PREF.search_germanet(PREF.split_word_at_pipe(splitword)[1], GN_SUPERSENSES, germanet_xml)
         t9 = PREF.extract_polarity(word, f9_pref_polarity_dict)
         t_similar_pol = PREF.return_similar_cosine_word(word, splitword, f5_pref_vector_dict, False, polarity_dict=f9_pref_polarity_dict)
         t_similar_pol_value = PREF.extract_polarity(t_similar_pol, f9_pref_polarity_dict)
@@ -743,13 +791,13 @@ if __name__ == "__main__":
         print('==================================')
         print('Frequency of complex word: ', word, ' = ', t2)
         print('==================================')
-        print('Frequency of first part: ', splitword, ' = ', t3)
+        print('Frequency of first part: ', PREF.split_word_at_pipe(splitword)[0], ' = ', t3)
         print('==================================')
-        print('Frequency of second part: ', splitword, ' = ', t4)
+        print('Frequency of second part: ', PREF.split_word_at_pipe(splitword)[1], ' = ', t4)
         print('==================================')
         print('Cosine similarity between: ', word, ' and ', PREF.split_word_at_pipe(splitword)[0], ' = ', t5)
         print('==================================')
-        print('Searching GermaNet Synsets for: ', word, ' in: ', germanet_supersenses_dict.keys())
+        print('Searching GermaNet Synsets for: ', word, ' in: ', GN_SUPERSENSES.keys())
         if sum(t6) < 1:
             print('Synset not found')
             print('Similar word: ', t_similar_gn)
@@ -758,7 +806,7 @@ if __name__ == "__main__":
             print('Synset found')
             print('Vector: ', t6)
         print('==================================')
-        print('Searching GermaNet Synsets for: ', PREF.split_word_at_pipe(splitword)[0], ' in: ', germanet_supersenses_dict.keys())
+        print('Searching GermaNet Synsets for: ', PREF.split_word_at_pipe(splitword)[0], ' in: ', GN_SUPERSENSES.keys())
         if sum(t7) < 1:
             print('Synset not found')
             print('Similar word: ', t_similar_gn)
@@ -768,7 +816,7 @@ if __name__ == "__main__":
             print('Vector: ', t7)
         print('==================================')
         print('Searching GermaNet Synsets for: ', PREF.split_word_at_pipe(splitword)[1], ' in: ',
-              germanet_supersenses_dict.keys())
+              GN_SUPERSENSES.keys())
         if sum(t8) < 1:
             print('Synset not found')
             print('Similar word: ', t_similar_gn)
@@ -802,11 +850,6 @@ if __name__ == "__main__":
             print('Polarity: ', t11)
         print('==================================')
 
-        # print(PREF.extract_frequency('Qualität', y_pref_dict, True))
-
-    # test_case('Dorf', 'Münchener|Münchener')
-
+    # test_case('Bombenattacke', 'Bombe|Attacke')
     # PREF.write_list_to_file(pref_inventory_list, 'out.txt', -1, True)/
-
-    print(PREF.search_germanet('Hochmittelalter', germanet_supersenses_dict))
-    print(germanet_supersenses_dict)
+    # print(GN_SUPERSENSES)
