@@ -1,13 +1,13 @@
 Allgemein
 Bewegung
-Gefühl
+Gefuehl
 Geist
 Gesellschaft
-Körper
+Koerper
 Menge
-natürliches Phänomen
+natPhaenomen
 Ort
-Pertonym Adjektiv
+Pertonym
 Perzeption
 privativ
 Relation
@@ -25,14 +25,14 @@ Kommunikation
 Mensch
 Motiv
 Nahrung
-natürlicher Gegenstand
+natGegenstand
 Pflanze
 Tier
 Tops
-Körperfunktion
+Koerperfunktion
 Konkurrenz
 Kontakt
 Lokation
-Schöpfung
-Veränderung
+Schoepfung
+Veraenderung
 Verbrauch
