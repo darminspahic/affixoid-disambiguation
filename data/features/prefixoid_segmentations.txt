@@ -174,7 +174,7 @@ Bilderbuch-Start	Bilderbuch	Start
 Bilderbuchsteg	Bilderbuch	Steg
 Bilderbuch-Stelle	Bilderbuch	Stelle
 Bilderbuchstil	Bilderbuch	Stil
-Bilderbuch-Südstaatentyp	Bilderbuch	SüdStaatentyp
+Bilderbuch-Südstaatentyp	Bilderbuch	Südstaatentyp
 Bilderbuchsymptom	Bilderbuch	Symptom
 Bilderbuchszene	Bilderbuch	Szene
 Bilderbuch-Thema	Bilderbuch	Thema
