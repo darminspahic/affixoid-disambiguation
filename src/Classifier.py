@@ -178,39 +178,50 @@ if __name__ == "__main__":
     suff_y = SUFF.read_labels_from_file('f1_suff.txt')
 
     """ Split data """
-    X_train, X_test, y_train, y_test = train_test_split(suff_X, suff_y, test_size=0.3, random_state=5, shuffle=True)
+    X_train_pref, X_test_pref, y_train_pref, y_test_pref = train_test_split(pref_X, pref_y, test_size=0.3, random_state=5, shuffle=True)
+    X_train_suff, X_test_suff, y_train_suff, y_test_suff = train_test_split(suff_X, suff_y, test_size=0.3, random_state=5, shuffle=True)
 
     """ SVM """
+    clf_pref = svm.SVC(gamma=0.001, C=10).fit(X_train_pref, y_train_pref)
+    clf_suff = svm.SVC(gamma=0.001, C=10).fit(X_train_suff, y_train_suff)
+
     # clf = svm.SVC(kernel='linear', C=1).fit(X_train, y_train)
-    clf = svm.SVC(gamma=0.001, C=10).fit(X_train, y_train)
     # clf = svm.SVC(C=1.0, cache_size=200, class_weight=None, coef0=0.0, decision_function_shape='ovr', degree=3, gamma='auto', kernel='linear', max_iter=-1, probability=False, random_state=None, shrinking=True, tol=0.001, verbose=False).fit(X_train, y_train)
     # clf = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(5, 1), random_state=1).fit(X_train, y_train)
 
-    results = clf.predict(X_test)
+    results_pref = clf_pref.predict(X_test_pref)
+    results_suff = clf_suff.predict(X_test_suff)
 
     """ SCORES """
-    print()
-    print(Style.BOLD + 'RESULTS' + Style.END)
-    print(results)
-    print()
-    print(Style.BOLD + 'SCORES' + Style.END)
-    print('Classifier score: ', clf.score(X_test, y_test))
-    print('Precision: ', precision_score(y_test, results))
-    print('Recall: ', recall_score(y_test, results))
-    print('Average P-R score: ', average_precision_score(y_test, results))
-    print('F-1 Score: ', f1_score(y_test, results, average='weighted'))
-    print()
-    # print(pref_X[0])
-    # print(pref_y[0])
+    def print_scores(classifier, classifer_results, test_instances, test_labels):
+        print()
+        print(Style.BOLD + 'RESULTS' + Style.END)
+        print(classifer_results)
+        print()
+        print(Style.BOLD + 'SCORES' + Style.END)
+        print('Classifier score: ', classifier.score(test_instances, test_labels))
+        print('Precision: ', precision_score(test_labels, classifer_results))
+        print('Recall: ', recall_score(test_labels, classifer_results))
+        print('Average P-R score: ', average_precision_score(test_labels, classifer_results))
+        print('F-1 Score: ', f1_score(test_labels, classifer_results, average='weighted'))
+        print()
+
+    print_scores(clf_pref, results_pref, X_test_pref, y_test_pref)
+    print_scores(clf_suff, results_suff, X_test_suff, y_test_suff)
+
+    def cross_validate(clf, instances, labels):
+        cv = ShuffleSplit(n_splits=10, test_size=0.3, random_state=5)
+        scores = cross_val_score(clf, instances, labels, cv=cv)
+        print('CV scores:', scores)
+        print()
+
+    cross_validate(clf_pref, pref_X, pref_y)
+    cross_validate(clf_suff, suff_X, suff_y)
 
     # ----------------------------
 
-    clf = svm.SVC(C=1)
-    scores = cross_val_score(clf, suff_X, suff_y, cv=5)
-    print(scores)
 
-    cv = ShuffleSplit(n_splits=10, test_size=0.3, random_state=0)
-    print(cross_val_score(clf, suff_X, suff_y, cv=cv))
-    predicted = cross_val_predict(clf, suff_X, suff_y, cv=10)
-    print(metrics.accuracy_score(suff_y, predicted))
+
+    # predicted = cross_val_predict(clf, suff_X, suff_y, cv=10)
+    # print(metrics.accuracy_score(suff_y, predicted))
 
