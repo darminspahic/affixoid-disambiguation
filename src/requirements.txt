@@ -1,9 +1,9 @@
+lxml
+matplotlib
 numpy
 scipy
 scikit-learn
-matplotlib
-pygermanet
-duden
-beautifulsoup4
-requests
-# lxml
+# beautifulsoup4
+# duden
+# pygermanet
+# requests
