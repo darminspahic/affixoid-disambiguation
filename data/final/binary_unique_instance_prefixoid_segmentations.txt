@@ -174,7 +174,7 @@ Bilderbuch-Start	Bilderbuch|Start	Bilderbuch	Ideal	Y
 Bilderbuchsteg	Bilderbuch|Steg	Bilderbuch	Ideal	Y
 Bilderbuch-Stelle	Bilderbuch|Stelle	Bilderbuch	Ideal	Y
 Bilderbuchstil	Bilderbuch|Stil	Bilderbuch	Buch	N
-Bilderbuch-Südstaatentyp	Bilderbuch|SüdStaatentyp	Bilderbuch	Ideal	Y
+Bilderbuch-Südstaatentyp	Bilderbuch|Südstaatentyp	Bilderbuch	Ideal	Y
 Bilderbuchsymptom	Bilderbuch|Symptom	Bilderbuch	Ideal	Y
 Bilderbuchszene	Bilderbuch|Szene	Bilderbuch	Buch	N
 Bilderbuch-Thema	Bilderbuch|Thema	Bilderbuch	Buch	N
