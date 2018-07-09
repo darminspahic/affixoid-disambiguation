@@ -33,6 +33,10 @@ from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import cross_val_predict
 from sklearn.model_selection import ShuffleSplit
 from sklearn import metrics
+from sklearn.metrics import precision_recall_curve
+import matplotlib.pyplot as plt
+from sklearn.metrics import average_precision_score
+
 
 ################
 # PATH SETTINGS
@@ -159,14 +163,14 @@ if __name__ == "__main__":
     PREF = Classifier('Prefixoids')
     SUFF = Classifier('Suffixoids')
 
-    pref_X = PREF.read_features_from_files(['f0_pref.txt', 'f1_pref.txt', 'f2_pref.txt',
+    pref_X = PREF.read_features_from_files(['f2_pref.txt',
                                             'f3_pref.txt', 'f4_pref.txt', 'f5_pref.txt',
                                             'f6_pref.txt', 'f7_pref.txt', 'f8_pref.txt',
                                             'f9_pref.txt', 'f10_pref.txt', 'f11_pref.txt',
                                             'f12_pref.txt', 'f13_pref.txt', 'f14_pref.txt',
                                             'f15_pref.txt', 'f15_pref.txt', 'f17_pref.txt'])
 
-    suff_X = SUFF.read_features_from_files(['f0_suff.txt', 'f1_suff.txt', 'f2_suff.txt',
+    suff_X = SUFF.read_features_from_files(['f2_suff.txt',
                                             'f3_suff.txt', 'f4_suff.txt', 'f5_suff.txt',
                                             'f6_suff.txt', 'f7_suff.txt', 'f8_suff.txt',
                                             'f9_suff.txt', 'f10_suff.txt', 'f11_suff.txt',
@@ -182,8 +186,8 @@ if __name__ == "__main__":
     X_train_suff, X_test_suff, y_train_suff, y_test_suff = train_test_split(suff_X, suff_y, test_size=0.3, random_state=5, shuffle=True)
 
     """ SVM """
-    clf_pref = svm.SVC(gamma=0.001, C=10).fit(X_train_pref, y_train_pref)
-    clf_suff = svm.SVC(gamma=0.001, C=10).fit(X_train_suff, y_train_suff)
+    clf_pref = svm.SVC(C=1.0, cache_size=200, class_weight=None, coef0=0.0, decision_function_shape='ovr', degree=3, gamma='auto', kernel='linear', max_iter=-1, probability=False, random_state=None, shrinking=True, tol=0.001, verbose=False).fit(X_train_pref, y_train_pref)
+    clf_suff = svm.SVC(C=1.0, cache_size=200, class_weight=None, coef0=0.0, decision_function_shape='ovr', degree=3, gamma='auto', kernel='linear', max_iter=-1, probability=False, random_state=None, shrinking=True, tol=0.001, verbose=False).fit(X_train_suff, y_train_suff)
 
     # clf = svm.SVC(kernel='linear', C=1).fit(X_train, y_train)
     # clf = svm.SVC(C=1.0, cache_size=200, class_weight=None, coef0=0.0, decision_function_shape='ovr', degree=3, gamma='auto', kernel='linear', max_iter=-1, probability=False, random_state=None, shrinking=True, tol=0.001, verbose=False).fit(X_train, y_train)
@@ -217,6 +221,24 @@ if __name__ == "__main__":
 
     cross_validate(clf_pref, pref_X, pref_y)
     cross_validate(clf_suff, suff_X, suff_y)
+
+    def plot(y_test, y_score):
+        average_precision = average_precision_score(y_test, y_score)
+        precision, recall, _ = precision_recall_curve(y_test, y_score)
+
+        plt.step(recall, precision, color='b', alpha=0.2, where='post')
+        plt.fill_between(recall, precision, step='post', alpha=0.2, color='b')
+
+        plt.xlabel('Recall')
+        plt.ylabel('Precision')
+        plt.ylim([0.0, 1.05])
+        plt.xlim([0.0, 1.0])
+        plt.title('2-class Precision-Recall curve: AP={0:0.2f}'.format(average_precision))
+
+        plt.show()
+
+    plot(y_test_pref, results_pref)
+    plot(y_test_suff, results_suff)
 
     # ----------------------------
 
