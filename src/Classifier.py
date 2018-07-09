@@ -186,8 +186,8 @@ if __name__ == "__main__":
     X_train_suff, X_test_suff, y_train_suff, y_test_suff = train_test_split(suff_X, suff_y, test_size=0.3, random_state=5, shuffle=True)
 
     """ SVM """
-    clf_pref = svm.SVC(C=1.0, cache_size=200, class_weight=None, coef0=0.0, decision_function_shape='ovr', degree=3, gamma='auto', kernel='linear', max_iter=-1, probability=False, random_state=None, shrinking=True, tol=0.001, verbose=False).fit(X_train_pref, y_train_pref)
-    clf_suff = svm.SVC(C=1.0, cache_size=200, class_weight=None, coef0=0.0, decision_function_shape='ovr', degree=3, gamma='auto', kernel='linear', max_iter=-1, probability=False, random_state=None, shrinking=True, tol=0.001, verbose=False).fit(X_train_suff, y_train_suff)
+    clf_pref = svm.SVC(gamma=0.001, C=10).fit(X_train_pref, y_train_pref)
+    clf_suff = svm.SVC(gamma=0.001, C=10).fit(X_train_suff, y_train_suff)
 
     # clf = svm.SVC(kernel='linear', C=1).fit(X_train, y_train)
     # clf = svm.SVC(C=1.0, cache_size=200, class_weight=None, coef0=0.0, decision_function_shape='ovr', degree=3, gamma='auto', kernel='linear', max_iter=-1, probability=False, random_state=None, shrinking=True, tol=0.001, verbose=False).fit(X_train, y_train)
@@ -214,9 +214,9 @@ if __name__ == "__main__":
     print_scores(clf_suff, results_suff, X_test_suff, y_test_suff)
 
     def cross_validate(clf, instances, labels):
-        cv = ShuffleSplit(n_splits=10, test_size=0.3, random_state=5)
+        cv = ShuffleSplit(n_splits=5, test_size=0.3, random_state=5)
         scores = cross_val_score(clf, instances, labels, cv=cv)
-        print('CV scores:', scores)
+        print('Crossvalidation scores:', scores)
         print()
 
     cross_validate(clf_pref, pref_X, pref_y)
@@ -241,9 +241,3 @@ if __name__ == "__main__":
     plot(y_test_suff, results_suff)
 
     # ----------------------------
-
-
-
-    # predicted = cross_val_predict(clf, suff_X, suff_y, cv=10)
-    # print(metrics.accuracy_score(suff_y, predicted))
-
