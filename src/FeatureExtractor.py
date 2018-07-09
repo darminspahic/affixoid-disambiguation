@@ -21,8 +21,8 @@ Version: 1.0
 import sys
 import os
 # import duden
-# import requests
-# from bs4 import BeautifulSoup
+import requests
+from bs4 import BeautifulSoup
 import re
 import numpy as np
 import matplotlib.pyplot as plt
@@ -79,6 +79,13 @@ GN_SUPERSENSES = {'Allgemein': 0, 'Bewegung': 0, 'Gefuehl': 0, 'Geist': 0, 'Gese
 GN_PREF_FORMATIONS = ['Blitzgerät', 'Blitzkarriere', 'Blitzkrieg', 'Blitzkurs', 'Blitzlampe', 'Blitzröhre', 'Blitzschach', 'Blitzschlag', 'Bombenabwurf', 'Bombenalarm', 'Bombendrohung', 'Bombenexplosion', 'Bombenleger', 'Bombennacht', 'Bombenopfer', 'Bombenschacht', 'Bombenschaden', 'Bombensplitter', 'Bombenteppich', 'Bombentest', 'Bombentrichter', 'Glanzente', 'Glanzleistung', 'Glanzlicht', 'Glanzpunkt', 'Glanzrolle', 'Glanzstoff', 'Glanzstück', 'Glanzzeit', 'Jahrhundertfeier', 'Jahrhunderthälfte', 'Jahrhunderthochwasser', 'Jahrhundertsommer', 'Jahrhundertwechsel', 'Qualitätsbewusstsein', 'Qualitätskriterium', 'Qualitätsprüfung', 'Qualitätsstandard', 'Qualitätsverbesserung', 'Qualitätswein', 'Qualitätszuwachs', 'Schweineblut', 'Schweinebraten', 'Schweinefleisch', 'Schweinehaltung', 'Schweinehirte', 'Schweinepest', 'Spitzenfunktionär', 'Spitzenkandidatin', 'Spitzenkoch', 'Spitzenläufer', 'Spitzenleistung', 'Spitzenplatz', 'Spitzenreiter', 'Spitzenspiel', 'Spitzensportler', 'Spitzenverband', 'Spitzenverdiener', 'Spitzenverein', 'Spitzenwert', 'Traummädchen', 'Traumwelt']
 GN_SUFF_FORMATIONS = ['Börsenguru', 'Burgunderkönig', 'Bürohengst', 'Dänenkönig', 'Donnergott', 'Dreikönig', 'Feenkönig', 'Feuergott', 'Froschkönig', 'Gegenkönig', 'Gegenpapst', 'Gotenkönig', 'Gottkönig', 'Großkönig', 'Hausschwein', 'Herzkönig', 'Himmelsgott', 'Hochkönig', 'Hunnenkönig', 'Kleinkönig', 'Langobardenkönig', 'Liebesgott', 'Märchenkönig', 'Marienikone', 'Meeresgott', 'Moralapostel', 'Normannenkönig', 'Perserkönig', 'Preußenkönig', 'Priesterkönig', 'Rattenkönig', 'Schlagbolzen', 'Schöpfergott', 'Schützenkönig', 'Schwedenkönig', 'Slawenapostel', 'Sonnenkönig', 'Stammapostel', 'Torschützenkönig', 'Unterkönig', 'Vizekönig', 'Vogelkönig', 'Wachtelkönig', 'Warzenschwein', 'Westgotenkönig', 'Wettergott', 'Wildschwein', 'Winterkönig', 'Zaunkönig', 'Zuchthengst', 'Zwergenkönig']
 
+"""Affixoid dictionary with fastText similarities; sorted"""
+AFFIXOID_DICTIONARY = 'affixoid_dict_fasttext_similarites.txt'
+
+"""Empty affixoid dictionaries for collecting various data"""
+EMPTY_PREF_DICTIONARY = 'prefixoid_dictionary.txt'
+EMPTY_SUFF_DICTIONARY = 'suffixoid_dictionary.txt'
+
 
 class FeatureExtractor:
     """ FeatureExtractor Class
@@ -93,6 +100,14 @@ class FeatureExtractor:
         print('=' * 40)
         print(Style.BOLD + "Running FeatureExtractor on:", string + Style.END)
         print('-' * 40)
+
+        try:
+            self.fasttext_affixoid_dict = self.read_dict_from_file(DATA_FEATURES_PATH + AFFIXOID_DICTIONARY)
+            self.empty_pref_dict = self.read_dict_from_file(DATA_FEATURES_PATH + EMPTY_PREF_DICTIONARY)
+            self.empty_suff_dict = self.read_dict_from_file(DATA_FEATURES_PATH + EMPTY_SUFF_DICTIONARY)
+
+        except FileNotFoundError:
+            print('Please set correct paths for data.')
 
     def create_affixoid_dictionary(self, affixoid_file, class_name):
         """ This function creates a dictionary with class instances of affixoids
@@ -189,6 +204,20 @@ class FeatureExtractor:
         print(Style.BOLD + 'File written to:' + Style.END, output_file)
 
         f.close()
+
+    def write_dict_to_file(self, dictionary, output_file):
+        """TODO"""
+
+        with open(output_file, 'w') as data:
+            data.write(str(dictionary))
+
+        print(Style.BOLD + 'Dictionary written to:' + Style.END, output_file)
+
+    def read_dict_from_file(self, dictionary_file):
+        with open(dictionary_file, "rb") as data:
+            dictionary = ast.literal_eval(data.read().decode('utf-8'))
+
+        return dictionary
 
     def transform_class_name_to_binary(self, class_name):
         """ This function transforms class labels to binary indicators
@@ -486,16 +515,30 @@ class FeatureExtractor:
             return list(gn_supersenses_dict_copy.values())
 
         else:
+            # similar_word_supersense = []
             print(Style.BOLD + word, 'not found.' + Style.END, 'Searching for word with similar cosine')
-            similar_word = self.return_similar_cosine_word(word, fast_text_vector_dict)
-            if similar_word is not None:
-                similar_word_supersense = self.search_germanet_supersenses(similar_word, fast_text_vector_dict)
-            else:
-                print(Style.BOLD + word + Style.END, 'is None. Lowering threshold...')
-                similar_word = self.return_similar_cosine_word(word, fast_text_vector_dict, threshold=0.2)
-                similar_word_supersense = self.search_germanet_supersenses(similar_word, fast_text_vector_dict)
+            similar_words_from_fasttext = self.return_similar_words_from_fasttext(word)
 
-            return similar_word_supersense
+            if similar_words_from_fasttext is not None:
+                print('Searching in fastText inventory...')
+                for result in similar_words_from_fasttext:
+                    print('Similar word: ', result)
+                    if self.is_in_germanet(result[0]):
+                        print(Style.BOLD + result[0] + Style.END, 'found in GermaNet!')
+                        similar_word_supersense = self.search_germanet_supersenses(result[0], fast_text_vector_dict)
+                        return similar_word_supersense
+                #     else:
+                #         continue
+                #
+                # similar_word = self.return_similar_cosine_word(word, fast_text_vector_dict)
+                # if similar_word is not None:
+                #     similar_word_supersense = self.search_germanet_supersenses(similar_word, fast_text_vector_dict)
+                # else:
+                #     print(Style.BOLD + word + Style.END, 'is None. Lowering threshold...')
+                #     similar_word = self.return_similar_cosine_word(word, fast_text_vector_dict, threshold=0.2)
+                #     similar_word_supersense = self.search_germanet_supersenses(similar_word, fast_text_vector_dict)
+
+            # return similar_word_supersense
 
     def is_in_germanet(self, word):
         """This function parses GermaNet for word and returns a boolean if the word is found"""
@@ -505,6 +548,19 @@ class FeatureExtractor:
                 return True
 
         return False
+
+    def return_similar_words_from_fasttext(self, word):
+        """TODO"""
+        if word in self.fasttext_affixoid_dict.keys():
+            return self.fasttext_affixoid_dict.get(word)
+        else:
+            return None
+
+    def is_in_dictionary(self, word, dictionary):
+        """TODO"""
+
+        # Return a word similar to word, that is also in dictionary.
+        # NOTE: Check if in fastText, if fails return similar cosine word
 
     def return_similar_cosine_word(self, word, fast_text_vector_dict, from_germanet=True, polarity_dict=None, threshold=0.4):
         """ This function calculates cosine similarity between the input word, and all other words
@@ -594,8 +650,8 @@ class FeatureExtractor:
 
 
 class Style:
-    OKBLUE = '\033[94m'
-    OKGREEN = '\033[92m'
+    BLUE = '\033[94m'
+    GREEN = '\033[92m'
     WARNING = '\033[93m'
     UNDERLINE = '\033[4m'
     BOLD = '\033[1m'
@@ -607,25 +663,25 @@ if __name__ == "__main__":
         PREFIXOIDS
     """
     PREF = FeatureExtractor('Prefixoids')
-    # pref_inventory_list = PREF.read_file_to_list(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE)
-    # pref_formations = {}
-    # y_pref_dict = PREF.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE, 'Y')
-    # n_pref_dict = PREF.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE, 'N')
-    # print('Y:\t', y_pref_dict)
-    # print('N:\t', n_pref_dict)
-    # print('Total:\t', sum(y_pref_dict.values()) + sum(n_pref_dict.values()))
-    # print(len(pref_inventory_list))
-    # # PREF.plot_statistics(y_pref_dict, n_pref_dict, 'Prefixoids')
-    #
+    pref_inventory_list = PREF.read_file_to_list(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE)
+    pref_formations = {}
+    y_pref_dict = PREF.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE, 'Y')
+    n_pref_dict = PREF.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE, 'N')
+    print('Y:\t', y_pref_dict)
+    print('N:\t', n_pref_dict)
+    print('Total:\t', sum(y_pref_dict.values()) + sum(n_pref_dict.values()))
+    print(len(pref_inventory_list))
+    # PREF.plot_statistics(y_pref_dict, n_pref_dict, 'Prefixoids')
+
     # f0_pref_list = []  # prefix coded into dictionary
     # f1_pref_list = []  # binary indicator, if affixoid
     # f2_pref_list = []  # frequency of complex word
     # f3_pref_list = []  # frequency of first part
     # f4_pref_list = []  # frequency of second part
     # f5_pref_list = []  # cosine similarity between complex word and head
-    # f6_pref_list = []  # vector of GermaNet supersenses for complex word
-    # f7_pref_list = []  # vector of GermaNet supersenses for first part
-    # f8_pref_list = []  # vector of GermaNet supersenses for second part
+    f6_pref_list = []  # vector of GermaNet supersenses for complex word
+    f7_pref_list = []  # vector of GermaNet supersenses for first part
+    f8_pref_list = []  # vector of GermaNet supersenses for second part
     # f9_pref_list = []  # SentiMerge Polarity for complex word
     # f10_pref_list = []  # SentiMerge Polarity for first part
     # f11_pref_list = []  # SentiMerge Polarity for second part
@@ -639,16 +695,18 @@ if __name__ == "__main__":
     # f2_pref_formations = PREF.create_frequency_dictionary(DATA_PATH + FREQUENCY_PREFIXOID_FORMATIONS)
     # f3_pref_lemmas = PREF.create_frequency_dictionary(DATA_PATH + FREQUENCY_PREFIXOID_LEMMAS)
     # f4_pref_heads = PREF.create_frequency_dictionary(DATA_PATH + FREQUENCY_PREFIXOID_HEADS)
-    # f5_pref_vector_dict = PREF.create_vector_dictionary(DATA_RESSOURCES_PATH + FAST_TEXT_PREFIXOID_VECTORS)
+    f5_pref_vector_dict = PREF.create_vector_dictionary(DATA_RESSOURCES_PATH + FAST_TEXT_PREFIXOID_VECTORS)
     # f9_pref_polarity_dict = PREF.create_polarity_dict(DATA_RESSOURCES_PATH + SENTIMERGE_POLARITY)
     # f12_pref_affective_norms_dict = PREF.create_vector_dictionary(DATA_RESSOURCES_PATH + AFFECTIVE_NORMS)
     # f15_pref_emolex_dict = PREF.create_vector_dictionary(DATA_RESSOURCES_PATH + EMOLEX, multiword=True)
-    #
-    # counter = 0
-    # for i in pref_inventory_list:
-    #     counter += 1
-    #     print()
-    #     print('Line:', str(counter)+' ===============================')
+
+    counter = 0
+    for i in pref_inventory_list:
+        counter += 1
+        print()
+        print('Line:', str(counter)+' ===============================')
+        if counter == 20:
+            break
     #     pref_formations.update({i[0]: ()})
     #     pref_formations.update({PREF.split_word_at_pipe(i[1])[0]: ()})
     #     pref_formations.update({PREF.split_word_at_pipe(i[1])[1]: ()})
@@ -658,9 +716,9 @@ if __name__ == "__main__":
     #     f3 = PREF.extract_frequency(PREF.split_word_at_pipe(i[1])[0], f3_pref_lemmas)
     #     f4 = PREF.extract_frequency(PREF.split_word_at_pipe(i[1])[1], f4_pref_heads)
     #     f5 = PREF.calculate_cosine_similarity(i[0], PREF.split_word_at_pipe(i[1])[0], f5_pref_vector_dict)  # reverse for SUFFIXOIDS
-    #     f6 = PREF.search_germanet_supersenses(i[0], f5_pref_vector_dict)
-    #     f7 = PREF.search_germanet_supersenses(PREF.split_word_at_pipe(i[1])[0], f5_pref_vector_dict)
-    #     f8 = PREF.search_germanet_supersenses(PREF.split_word_at_pipe(i[1])[1], f5_pref_vector_dict)
+        f6 = PREF.search_germanet_supersenses(i[0], f5_pref_vector_dict)
+        f7 = PREF.search_germanet_supersenses(PREF.split_word_at_pipe(i[1])[0], f5_pref_vector_dict)
+        f8 = PREF.search_germanet_supersenses(PREF.split_word_at_pipe(i[1])[1], f5_pref_vector_dict)
     #
     #     f9 = PREF.extract_dictionary_values(i[0], f9_pref_polarity_dict)
     #     if f9 == 0:
@@ -718,9 +776,9 @@ if __name__ == "__main__":
     #     f3_pref_list.append(f3)
     #     f4_pref_list.append(f4)
     #     f5_pref_list.append(f5)
-    #     f6_pref_list.append(f6)
-    #     f7_pref_list.append(f7)
-    #     f8_pref_list.append(f8)
+        f6_pref_list.append(f6)
+        f7_pref_list.append(f7)
+        f8_pref_list.append(f8)
     #     f9_pref_list.append(f9)
     #     f10_pref_list.append(f10)
     #     f11_pref_list.append(f11)
@@ -774,9 +832,9 @@ if __name__ == "__main__":
     # PREF.write_list_to_file(f3_pref_list, DATA_FEATURES_PATH + 'f3_pref.txt')  # DONE
     # PREF.write_list_to_file(f4_pref_list, DATA_FEATURES_PATH + 'f4_pref.txt')  # DONE
     # PREF.write_list_to_file(f5_pref_list, DATA_FEATURES_PATH + 'f5_pref.txt')  # DONE
-    # PREF.write_list_to_file(f6_pref_list, DATA_FEATURES_PATH + 'f6_pref.txt')  # DONE
-    # PREF.write_list_to_file(f7_pref_list, DATA_FEATURES_PATH + 'f7_pref.txt')  # DONE
-    # PREF.write_list_to_file(f8_pref_list, DATA_FEATURES_PATH + 'f8_pref.txt')  # DONE
+    PREF.write_list_to_file(f6_pref_list, DATA_FEATURES_PATH + 'f6_pref.txt')  # DONE
+    PREF.write_list_to_file(f7_pref_list, DATA_FEATURES_PATH + 'f7_pref.txt')  # DONE
+    PREF.write_list_to_file(f8_pref_list, DATA_FEATURES_PATH + 'f8_pref.txt')  # DONE
     # PREF.write_list_to_file(f9_pref_list, DATA_FEATURES_PATH + 'f9_pref.txt')  # DONE
     # PREF.write_list_to_file(f10_pref_list, DATA_FEATURES_PATH + 'f10_pref.txt')  # DONE
     # PREF.write_list_to_file(f11_pref_list, DATA_FEATURES_PATH + 'f11_pref.txt')  # DONE
@@ -793,7 +851,7 @@ if __name__ == "__main__":
         SUFFIXOIDS
     """
 
-    SUFF = FeatureExtractor('Suffixoids')
+    # SUFF = FeatureExtractor('Suffixoids')
     # suff_inventory_list = SUFF.read_file_to_list(DATA_FINAL_PATH + FINAL_SUFFIXOID_FILE)
     # suff_formations = {}
     # y_suff_dict = SUFF.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_SUFFIXOID_FILE, 'Y')
@@ -802,8 +860,8 @@ if __name__ == "__main__":
     # print('N:\t', n_suff_dict)
     # print('Total:\t', sum(y_suff_dict.values()) + sum(n_suff_dict.values()))
     # print(len(suff_inventory_list))
-    # # SUFF.plot_statistics(y_suff_dict, n_suff_dict, 'Prefixoids')
-    #
+    # SUFF.plot_statistics(y_suff_dict, n_suff_dict, 'Suffixoids')
+
     # f0_suff_list = []  # suffix coded into dictionary
     # f1_suff_list = []  # binary indicator, if affixoid
     # f2_suff_list = []  # frequency of complex word
@@ -822,7 +880,7 @@ if __name__ == "__main__":
     # f15_suff_list = []  # Emotion for complex word
     # f16_suff_list = []  # Emotion for first part
     # f17_suff_list = []  # Emotion for second part
-    #
+
     # f2_suff_formations = SUFF.create_frequency_dictionary(DATA_PATH + FREQUENCY_SUFFIXOID_FORMATIONS)
     # f3_suff_lemmas = SUFF.create_frequency_dictionary(DATA_PATH + FREQUENCY_SUFFIXOID_LEMMAS)
     # f4_suff_heads = SUFF.create_frequency_dictionary(DATA_PATH + FREQUENCY_SUFFIXOID_MODIFIERS)
@@ -830,7 +888,7 @@ if __name__ == "__main__":
     # f9_suff_polarity_dict = SUFF.create_polarity_dict(DATA_RESSOURCES_PATH + SENTIMERGE_POLARITY)
     # f12_suff_affective_norms_dict = SUFF.create_vector_dictionary(DATA_RESSOURCES_PATH + AFFECTIVE_NORMS)
     # f15_suff_emolex_dict = SUFF.create_vector_dictionary(DATA_RESSOURCES_PATH + EMOLEX, multiword=True)
-    #
+
     # counter = 0
     # for i in suff_inventory_list:
     #     counter += 1
@@ -990,4 +1048,10 @@ if __name__ == "__main__":
     # print(PREF.return_similar_cosine_word('SPITZENARCHITEKTUR', f5_pref_vector_dict, False, threshold=0.2, polarity_dict=f12_pref_affective_norms_dict))
     # print(PREF.extract_dictionary_values('Bombe', f15_pref_emolex_dict))
     # print(PREF.return_similar_cosine_word('Bombe', f5_pref_vector_dict, False, polarity_dict=f15_pref_emolex_dict))
+
+    # returns = PREF.return_similar_words_from_fasttext('Bombenchance')
+    # print(returns)
+    # for r in returns:
+    #     print(r)
+    #     print('In GermaNet: ', PREF.is_in_germanet(r[0]))
 
