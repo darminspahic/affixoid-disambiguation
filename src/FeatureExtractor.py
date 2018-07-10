@@ -82,9 +82,8 @@ GN_SUFF_FORMATIONS = ['Börsenguru', 'Burgunderkönig', 'Bürohengst', 'Dänenk�
 """Affixoid dictionary with fastText similarities; sorted"""
 AFFIXOID_DICTIONARY = 'fastText/affixoid_dict_fasttext_similarites.txt'
 
-"""Empty affixoid dictionaries for collecting various data"""
-EMPTY_PREF_DICTIONARY = 'prefixoid_dictionary.txt'
-EMPTY_SUFF_DICTIONARY = 'suffixoid_dictionary.txt'
+"""Empty words dictionary for collecting various data"""
+EMPTY_WORDS_DICTIONARY = 'all_words_dict.txt'
 
 
 class FeatureExtractor:
@@ -103,8 +102,7 @@ class FeatureExtractor:
 
         try:
             self.fasttext_similar_words_dict = self.read_dict_from_file(DATA_RESSOURCES_PATH + AFFIXOID_DICTIONARY)
-            self.empty_pref_dict = self.read_dict_from_file(DATA_FINAL_PATH + EMPTY_PREF_DICTIONARY)
-            self.empty_suff_dict = self.read_dict_from_file(DATA_FINAL_PATH + EMPTY_SUFF_DICTIONARY)
+            self.empty_words_dict = self.read_dict_from_file(DATA_FINAL_PATH + EMPTY_WORDS_DICTIONARY)
 
         except FileNotFoundError:
             print('Please set correct paths for data.')
@@ -683,30 +681,30 @@ if __name__ == "__main__":
     print(len(pref_inventory_list))
     # PREF.plot_statistics(y_pref_dict, n_pref_dict, 'Prefixoids')
 
-    # f0_pref_list = []  # prefix coded into dictionary
-    # f1_pref_list = []  # binary indicator, if affixoid
-    # f2_pref_list = []  # frequency of complex word
-    # f3_pref_list = []  # frequency of first part
-    # f4_pref_list = []  # frequency of second part
-    # f5_pref_list = []  # cosine similarity between complex word and head
-    # f6_pref_list = []  # vector of GermaNet supersenses for complex word
-    # f7_pref_list = []  # vector of GermaNet supersenses for first part
-    # f8_pref_list = []  # vector of GermaNet supersenses for second part
-    # f9_pref_list = []  # SentiMerge Polarity for complex word
-    # f10_pref_list = []  # SentiMerge Polarity for first part
-    # f11_pref_list = []  # SentiMerge Polarity for second part
-    # f12_pref_list = []  # Affective Norms for complex word
-    # f13_pref_list = []  # Affective Norms for first part
-    # f14_pref_list = []  # Affective Norms for second part
-    # f15_pref_list = []  # Emotion for complex word
-    # f16_pref_list = []  # Emotion for first part
-    # f17_pref_list = []  # Emotion for second part
+    f0_pref_list = []  # prefix coded into dictionary
+    f1_pref_list = []  # binary indicator, if affixoid
+    f2_pref_list = []  # frequency of complex word
+    f3_pref_list = []  # frequency of first part
+    f4_pref_list = []  # frequency of second part
+    f5_pref_list = []  # cosine similarity between complex word and head
+    f6_pref_list = []  # vector of GermaNet supersenses for complex word
+    f7_pref_list = []  # vector of GermaNet supersenses for first part
+    f8_pref_list = []  # vector of GermaNet supersenses for second part
+    f9_pref_list = []  # SentiMerge Polarity for complex word
+    f10_pref_list = []  # SentiMerge Polarity for first part
+    f11_pref_list = []  # SentiMerge Polarity for second part
+    f12_pref_list = []  # Affective Norms for complex word
+    f13_pref_list = []  # Affective Norms for first part
+    f14_pref_list = []  # Affective Norms for second part
+    f15_pref_list = []  # Emotion for complex word
+    f16_pref_list = []  # Emotion for first part
+    f17_pref_list = []  # Emotion for second part
 
-    # f2_pref_formations = PREF.create_frequency_dictionary(DATA_PATH + FREQUENCY_PREFIXOID_FORMATIONS)
-    # f3_pref_lemmas = PREF.create_frequency_dictionary(DATA_PATH + FREQUENCY_PREFIXOID_LEMMAS)
-    # f4_pref_heads = PREF.create_frequency_dictionary(DATA_PATH + FREQUENCY_PREFIXOID_HEADS)
-    # f5_pref_vector_dict = PREF.create_vector_dictionary(DATA_RESSOURCES_PATH + FAST_TEXT_PREFIXOID_VECTORS)
-    # f9_pref_polarity_dict = PREF.create_polarity_dict(DATA_RESSOURCES_PATH + SENTIMERGE_POLARITY)
+    f2_pref_formations = PREF.create_frequency_dictionary(DATA_PATH + FREQUENCY_PREFIXOID_FORMATIONS)
+    f3_pref_lemmas = PREF.create_frequency_dictionary(DATA_PATH + FREQUENCY_PREFIXOID_LEMMAS)
+    f4_pref_heads = PREF.create_frequency_dictionary(DATA_PATH + FREQUENCY_PREFIXOID_HEADS)
+    f5_pref_vector_dict = PREF.create_vector_dictionary(DATA_RESSOURCES_PATH + FAST_TEXT_PREFIXOID_VECTORS)
+    f9_pref_polarity_dict = PREF.create_polarity_dict(DATA_RESSOURCES_PATH + SENTIMERGE_POLARITY)
     # f12_pref_affective_norms_dict = PREF.create_vector_dictionary(DATA_RESSOURCES_PATH + AFFECTIVE_NORMS)
     # f15_pref_emolex_dict = PREF.create_vector_dictionary(DATA_RESSOURCES_PATH + EMOLEX, multiword=True)
 
@@ -715,25 +713,29 @@ if __name__ == "__main__":
     #     counter += 1
     #     print()
     #     print('Line:', str(counter)+' ===============================')
-    #     if counter == 20:
-    #         break
-    #     pref_formations.update({i[0]: ()})
-    #     pref_formations.update({PREF.split_word_at_pipe(i[1])[0]: ()})
-    #     pref_formations.update({PREF.split_word_at_pipe(i[1])[1]: ()})
-    #     f0 = PREF.extract_frequency(i[-3], y_pref_dict, True)  # y_pref_dict or n_pref_dict
-    #     f1 = PREF.transform_class_name_to_binary(i[-1])
-    #     f2 = PREF.extract_frequency(i[0], f2_pref_formations)
-    #     f3 = PREF.extract_frequency(PREF.split_word_at_pipe(i[1])[0], f3_pref_lemmas)
-    #     f4 = PREF.extract_frequency(PREF.split_word_at_pipe(i[1])[1], f4_pref_heads)
-    #     f5 = PREF.calculate_cosine_similarity(i[0], PREF.split_word_at_pipe(i[1])[0], f5_pref_vector_dict)  # reverse for SUFFIXOIDS
-    #     f6 = PREF.search_germanet_supersenses(i[0], f5_pref_vector_dict)
-    #     f7 = PREF.search_germanet_supersenses(PREF.split_word_at_pipe(i[1])[0], f5_pref_vector_dict)
-    #     f8 = PREF.search_germanet_supersenses(PREF.split_word_at_pipe(i[1])[1], f5_pref_vector_dict)
+    #     # if counter == 20:
+    #     #     break
+    #     pref_formations.update({i[0]: []})
+    #     pref_formations.update({PREF.split_word_at_pipe(i[1])[0]: []})
+    #     pref_formations.update({PREF.split_word_at_pipe(i[1])[1]: []})
+        # f0 = PREF.extract_frequency(i[-3], y_pref_dict, True)  # y_pref_dict or n_pref_dict
+        # f1 = PREF.transform_class_name_to_binary(i[-1])
+        # f2 = PREF.extract_frequency(i[0], f2_pref_formations)
+        # f3 = PREF.extract_frequency(PREF.split_word_at_pipe(i[1])[0], f3_pref_lemmas)
+        # f4 = PREF.extract_frequency(PREF.split_word_at_pipe(i[1])[1], f4_pref_heads)
+        # f5 = PREF.calculate_cosine_similarity(i[0], PREF.split_word_at_pipe(i[1])[0], f5_pref_vector_dict)  # reverse for SUFFIXOIDS
+        # f6 = PREF.search_germanet_supersenses(i[0], f5_pref_vector_dict)
+        # f7 = PREF.search_germanet_supersenses(PREF.split_word_at_pipe(i[1])[0], f5_pref_vector_dict)
+        # f8 = PREF.search_germanet_supersenses(PREF.split_word_at_pipe(i[1])[1], f5_pref_vector_dict)
 
         # f9 = PREF.extract_dictionary_values(i[0], f9_pref_polarity_dict)
         # if f9 == 0:
-        #     f9_similar_pol = PREF.return_similar_cosine_word(i[0], f5_pref_vector_dict, False, polarity_dict=f9_pref_polarity_dict)
-        #     f9_similar_pol_value = PREF.extract_dictionary_values(f9_similar_pol, f9_pref_polarity_dict)
+        #     f9_similar_pol = PREF.return_single_word_from_fasttext(i[0], f5_pref_vector_dict)
+        #     if f9_similar_pol == 0:
+        #         f9_similar_pol = PREF.return_similar_cosine_word(i[0], f5_pref_vector_dict, False, polarity_dict=f9_pref_polarity_dict)
+        #         f9_similar_pol_value = PREF.extract_dictionary_values(f9_similar_pol, f9_pref_polarity_dict)
+        #     else:
+        #         f9_similar_pol_value = PREF.extract_dictionary_values(f9_similar_pol, f9_pref_polarity_dict)
         #     f9 = f9_similar_pol_value
         #
         # f10 = PREF.extract_dictionary_values(PREF.split_word_at_pipe(i[1])[0], f9_pref_polarity_dict)
@@ -904,9 +906,9 @@ if __name__ == "__main__":
     #     counter += 1
     #     print()
     #     print('Line:', str(counter) + ' ===============================')
-    #     suff_formations.update({i[0]: ()})
-    #     suff_formations.update({SUFF.split_word_at_pipe(i[1])[0]: ()})
-    #     suff_formations.update({SUFF.split_word_at_pipe(i[1])[1]: ()})
+    #     pref_formations.update({i[0]: []})
+    #     pref_formations.update({SUFF.split_word_at_pipe(i[1])[0]: []})
+    #     pref_formations.update({SUFF.split_word_at_pipe(i[1])[1]: []})
     #     f0 = SUFF.extract_frequency(i[-3], y_suff_dict, True)  # y_suff_dict or n_suff_dict
     #     f1 = SUFF.transform_class_name_to_binary(i[-1])
     #     f2 = SUFF.extract_frequency(i[0], f2_suff_formations)
