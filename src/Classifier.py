@@ -163,14 +163,14 @@ if __name__ == "__main__":
     PREF = Classifier('Prefixoids')
     SUFF = Classifier('Suffixoids')
 
-    pref_X = PREF.read_features_from_files(['f2_pref.txt',
+    pref_X = PREF.read_features_from_files([
                                             'f3_pref.txt', 'f4_pref.txt', 'f5_pref.txt',
                                             'f6_pref.txt', 'f7_pref.txt', 'f8_pref.txt',
                                             'f9_pref.txt', 'f10_pref.txt', 'f11_pref.txt',
                                             'f12_pref.txt', 'f13_pref.txt', 'f14_pref.txt',
                                             'f15_pref.txt', 'f15_pref.txt', 'f17_pref.txt'])
 
-    suff_X = SUFF.read_features_from_files(['f2_suff.txt',
+    suff_X = SUFF.read_features_from_files([
                                             'f3_suff.txt', 'f4_suff.txt', 'f5_suff.txt',
                                             'f6_suff.txt', 'f7_suff.txt', 'f8_suff.txt',
                                             'f9_suff.txt', 'f10_suff.txt', 'f11_suff.txt',
