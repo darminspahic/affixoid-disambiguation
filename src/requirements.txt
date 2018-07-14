@@ -3,7 +3,7 @@ matplotlib
 numpy
 scipy
 scikit-learn
-# beautifulsoup4
+beautifulsoup4
+requests
 # duden
 # pygermanet
-# requests
