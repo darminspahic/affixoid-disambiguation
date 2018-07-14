@@ -53,9 +53,7 @@ class Classifier:
 
     """
 
-    def __init__(self, string):
-        print('=' * 40)
-        print("Running Classifier on:", string)
+    def __init__(self):
         print('-' * 40)
 
     def read_features_from_files(self, feature_files_list):
@@ -160,17 +158,17 @@ if __name__ == "__main__":
         'f17_' = Emotion for second part
     """
 
-    PREF = Classifier('Prefixoids')
-    SUFF = Classifier('Suffixoids')
+    PREF = Classifier()
+    SUFF = Classifier()
 
-    pref_X = PREF.read_features_from_files([
+    pref_X = PREF.read_features_from_files(['f2_pref.txt',
                                             'f3_pref.txt', 'f4_pref.txt', 'f5_pref.txt',
                                             'f6_pref.txt', 'f7_pref.txt', 'f8_pref.txt',
                                             'f9_pref.txt', 'f10_pref.txt', 'f11_pref.txt',
                                             'f12_pref.txt', 'f13_pref.txt', 'f14_pref.txt',
                                             'f15_pref.txt', 'f15_pref.txt', 'f17_pref.txt'])
 
-    suff_X = SUFF.read_features_from_files([
+    suff_X = SUFF.read_features_from_files(['f2_suff.txt',
                                             'f3_suff.txt', 'f4_suff.txt', 'f5_suff.txt',
                                             'f6_suff.txt', 'f7_suff.txt', 'f8_suff.txt',
                                             'f9_suff.txt', 'f10_suff.txt', 'f11_suff.txt',
@@ -237,8 +235,16 @@ if __name__ == "__main__":
 
         plt.show()
 
-    plot(y_test_pref, results_pref)
-    plot(y_test_suff, results_suff)
+    # plot(y_test_pref, results_pref)
+    # plot(y_test_suff, results_suff)
 
     # ----------------------------
 
+    from sklearn import preprocessing
+
+    X_train, X_test, y_train, y_test = train_test_split(pref_X, pref_y, test_size=0.2, random_state=0)
+    scaler = preprocessing.StandardScaler().fit(X_train)
+    X_train_transformed = scaler.transform(X_train)
+    clf = svm.SVC(C=1).fit(X_train_transformed, y_train)
+    X_test_transformed = scaler.transform(X_test)
+    print(clf.score(X_test_transformed, y_test))
