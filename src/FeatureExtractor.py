@@ -19,6 +19,7 @@ Version: 1.0
 """
 
 import ast
+import bz2
 import itertools
 # import duden
 import re
@@ -66,6 +67,9 @@ AFFECTIVE_NORMS = 'AffectiveNorms/ratings_lrec16_koeper_ssiw.txt'
 
 """Emolex"""
 EMOLEX = 'EmoLex/NRC-Emotion-Lexicon-v0.92-DE-sorted.csv'
+
+"""PMI Lexicon"""
+PMI_SCORES = '../../PMI/sdewac_npmi.csv.bz2'
 
 ################
 # GermaNet
@@ -678,6 +682,28 @@ class FeatureExtractor:
         else:
             return 0
 
+    def extract_pmi_values(self, splitword):
+        """TODO"""
+
+        items = self.split_word_at_pipe(splitword)
+        print('Extracting PMI scores for:', items)
+
+        with bz2.BZ2File(PMI_SCORES, 'r') as pmi_file:
+            for line in pmi_file:
+                words = line.split()
+                decoded = []
+                for w in words:
+                    word = w.decode('UTF-8')
+                    decoded.append(word)
+                if items[0] == decoded[0] and items[1] == decoded[1]:
+                    print('Found!')
+                    print(decoded)
+                    print([decoded[2], decoded[3]])
+                    return [decoded[2], decoded[3]]
+            else:
+                print([10 ** -3], [10 ** -3])
+                return [10 ** -3], [10 ** -3]
+
     def search_germanet_similarities(self, word_1, word_2, class_indicator):
         """ This function searches through GermaNet for supersenses noted in germanet_supersenses_dict
             and returns a vector with binary indicator where the sense has been found.
@@ -817,6 +843,7 @@ if __name__ == "__main__":
     f15_pref_list = []  # Emotion for complex word
     f16_pref_list = []  # Emotion for first part
     f17_pref_list = []  # Emotion for second part
+    f18_pref_list = []  # PMI Scores for first and second part of word
 
     f2_pref_formations = PREF.create_frequency_dictionary(DATA_PATH + FREQUENCY_PREFIXOID_FORMATIONS)
     f3_pref_lemmas = PREF.create_frequency_dictionary(DATA_PATH + FREQUENCY_PREFIXOID_LEMMAS)
@@ -832,10 +859,10 @@ if __name__ == "__main__":
 
     print('F:', f2_pref_formations[maximum_f2_pref_formations], 'L:', f3_pref_lemmas[maximum_f3_pref_lemmas], 'H:', f4_pref_heads[maximum_f4_pref_heads])
 
-    # counter = 0
-    # for i in pref_inventory_list:
-    #     counter += 1
-    #     print('Line:', str(counter) + ' ===============================', i[0], i[-1])
+    counter = 0
+    for i in pref_inventory_list:
+        counter += 1
+        print('Line:', str(counter) + ' ===============================', i[0], i[-1])
         # if counter < 50:
         #     pass
         # else:
@@ -955,6 +982,8 @@ if __name__ == "__main__":
         #         f17_similar_pol_value = PREF.extract_dictionary_values(f17_similar_pol, f15_pref_emolex_dict)
         #     f17 = f17_similar_pol_value
 
+        f18 = PREF.extract_pmi_values(i[1])
+
         # f0_pref_list.append(f0)
         # f1_pref_list.append(f1)
         # f2_pref_list.append(f2)
@@ -973,6 +1002,7 @@ if __name__ == "__main__":
         # f15_pref_list.append(f15)
         # f16_pref_list.append(f16)
         # f17_pref_list.append(f17)
+        f18_pref_list.append(f18)
     # # print(f0_pref_list)
     # print(len(f0_pref_list))
     # # print(f1_pref_list)
@@ -1009,6 +1039,8 @@ if __name__ == "__main__":
     # print(len(f16_pref_list))
     # # print(f17_pref_list)
     # print(len(f17_pref_list))
+    # # print(f18_pref_list)
+    # print(len(f18_pref_list))
 
     # """Write files"""
     # PREF.write_list_to_file(f0_pref_list, DATA_FEATURES_PATH + 'f0_pref.txt')  # DONE
@@ -1029,6 +1061,7 @@ if __name__ == "__main__":
     # PREF.write_list_to_file(f15_pref_list, DATA_FEATURES_PATH + 'f15_pref.txt')  # Check
     # PREF.write_list_to_file(f16_pref_list, DATA_FEATURES_PATH + 'f16_pref.txt')  # Check
     # PREF.write_list_to_file(f17_pref_list, DATA_FEATURES_PATH + 'f17_pref.txt')  # Check
+    # PREF.write_list_to_file(f18_pref_list, DATA_FEATURES_PATH + 'f18_pref.txt')  # Check
     #
     # print(pref_formations)
 
@@ -1065,6 +1098,7 @@ if __name__ == "__main__":
     f15_suff_list = []  # Emotion for complex word
     f16_suff_list = []  # Emotion for first part
     f17_suff_list = []  # Emotion for second part
+    f18_suff_list = []  # PMI Scores for first and second part of word
 
     f2_suff_formations = SUFF.create_frequency_dictionary(DATA_PATH + FREQUENCY_SUFFIXOID_FORMATIONS)
     f3_suff_lemmas = SUFF.create_frequency_dictionary(DATA_PATH + FREQUENCY_SUFFIXOID_LEMMAS)
@@ -1355,3 +1389,17 @@ if __name__ == "__main__":
     # print(PREF.return_single_word_from_fasttext('Bilderbuchabsturz', f5_pref_vector_dict))
     # print(PREF.return_single_word_from_fasttext('Bilderbuchabsturz', f9_pref_polarity_dict))
     # print(PREF.return_similar_cosine_word('Bilderbuchabsturz', f5_pref_vector_dict, False, polarity_dict=f9_pref_polarity_dict))
+
+
+    """PMI"""
+
+    """
+    - Loop over lines in bz2 file
+    - Have a dictionary with splitwords as keys 'Bilderbuch|Absturz'
+    - for line in bz2 file, check if item[0] + item[1] in keys aka 'Bilderbuch|Absturz'
+    - update value
+    - return dictionary
+    - done!
+    - function already avalable
+    - at and loop over empty values, add 10**-3
+    """
