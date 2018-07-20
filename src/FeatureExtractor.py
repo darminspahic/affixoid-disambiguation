@@ -359,6 +359,16 @@ class FeatureExtractor:
 
         return dictionary
 
+    def create_splitword_dictionary(self, splitword):
+        """TODO"""
+
+        dictionary = {}
+        dict_key = splitword
+        dictionary.update({dict_key: 0})
+
+        return dictionary
+
+
     def plot_statistics(self, dict_1, dict_2, title):
         """ This function plots charts with affixoid statistics.
 
@@ -682,11 +692,10 @@ class FeatureExtractor:
         else:
             return 0
 
-    def extract_pmi_values(self, splitword):
+    def extract_pmi_values(self, splitwords_dictionary):
         """TODO"""
 
-        items = self.split_word_at_pipe(splitword)
-        print('Extracting PMI scores for:', items)
+        print('Extracting PMI scores...')
 
         with bz2.BZ2File(PMI_SCORES, 'r') as pmi_file:
             for line in pmi_file:
@@ -695,14 +704,25 @@ class FeatureExtractor:
                 for w in words:
                     word = w.decode('UTF-8')
                     decoded.append(word)
-                if items[0] == decoded[0] and items[1] == decoded[1]:
-                    print('Found!')
-                    print(decoded)
-                    print([decoded[2], decoded[3]])
-                    return [decoded[2], decoded[3]]
-            else:
-                print([10 ** -3], [10 ** -3])
-                return [10 ** -3], [10 ** -3]
+                try:
+                    splitword = str(decoded[0]) + '|' + str(decoded[1])
+                    # print(splitword)
+                    if splitword in splitwords_dictionary.keys():
+                        print('Found!')
+                        print(decoded)
+                        print([decoded[2], decoded[3]])
+                        splitwords_dictionary.update({splitword: [decoded[2], decoded[3]]})
+                except:
+                    pass
+
+
+            # else:
+            #     print([10 ** -3], [10 ** -3])
+            #     splitwords_dictionary.update({splitword: [10 ** -3], [10 ** -3]})
+
+        self.write_dict_to_file(splitwords_dictionary, 'pmi.txt')
+
+        return splitwords_dictionary
 
     def search_germanet_similarities(self, word_1, word_2, class_indicator):
         """ This function searches through GermaNet for supersenses noted in germanet_supersenses_dict
@@ -810,6 +830,10 @@ def sigmoid(x):
     return 1 / (1 + math.exp(-x))
 
 
+def min_max_scaling(x, min_x, max_x):
+    return (x - min_x) / (max_x - min_x)
+
+
 if __name__ == "__main__":
     """
         PREFIXOIDS
@@ -817,6 +841,7 @@ if __name__ == "__main__":
     PREF = FeatureExtractor('Prefixoids', DATA_RESSOURCES_PATH + PREFIXOID_DICTIONARY)
     pref_inventory_list = PREF.read_file_to_list(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE)
     pref_formations = {}
+    pref_splitwords = {}
     y_pref_dict = PREF.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE, 'Y')
     n_pref_dict = PREF.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE, 'N')
     print('Y:\t', y_pref_dict)
@@ -858,6 +883,7 @@ if __name__ == "__main__":
     maximum_f4_pref_heads = max(f4_pref_heads, key=f4_pref_heads.get)
 
     print('F:', f2_pref_formations[maximum_f2_pref_formations], 'L:', f3_pref_lemmas[maximum_f3_pref_lemmas], 'H:', f4_pref_heads[maximum_f4_pref_heads])
+    # F: 97 L: 94232 H: 9988
 
     counter = 0
     for i in pref_inventory_list:
@@ -880,12 +906,14 @@ if __name__ == "__main__":
         # # pref_formations.update({PREF.split_word_at_pipe(i[1])[0]: []})
         # # pref_formations.update({PREF.split_word_at_pipe(i[1])[1]: []})
 
+        pref_splitwords.update({i[1]: [10 ** -3, 10 ** -3]})
+
         # =================================================================================
         # f0 = PREF.extract_frequency(i[-3], y_pref_dict, True)  # y_pref_dict or n_pref_dict
         # f1 = PREF.transform_class_name_to_binary(i[-1])
-        # f2 = sigmoid(PREF.extract_frequency(i[0], f2_pref_formations))
-        # f3 = sigmoid(PREF.extract_frequency(PREF.split_word_at_pipe(i[1])[0], f3_pref_lemmas))
-        # f4 = sigmoid(PREF.extract_frequency(PREF.split_word_at_pipe(i[1])[1], f4_pref_heads))
+        # f2 = min_max_scaling(PREF.extract_frequency(i[0], f2_pref_formations), 0, 97)
+        # f3 = min_max_scaling(PREF.extract_frequency(PREF.split_word_at_pipe(i[1])[0], f3_pref_lemmas), 0, 94232)
+        # f4 = min_max_scaling(PREF.extract_frequency(PREF.split_word_at_pipe(i[1])[1], f4_pref_heads), 0, 9988)
         # f5 = PREF.calculate_cosine_similarity(i[0], PREF.split_word_at_pipe(i[1])[0], f5_pref_vector_dict)  # reverse for SUFFIXOIDS
         # f6 = PREF.search_germanet_supersenses(i[0], f5_pref_vector_dict)
         # f7 = PREF.search_germanet_supersenses(PREF.split_word_at_pipe(i[1])[0], f5_pref_vector_dict)
@@ -982,7 +1010,7 @@ if __name__ == "__main__":
         #         f17_similar_pol_value = PREF.extract_dictionary_values(f17_similar_pol, f15_pref_emolex_dict)
         #     f17 = f17_similar_pol_value
 
-        f18 = PREF.extract_pmi_values(i[1])
+        # f18 = PREF.extract_pmi_values(i[1])
 
         # f0_pref_list.append(f0)
         # f1_pref_list.append(f1)
@@ -1002,7 +1030,7 @@ if __name__ == "__main__":
         # f15_pref_list.append(f15)
         # f16_pref_list.append(f16)
         # f17_pref_list.append(f17)
-        f18_pref_list.append(f18)
+        # f18_pref_list.append(f18)
     # # print(f0_pref_list)
     # print(len(f0_pref_list))
     # # print(f1_pref_list)
@@ -1072,6 +1100,7 @@ if __name__ == "__main__":
     SUFF = FeatureExtractor('Suffixoids', DATA_RESSOURCES_PATH + SUFFIXOID_DICTIONARY)
     suff_inventory_list = SUFF.read_file_to_list(DATA_FINAL_PATH + FINAL_SUFFIXOID_FILE)
     suff_formations = {}
+    suff_splitwords = {}
     y_suff_dict = SUFF.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_SUFFIXOID_FILE, 'Y')
     n_suff_dict = SUFF.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_SUFFIXOID_FILE, 'N')
     print('Y:\t', y_suff_dict)
@@ -1113,6 +1142,7 @@ if __name__ == "__main__":
     maximum_f4_suff_heads = max(f4_suff_heads, key=f4_suff_heads.get)
 
     print('F:', f2_suff_formations[maximum_f2_suff_formations], 'L:', f3_suff_lemmas[maximum_f3_suff_lemmas], 'H:', f4_suff_heads[maximum_f4_suff_heads])
+    # F: 99 L: 931 H: 998048
 
     # counter = 0
     # for i in suff_inventory_list:
@@ -1363,8 +1393,8 @@ if __name__ == "__main__":
     </synset>
     """
 
-    for i in inventory:
-        print(PREF.search_germanet_definitions(i))
+    # for i in inventory:
+    #    print(PREF.search_germanet_definitions(i))
 
     # print(PREF.search_germanet_definitions('Heide'))
     # print(PREF.search_germanet_similarities('Heide', 'Adler', 'N'))
@@ -1403,3 +1433,7 @@ if __name__ == "__main__":
     - function already avalable
     - at and loop over empty values, add 10**-3
     """
+
+    # print(pref_splitwords)
+    # print(PREF.extract_pmi_values(pref_splitwords))
+
