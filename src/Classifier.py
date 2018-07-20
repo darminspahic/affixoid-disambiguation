@@ -184,8 +184,8 @@ if __name__ == "__main__":
     X_train_suff, X_test_suff, y_train_suff, y_test_suff = train_test_split(suff_X, suff_y, test_size=0.3, random_state=5, shuffle=True)
 
     """ SVM """
-    clf_pref = svm.SVC(kernel="rbf", gamma=0.001, C=10).fit(X_train_pref, y_train_pref)
-    clf_suff = svm.SVC(kernel="rbf", gamma=0.001, C=10).fit(X_train_suff, y_train_suff)
+    clf_pref = svm.SVC(kernel="rbf", gamma=0.01, C=10).fit(X_train_pref, y_train_pref)
+    clf_suff = svm.SVC(kernel="rbf", gamma=0.01, C=10).fit(X_train_suff, y_train_suff)
 
     # clf = svm.SVC(kernel='linear', C=1).fit(X_train, y_train)
     # clf = svm.SVC(C=1.0, cache_size=200, class_weight=None, coef0=0.0, decision_function_shape='ovr', degree=3, gamma='auto', kernel='linear', max_iter=-1, probability=False, random_state=None, shrinking=True, tol=0.001, verbose=False).fit(X_train, y_train)
@@ -248,3 +248,17 @@ if __name__ == "__main__":
     clf = svm.SVC(C=1).fit(X_train_transformed, y_train)
     X_test_transformed = scaler.transform(X_test)
     print(clf.score(X_test_transformed, y_test))
+
+    from sklearn.model_selection import GridSearchCV
+
+
+    def svc_param_selection(X, y, nfolds):
+        Cs = [0.001, 0.01, 0.1, 1, 10]
+        gammas = [0.001, 0.01, 0.1, 1]
+        param_grid = {'C': Cs, 'gamma': gammas}
+        grid_search = GridSearchCV(svm.SVC(kernel='rbf'), param_grid, cv=nfolds)
+        grid_search.fit(X, y)
+        # grid_search.best_params_
+        return grid_search.best_params_
+
+    # print(svc_param_selection(pref_X, pref_y, 10))
