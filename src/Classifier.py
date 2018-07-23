@@ -32,6 +32,7 @@ from sklearn.metrics import recall_score
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import cross_val_predict
 from sklearn.model_selection import ShuffleSplit
+from sklearn import preprocessing
 from sklearn import metrics
 from sklearn.metrics import precision_recall_curve
 import matplotlib.pyplot as plt
@@ -175,17 +176,27 @@ if __name__ == "__main__":
                                             'f12_suff.txt', 'f13_suff.txt', 'f14_suff.txt',
                                             'f15_suff.txt', 'f15_suff.txt', 'f17_suff.txt'])
 
+    scaler_s = preprocessing.StandardScaler()
+    scaler_m = preprocessing.MinMaxScaler()
+    scaler_r = preprocessing.RobustScaler()
+
+    pref_X_scaled = scaler_m.fit_transform(pref_X)
+    suff_X_scaled = scaler_m.fit_transform(suff_X)
+
+    # print(pref_X_scaled[0])
+    # print(suff_X_scaled[0])
+
     """ Labels """
     pref_y = PREF.read_labels_from_file('f1_pref.txt')
     suff_y = SUFF.read_labels_from_file('f1_suff.txt')
 
     """ Split data """
-    X_train_pref, X_test_pref, y_train_pref, y_test_pref = train_test_split(pref_X, pref_y, test_size=0.3, random_state=5, shuffle=True)
-    X_train_suff, X_test_suff, y_train_suff, y_test_suff = train_test_split(suff_X, suff_y, test_size=0.3, random_state=5, shuffle=True)
+    X_train_pref, X_test_pref, y_train_pref, y_test_pref = train_test_split(pref_X_scaled, pref_y, test_size=0.3, random_state=5, shuffle=True)
+    X_train_suff, X_test_suff, y_train_suff, y_test_suff = train_test_split(suff_X_scaled, suff_y, test_size=0.3, random_state=5, shuffle=True)
 
     """ SVM """
-    clf_pref = svm.SVC(kernel="rbf", gamma=0.01, C=10).fit(X_train_pref, y_train_pref)
-    clf_suff = svm.SVC(kernel="rbf", gamma=0.01, C=10).fit(X_train_suff, y_train_suff)
+    clf_pref = svm.SVC(kernel="rbf", gamma=0.1, C=1).fit(X_train_pref, y_train_pref)
+    clf_suff = svm.SVC(kernel="rbf", gamma=0.1, C=10).fit(X_train_suff, y_train_suff)
 
     # clf = svm.SVC(kernel='linear', C=1).fit(X_train, y_train)
     # clf = svm.SVC(C=1.0, cache_size=200, class_weight=None, coef0=0.0, decision_function_shape='ovr', degree=3, gamma='auto', kernel='linear', max_iter=-1, probability=False, random_state=None, shrinking=True, tol=0.001, verbose=False).fit(X_train, y_train)
@@ -217,8 +228,8 @@ if __name__ == "__main__":
         print('Crossvalidation scores:', scores)
         print()
 
-    cross_validate(clf_pref, pref_X, pref_y)
-    cross_validate(clf_suff, suff_X, suff_y)
+    cross_validate(clf_pref, pref_X_scaled, pref_y)
+    cross_validate(clf_suff, suff_X_scaled, suff_y)
 
     def plot(y_test, y_score):
         average_precision = average_precision_score(y_test, y_score)
@@ -240,17 +251,7 @@ if __name__ == "__main__":
 
     # ----------------------------
 
-    from sklearn import preprocessing
-
-    X_train, X_test, y_train, y_test = train_test_split(pref_X, pref_y, test_size=0.2, random_state=0)
-    scaler = preprocessing.StandardScaler().fit(X_train)
-    X_train_transformed = scaler.transform(X_train)
-    clf = svm.SVC(C=1).fit(X_train_transformed, y_train)
-    X_test_transformed = scaler.transform(X_test)
-    print(clf.score(X_test_transformed, y_test))
-
     from sklearn.model_selection import GridSearchCV
-
 
     def svc_param_selection(X, y, nfolds):
         Cs = [0.001, 0.01, 0.1, 1, 10]
@@ -261,4 +262,5 @@ if __name__ == "__main__":
         # grid_search.best_params_
         return grid_search.best_params_
 
-    # print(svc_param_selection(pref_X, pref_y, 10))
+    # print(svc_param_selection(pref_X_scaled, pref_y, 10))
+    # print(svc_param_selection(suff_X_scaled, suff_y, 10))
