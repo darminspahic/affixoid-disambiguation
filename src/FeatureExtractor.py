@@ -692,7 +692,7 @@ class FeatureExtractor:
         else:
             return 0
 
-    def extract_pmi_values(self, splitwords_dictionary):
+    def extract_pmi_values(self, splitwords_dictionary, output_file):
         """TODO"""
 
         print('Extracting PMI scores...')
@@ -715,12 +715,7 @@ class FeatureExtractor:
                 except:
                     pass
 
-
-            # else:
-            #     print([10 ** -3], [10 ** -3])
-            #     splitwords_dictionary.update({splitword: [10 ** -3], [10 ** -3]})
-
-        self.write_dict_to_file(splitwords_dictionary, 'pmi.txt')
+        self.write_dict_to_file(splitwords_dictionary, output_file)
 
         return splitwords_dictionary
 
@@ -911,9 +906,9 @@ if __name__ == "__main__":
         # =================================================================================
         # f0 = PREF.extract_frequency(i[-3], y_pref_dict, True)  # y_pref_dict or n_pref_dict
         # f1 = PREF.transform_class_name_to_binary(i[-1])
-        # f2 = min_max_scaling(PREF.extract_frequency(i[0], f2_pref_formations), 0, 97)
-        # f3 = min_max_scaling(PREF.extract_frequency(PREF.split_word_at_pipe(i[1])[0], f3_pref_lemmas), 0, 94232)
-        # f4 = min_max_scaling(PREF.extract_frequency(PREF.split_word_at_pipe(i[1])[1], f4_pref_heads), 0, 9988)
+        f2 = PREF.extract_frequency(i[0], f2_pref_formations)
+        f3 = PREF.extract_frequency(PREF.split_word_at_pipe(i[1])[0], f3_pref_lemmas)
+        f4 = PREF.extract_frequency(PREF.split_word_at_pipe(i[1])[1], f4_pref_heads)
         # f5 = PREF.calculate_cosine_similarity(i[0], PREF.split_word_at_pipe(i[1])[0], f5_pref_vector_dict)  # reverse for SUFFIXOIDS
         # f6 = PREF.search_germanet_supersenses(i[0], f5_pref_vector_dict)
         # f7 = PREF.search_germanet_supersenses(PREF.split_word_at_pipe(i[1])[0], f5_pref_vector_dict)
@@ -1014,9 +1009,9 @@ if __name__ == "__main__":
 
         # f0_pref_list.append(f0)
         # f1_pref_list.append(f1)
-        # f2_pref_list.append(f2)
-        # f3_pref_list.append(f3)
-        # f4_pref_list.append(f4)
+        f2_pref_list.append(f2)
+        f3_pref_list.append(f3)
+        f4_pref_list.append(f4)
         # f5_pref_list.append(f5)
         # f6_pref_list.append(f6)
         # f7_pref_list.append(f7)
@@ -1073,9 +1068,9 @@ if __name__ == "__main__":
     # """Write files"""
     # PREF.write_list_to_file(f0_pref_list, DATA_FEATURES_PATH + 'f0_pref.txt')  # DONE
     # PREF.write_list_to_file(f1_pref_list, DATA_FEATURES_PATH + 'f1_pref.txt')  # DONE
-    # PREF.write_list_to_file(f2_pref_list, DATA_FEATURES_PATH + 'f2_pref.txt')  # DONE
-    # PREF.write_list_to_file(f3_pref_list, DATA_FEATURES_PATH + 'f3_pref.txt')  # DONE
-    # PREF.write_list_to_file(f4_pref_list, DATA_FEATURES_PATH + 'f4_pref.txt')  # DONE
+    PREF.write_list_to_file(f2_pref_list, DATA_FEATURES_PATH + 'f2_pref.txt')  # DONE
+    PREF.write_list_to_file(f3_pref_list, DATA_FEATURES_PATH + 'f3_pref.txt')  # DONE
+    PREF.write_list_to_file(f4_pref_list, DATA_FEATURES_PATH + 'f4_pref.txt')  # DONE
     # PREF.write_list_to_file(f5_pref_list, DATA_FEATURES_PATH + 'f5_pref.txt')  # DONE
     # PREF.write_list_to_file(f6_pref_list, DATA_FEATURES_PATH + 'f6_pref.txt')  # DONE
     # PREF.write_list_to_file(f7_pref_list, DATA_FEATURES_PATH + 'f7_pref.txt')  # DONE
@@ -1144,17 +1139,17 @@ if __name__ == "__main__":
     print('F:', f2_suff_formations[maximum_f2_suff_formations], 'L:', f3_suff_lemmas[maximum_f3_suff_lemmas], 'H:', f4_suff_heads[maximum_f4_suff_heads])
     # F: 99 L: 931 H: 998048
 
-    # counter = 0
-    # for i in suff_inventory_list:
-    #     counter += 1
-    #     print('Line:', str(counter) + ' ===============================', i[0], i[-1])
+    counter = 0
+    for i in suff_inventory_list:
+        counter += 1
+        print('Line:', str(counter) + ' ===============================', i[0], i[-1])
     #
     #     # =================================================================================
     #     f0 = SUFF.extract_frequency(i[-3], y_suff_dict, True)  # y_suff_dict or n_suff_dict
     #     f1 = SUFF.transform_class_name_to_binary(i[-1])
-    #     f2 = sigmoid(SUFF.extract_frequency(i[0], f2_suff_formations))
-    #     f3 = sigmoid(SUFF.extract_frequency(SUFF.split_word_at_pipe(i[1])[0], f3_suff_lemmas))
-    #     f4 = sigmoid(SUFF.extract_frequency(SUFF.split_word_at_pipe(i[1])[1], f4_suff_heads))
+        f2 = SUFF.extract_frequency(i[0], f2_suff_formations)
+        f3 = SUFF.extract_frequency(SUFF.split_word_at_pipe(i[1])[0], f3_suff_lemmas)
+        f4 = SUFF.extract_frequency(SUFF.split_word_at_pipe(i[1])[1], f4_suff_heads)
     #     f5 = SUFF.calculate_cosine_similarity(i[0], SUFF.split_word_at_pipe(i[1])[1], f5_suff_vector_dict)  # reverse for SUFFIXOIDS
     #     f6 = SUFF.search_germanet_supersenses(i[0], f5_suff_vector_dict)
     #     f7 = SUFF.search_germanet_supersenses(SUFF.split_word_at_pipe(i[1])[0], f5_suff_vector_dict)
@@ -1253,9 +1248,9 @@ if __name__ == "__main__":
     #
     #     f0_suff_list.append(f0)
     #     f1_suff_list.append(f1)
-    #     f2_suff_list.append(f2)
-    #     f3_suff_list.append(f3)
-    #     f4_suff_list.append(f4)
+        f2_suff_list.append(f2)
+        f3_suff_list.append(f3)
+        f4_suff_list.append(f4)
     #     f5_suff_list.append(f5)
     #     f6_suff_list.append(f6)
     #     f7_suff_list.append(f7)
@@ -1309,9 +1304,9 @@ if __name__ == "__main__":
     # """Write files"""
     # SUFF.write_list_to_file(f0_suff_list, DATA_FEATURES_PATH + 'f0_suff.txt')  # DONE
     # SUFF.write_list_to_file(f1_suff_list, DATA_FEATURES_PATH + 'f1_suff.txt')  # DONE
-    # SUFF.write_list_to_file(f2_suff_list, DATA_FEATURES_PATH + 'f2_suff.txt')  # DONE
-    # SUFF.write_list_to_file(f3_suff_list, DATA_FEATURES_PATH + 'f3_suff.txt')  # DONE
-    # SUFF.write_list_to_file(f4_suff_list, DATA_FEATURES_PATH + 'f4_suff.txt')  # DONE
+    SUFF.write_list_to_file(f2_suff_list, DATA_FEATURES_PATH + 'f2_suff.txt')  # DONE
+    SUFF.write_list_to_file(f3_suff_list, DATA_FEATURES_PATH + 'f3_suff.txt')  # DONE
+    SUFF.write_list_to_file(f4_suff_list, DATA_FEATURES_PATH + 'f4_suff.txt')  # DONE
     # SUFF.write_list_to_file(f5_suff_list, DATA_FEATURES_PATH + 'f5_suff.txt')  # DONE
     # SUFF.write_list_to_file(f6_suff_list, DATA_FEATURES_PATH + 'f6_suff.txt')  # DONE
     # SUFF.write_list_to_file(f7_suff_list, DATA_FEATURES_PATH + 'f7_suff.txt')  # DONE
@@ -1419,20 +1414,6 @@ if __name__ == "__main__":
     # print(PREF.return_single_word_from_fasttext('Bilderbuchabsturz', f5_pref_vector_dict))
     # print(PREF.return_single_word_from_fasttext('Bilderbuchabsturz', f9_pref_polarity_dict))
     # print(PREF.return_similar_cosine_word('Bilderbuchabsturz', f5_pref_vector_dict, False, polarity_dict=f9_pref_polarity_dict))
-
-
-    """PMI"""
-
-    """
-    - Loop over lines in bz2 file
-    - Have a dictionary with splitwords as keys 'Bilderbuch|Absturz'
-    - for line in bz2 file, check if item[0] + item[1] in keys aka 'Bilderbuch|Absturz'
-    - update value
-    - return dictionary
-    - done!
-    - function already avalable
-    - at and loop over empty values, add 10**-3
-    """
 
     # print(pref_splitwords)
     # print(PREF.extract_pmi_values(pref_splitwords))
