@@ -157,6 +157,8 @@ if __name__ == "__main__":
         'f15_' = Emotion for complex word
         'f16_' = Emotion for first part
         'f17_' = Emotion for second part
+        
+        'f18_' = PMI Scores for first and second part of word
     """
 
     PREF = Classifier()
@@ -167,14 +169,16 @@ if __name__ == "__main__":
                                             'f6_pref.txt', 'f7_pref.txt', 'f8_pref.txt',
                                             'f9_pref.txt', 'f10_pref.txt', 'f11_pref.txt',
                                             'f12_pref.txt', 'f13_pref.txt', 'f14_pref.txt',
-                                            'f15_pref.txt', 'f15_pref.txt', 'f17_pref.txt'])
+                                            'f15_pref.txt', 'f15_pref.txt', 'f17_pref.txt',
+                                            'f18_pref.txt'])
 
     suff_X = SUFF.read_features_from_files(['f2_suff.txt',
                                             'f3_suff.txt', 'f4_suff.txt', 'f5_suff.txt',
                                             'f6_suff.txt', 'f7_suff.txt', 'f8_suff.txt',
                                             'f9_suff.txt', 'f10_suff.txt', 'f11_suff.txt',
                                             'f12_suff.txt', 'f13_suff.txt', 'f14_suff.txt',
-                                            'f15_suff.txt', 'f15_suff.txt', 'f17_suff.txt'])
+                                            'f15_suff.txt', 'f15_suff.txt', 'f17_suff.txt',
+                                            'f18_suff.txt'])
 
     scaler_s = preprocessing.StandardScaler()
     scaler_m = preprocessing.MinMaxScaler()
