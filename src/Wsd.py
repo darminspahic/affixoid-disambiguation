@@ -70,12 +70,12 @@ class Wsd:
 
     def __init__(self, string, json_dict):
         print('=' * 40)
-        print(Style.BOLD + "Running Wsd on:" + Style.END, string)
+        print(Style.BOLD + "Running word sense disambiguation on:" + Style.END, string)
         print('-' * 40)
 
         try:
             print('Initializing dictionary...')
-            # self.definition_dict = self.read_json_from_file(json_dict)
+            self.definition_dict = self.read_json_from_file(json_dict)
 
         except FileNotFoundError:
             print('Please set correct paths for data.')
@@ -386,8 +386,7 @@ if __name__ == "__main__":
     """
         PREFIXOIDS WSD
     """
-    PREF_WSD = Wsd('Prefixoids WSD', DATA_FINAL_PATH + FINAL_PREFIXOID_FILE)
-    # pref_json_dict = PREF_WSD.read_json_from_file(DATA_PATH + 'wsd/' + PREF_JSON_DICT)
+    PREF_WSD = Wsd('Prefixoids', DATA_PATH + 'wsd/' + PREF_JSON_DICT)
 
     # print(PREF.lesk('Bilderbuch', 'Absturz', pref_json_dict))
     # counter = 0
