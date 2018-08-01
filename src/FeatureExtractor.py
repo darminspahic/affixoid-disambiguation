@@ -19,35 +19,15 @@ Version: 1.0
 
 import ast
 import bz2
-import itertools
 import io
 import json
 # import duden
-import re
 import sys
 import math
 import matplotlib.pyplot as plt
 import numpy as np
 from lxml import etree
-from pygermanet import load_germanet
 from sklearn.metrics.pairwise import cosine_similarity
-
-# WSD
-from nltk.corpus import stopwords
-from nltk.tokenize import load
-from nltk.tokenize import RegexpTokenizer
-
-# Sentence tokenizer
-sent_tok = load('tokenizers/punkt/german.pickle')
-
-# Filter stopwords
-stop_words = set(stopwords.words('german'))
-
-# Word Tokenizer
-# word_tok = TreebankWordTokenizer()
-word_tok = RegexpTokenizer(r'\w+')
-
-ger = load_germanet()
 
 ################
 # PATH SETTINGS
@@ -89,7 +69,7 @@ PMI_SCORES = '../../PMI/sdewac_npmi.csv.bz2'
 PMI_OUTPUT = 'PMI/'
 
 ################
-# GermaNet
+# GermaNet with lxml
 ################
 TREE = etree.parse(DATA_RESSOURCES_PATH+'GermaNet/GN_full.xml')
 GN_ROOT = TREE.getroot()
@@ -113,10 +93,6 @@ SUFFIXOID_DICTIONARY = 'fastText/suffixoid_dict_fasttext_similarites.txt'
 
 """Empty words dictionary for collecting various data"""
 EMPTY_WORDS_DICTIONARY = 'all_words_dict.txt'
-
-"""WSD"""
-PREF_JSON_DICT = 'pref_dictionary.json'
-SUFF_JSON_DICT = 'suff_dictionary.json'
 
 
 class FeatureExtractor:
@@ -744,209 +720,6 @@ class FeatureExtractor:
 
         return splitwords_dictionary
 
-    def search_germanet_synonyms(self, word):
-
-        lemmas = []
-        reg_1 = r"\(([^)]+)\)"
-
-        word_synsets = ger.synsets(word)
-        match_word = re.findall(reg_1, str(word_synsets))
-
-        for m1 in match_word:
-            s1 = ger.synset(m1)
-            lemmas.append([s.orthForm for s in s1.lemmas])
-
-        return lemmas
-
-    def search_germanet_synsets(self, word):
-        return ger.synsets(word)
-
-    def return_germanet_lemmas(self, word):
-        return ger.lemmas(word)
-
-    def search_germanet_similarities(self, word_1, word_2):
-        """ TODO """
-
-        # print('Searching for: ', word)
-
-        reg_1 = r"\(([^)]+)\)"
-        reg_2 = r"(?<=\()(.*?)(?=\.)"
-        word_1_synset = ger.synsets(word_1)
-        word_2_synset = ger.synsets(word_2)
-        # print(word_synset)
-        match_word_1 = re.findall(reg_1, str(word_1_synset))
-        match_word_2 = re.findall(reg_1, str(word_2_synset))
-
-        match_word_1_synset_list = []
-        match_word_2_synset_list = []
-
-        match_word_1_lemmas_list = []
-        match_word_2_lemmas_list = []
-        """
-        
-        b = ger.synset('Heide.n.1')
-        a = ger.synset('Graben.n.1')
-        
-        print(b.lowest_common_hypernyms(a))
-        print(b.shortest_path_length(a))
-        print(b.sim_lch(a))
-        print(b.sim_res(a))
-        print(b.sim_lin(a))
-        """
-
-        # print(match_word_1)
-        # print(match_word_2)
-
-        print(self.search_germanet_definitions(word_1))
-        print(self.search_germanet_definitions(word_2))
-
-        for m1 in match_word_1:
-            s1 = ger.synset(m1)
-            match_word_1_synset_list.append(s1)
-            match_word_1_lemmas_list.append(s1.lemmas)
-
-        for m2 in match_word_2:
-            s2 = ger.synset(m2)
-            match_word_2_synset_list.append(s2)
-            match_word_2_lemmas_list.append(s2.lemmas)
-
-        print('Synsets for:', word_1, match_word_1_synset_list)
-        print('Synsets for:', word_2, match_word_2_synset_list)
-
-        print('Lemmas for:', word_1, match_word_1_lemmas_list)
-        print('Lemmas for:', word_2, match_word_2_lemmas_list)
-
-        if len(match_word_1_synset_list) > 0 and len(match_word_2_synset_list) > 0:
-            for p in itertools.product(match_word_1_synset_list, match_word_2_synset_list):
-                print('===')
-                print(len(p[0].hypernym_distances), sorted(list(p[0].hypernym_distances), key=lambda tup: tup[1]))
-                print(len(p[1].hypernym_distances), sorted(list(p[1].hypernym_distances), key=lambda tup: tup[1]))
-                # print(len(p[0].hypernym_paths), p[0].hypernym_paths)
-                # print(len(p[1].hypernym_paths), p[1].hypernym_paths)
-                print('LCH:', p[0], p[1], '=', p[0].sim_lch(p[1]))
-                print('RES:', p[0], p[1], '=', p[0].sim_res(p[1]))
-                print('JCN:', p[0], p[1], '=', p[0].dist_jcn(p[1]))
-                print('LIN:', p[0], p[1], '=', p[0].sim_lin(p[1]))
-                print('---')
-                print('Common hypernyms:', p[0].common_hypernyms(p[1]), len(p[0].common_hypernyms(p[1])))
-                print('Lowest common hypernyms:', p[0].lowest_common_hypernyms(p[1]))
-                print('Nearest common hypernyms:', p[0].nearest_common_hypernyms(p[1]))
-                print('Shortest path lenght:', p[0].shortest_path_length(p[1]))
-                print('===')
-
-        else:
-            print('Synset not found')
-
-    def search_germanet_definitions(self, word):
-        """ TODO """
-
-        # print('Searching for: ', word)
-
-        definitions = [word]
-
-        if self.is_in_germanet(word):
-            for synset in GN_ROOT:
-                orthforms = synset.findall('.//orthForm')
-                for item in orthforms:
-                    if word == item.text or word == item.text.lower() or word == item.text.lower().capitalize():
-                        parent = item.getparent()
-                        parent_id = item.getparent().get('id')
-                        # print(parent)
-                        # print('ID:', parent_id)
-                        ancestor = parent.getparent()
-                        ancestor_id = parent.getparent().get('id')
-                        # print(ancestor)
-                        # print('ID:', ancestor_id)
-                        # TODO get sense of synset id 1, 2 etc.
-                        # print('Synset by ID:', ger.get_lemma_by_id(ancestor_id))
-                        parent_sense = item.getparent().get('sense')
-                        parent_description = PARAROOT.find('.//wiktionaryParaphrase[@lexUnitId = "'+parent_id+'"]')
-                        try:
-                            sense_dict = {parent_sense: parent_description.get('wiktionarySense')}
-                        except AttributeError:
-                            sense_dict = {parent_sense: None}
-                        definitions.append(sense_dict)
-
-        if len(definitions) > 0:
-            return definitions
-        else:
-            return 0
-
-    def lesk(self, ambigous_word, other_word, json_dictionary, remove_stop_words=False, join_sense_and_example=False):
-        try:
-            # Sense 0 ambigous_word
-            sense_0 = json_dictionary[ambigous_word]['0']
-            sense_0_germanet = sense_0['GermaNet']['Bedeutung']
-            sense_0_wiktionary = sense_0['Wiktionary']['Bedeutung']
-            sense_0_duden = sense_0['Duden']['Bedeutung']
-
-            sense_0_germanet_example = sense_0['GermaNet']['Beispiel']
-            sense_0_wiktionary_example = sense_0['Wiktionary']['Beispiel']
-            sense_0_duden_example = sense_0['Duden']['Beispiel']
-
-            sense_0_bedeutung = sense_0_germanet + ' ' + sense_0_wiktionary + ' ' + sense_0_duden
-            sense_0_beispiel = sense_0_germanet_example + ' ' + sense_0_wiktionary_example + ' ' + sense_0_duden_example
-
-            sense_0_bedeutung_words = word_tok.tokenize(sense_0_bedeutung)
-            sense_0_bedeutung_words_clean = [w for w in sense_0_bedeutung_words if w not in stop_words]
-            sense_0_bedeutung_words_distinct = set(sense_0_bedeutung_words_clean)
-
-            sense_0_beispiel_words = word_tok.tokenize(sense_0_beispiel)
-            sense_0_beispiel_words_clean = [w for w in sense_0_beispiel_words if w not in stop_words]
-            sense_0_beispiel_words_distinct = set(sense_0_beispiel_words_clean)
-
-            # Sense 1 ambigous_word
-            sense_1 = json_dictionary[ambigous_word]['1']
-            sense_1_germanet = sense_1['GermaNet']['Bedeutung']
-            sense_1_wiktionary = sense_1['Wiktionary']['Bedeutung']
-            sense_1_duden = sense_1['Duden']['Bedeutung']
-
-            sense_1_germanet_example = sense_1['GermaNet']['Beispiel']
-            sense_1_wiktionary_example = sense_1['Wiktionary']['Beispiel']
-            sense_1_duden_example = sense_1['Duden']['Beispiel']
-
-            sense_1_bedeutung = sense_1_germanet + ' ' + sense_1_wiktionary + ' ' + sense_1_duden
-            sense_1_beispiel = sense_1_germanet_example + ' ' + sense_1_wiktionary_example + ' ' + sense_1_duden_example
-
-            sense_1_bedeutung_words = word_tok.tokenize(sense_1_bedeutung)
-            sense_1_bedeutung_words_clean = [w for w in sense_1_bedeutung_words if w not in stop_words]
-            sense_1_bedeutung_words_distinct = set(sense_1_bedeutung_words)
-
-            sense_1_beispiel_words = word_tok.tokenize(sense_1_beispiel)
-            sense_1_beispiel_words_clean = [w for w in sense_1_beispiel_words if w not in stop_words]
-            sense_1_beispiel_words_distinct = set(sense_1_beispiel_words)
-
-            # Other Word
-            other_word = self.search_germanet_definitions(other_word)
-            other_word_bedeutung = [list(s.values()) for s in other_word[1:]]
-            other_word_bedeutung = ' '.join([item for sublist in other_word_bedeutung for item in sublist if item is not None])
-            other_word_bedeutung_words = word_tok.tokenize(other_word_bedeutung)
-            other_word_bedeutung_words_clean = [w for w in other_word_bedeutung_words if w not in stop_words]
-
-            other_word_bedeutung_words_distinct = set(other_word_bedeutung_words)
-
-            # print(sense_0_bedeutung_words_distinct)
-            # print(sense_0_beispiel_words_distinct)
-            # print()
-            # print(sense_1_bedeutung_words_distinct)
-            # print(sense_1_beispiel_words_distinct)
-            # print()
-            # print(other_word_bedeutung_words_distinct)
-
-            overlap_sense_0 = sense_0_bedeutung_words_distinct.intersection(other_word_bedeutung_words_distinct)
-            overlap_sense_1 = sense_1_bedeutung_words_distinct.intersection(other_word_bedeutung_words_distinct)
-
-            overlap_sense_0_beispiel = sense_0_beispiel_words_distinct.intersection(other_word_bedeutung_words_distinct)
-            overlap_sense_1_beispiel = sense_1_beispiel_words_distinct.intersection(other_word_bedeutung_words_distinct)
-
-            print('Overlap in sense_N', len(overlap_sense_0), overlap_sense_0)
-            print('Overlap in sense_Y', len(overlap_sense_1), overlap_sense_1)
-            print('Overlap in Beisp_N', len(overlap_sense_0_beispiel), overlap_sense_0_beispiel)
-            print('Overlap in Beisp_Y', len(overlap_sense_1_beispiel), overlap_sense_1_beispiel)
-
-        except KeyError:
-            pass
-
 
 class Style:
     BLUE = '\033[94m'
@@ -1449,7 +1222,7 @@ if __name__ == "__main__":
     # SUFF.write_list_to_file(f16_suff_list, DATA_FEATURES_PATH + 'f16_suff.txt')  # DONE
     # SUFF.write_list_to_file(f17_suff_list, DATA_FEATURES_PATH + 'f17_suff.txt')  # DONE
 
-    # """PMI Scores"""
+    """PMI Scores"""
     # f18_suff_pmi_dict = SUFF.extract_pmi_values(f18_suff_splitwords_dict, DATA_RESSOURCES_PATH + PMI_OUTPUT + 'suff_PMI_scores.txt')
     # f18_suff_list = []  # PMI Scores for first and second part of word
     #
@@ -1462,100 +1235,3 @@ if __name__ == "__main__":
     # print(len(f18_suff_list))
     #
     # SUFF.write_list_to_file(f18_suff_list, DATA_FEATURES_PATH + 'f18_suff.txt')
-
-    """WSD"""
-    PREF_WSD = FeatureExtractor('Prefixoids WSD', DATA_RESSOURCES_PATH + EMPTY_WORDS_DICTIONARY)
-    pref_inventory_list = PREF_WSD.read_file_to_list(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE)
-    pref_json_dict = PREF_WSD.read_json_from_file(DATA_PATH + 'wsd/' + PREF_JSON_DICT)
-    # print(PREF.lesk('Bilderbuch', 'Absturz', pref_json_dict))
-    # counter = 0
-    # for i in pref_inventory_list:
-    #     counter += 1
-    #     if counter == 310:
-    #         break
-    #     elif counter <= 210:
-    #         pass
-    #     elif counter % 3 == 0:
-    #         pass
-    #     else:
-    #     print('Line:', str(counter) + ' ===============================', i[0], i[-1])
-    #     # PREF.search_germanet_similarities(PREF.split_word_at_pipe(i[1])[0], PREF.split_word_at_pipe(i[1])[1])
-    #     PREF_WSD.lesk(PREF_WSD.split_word_at_pipe(i[1])[0], PREF_WSD.split_word_at_pipe(i[1])[1], pref_json_dict)
-
-    # print(PREF_WSD.search_germanet_similarities('Bilderbuch', 'Bilderbuch', 'N'))
-    # print(PREF_WSD.search_germanet_similarities('Pferd', 'Hengst', 'N'))
-    # print(PREF_WSD.search_germanet_definitions('Pferd'))
-    # print(PREF_WSD.search_germanet_definitions('Hengst'))
-    # print(PREF_WSD.search_germanet_similarities('Kohle', 'Tagebuch'))
-    # print(PREF_WSD.search_germanet_similarities('Hund', 'Katze'))
-    # print(PREF_WSD.search_germanet_definitions('Wunsch'))
-    # print(PREF_WSD.search_germanet_definitions('Kohle'))
-    print(PREF_WSD.search_germanet_synonyms('Geld'))
-    print()
-    print(PREF_WSD.return_germanet_lemmas('Geld'))
-    print()
-    print(PREF_WSD.search_germanet_synsets('Geld'))
-
-    inventory = ['Bilderbuch',
-                 'Blitz',
-                 'Bombe',
-                 'Glanz',
-                 'Heide',
-                 'Jahrhundert',
-                 'Qualität',
-                 'Schwein',
-                 'Spitze',
-                 'Traum',
-                 'Apostel',
-                 'Bolzen',
-                 'Dreck',
-                 'Gott',
-                 'Guru',
-                 'Hengst',
-                 'Ikone',
-                 'König',
-                 'Papst',
-                 'Schwein']
-
-    """
-    <synset id="s38531" category="nomen" class="Mensch">
-    
-        <lexUnit id="l118841" sense="1" source="core" namedEntity="no" artificial="no" styleMarking="no">
-            <orthForm>Gottlose</orthForm>
-        </lexUnit>
-        
-        <lexUnit id="l118842" sense="1" source="core" namedEntity="no" artificial="no" styleMarking="no">
-            <orthForm>Gottloser</orthForm>
-        </lexUnit>
-        
-        <lexUnit id="l56466" sense="2" source="core" namedEntity="no" artificial="no" styleMarking="no">
-            <orthForm>Heide</orthForm>
-        </lexUnit>
-        
-        <lexUnit id="l56467" sense="1" source="core" namedEntity="no" artificial="no" styleMarking="no">
-            <orthForm>Heidin</orthForm>
-        </lexUnit>
-    </synset>
-    """
-
-    #
-    # for i in inventory:
-    #     print(PREF.search_germanet_definitions(i))
-
-    # print(PREF.search_germanet_definitions('Heide'))
-    # print(PREF.search_germanet_similarities('Heide', 'Adler', 'N'))
-    # print(PREF.return_similar_words_from_fasttext('Südstaatentyp'))
-    # print(PREF.return_single_word_from_fasttext('Südstaatentyp', f5_pref_vector_dict))
-    #
-    # from timeit import Timer
-    # t = Timer(lambda: PREF.is_in_germanet('Heide'))
-    # print(t.timeit(number=100))
-    # t = Timer(lambda: PREF.is_in_germanet_fast('Heide'))
-    # print(t.timeit(number=100))
-    #
-    # print(PREF.is_in_germanet('Heide'))
-    # print(PREF.is_in_germanet_fast('Heide'))
-    #
-    # print(GN_ROOT.find('.//orthForm').text)
-    # print(GN_ROOT.xpath('.//orthForm[text()="Heide"]'))
-    # print(GN_ROOT.xpath('.//orthForm[matches(text()="Heide","i")]'))
