@@ -19,11 +19,13 @@ Version: 1.0
 
 import itertools
 import json
-import re
+
 from pygermanet import load_germanet
 from nltk.corpus import stopwords
 from nltk.tokenize import load
 from nltk.tokenize import RegexpTokenizer
+# nltk.download('punkt')
+# nltk.download('stopwords')
 
 ################
 # PATH SETTINGS
@@ -54,7 +56,7 @@ stop_words = set(stopwords.words('german'))
 # word_tok = TreebankWordTokenizer()
 word_tok = RegexpTokenizer(r'\w+')
 
-"""WSD Dictionaries"""
+""" WSD Dictionaries """
 PREF_JSON_DICT = 'pref_dictionary.json'
 SUFF_JSON_DICT = 'suff_dictionary.json'
 
@@ -64,7 +66,7 @@ class Wsd:
 
         Returns: Files with feature vectors
 
-        Example: PREF = FeatureExtractor()
+        Example: PREF = Wsd()
 
     """
 
@@ -90,7 +92,7 @@ class Wsd:
                 List of lines from file
 
             Example:
-                >>> self.read_file_to_list(DATA_FINAL_PATH+FINAL_PREFIXOID_FILE)
+                >>> self.read_file_to_list(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE)
 
         """
         file_as_list = []
@@ -143,6 +145,7 @@ class Wsd:
         f.close()
 
     def read_json_from_file(self, json_file):
+        """ Helper function to read a json file. """
         j = open(json_file, 'r', encoding='utf-8')
         json_data = json.load(j)
 
@@ -168,83 +171,68 @@ class Wsd:
         else:
             return [word, word]
 
-    def search_germanet_synonyms(self, word):
+    def is_in_germanet(self, word):
+        """ This function parses GermaNet for a word and returns a boolean if the word is found """
 
-        lemmas = []
-        reg_1 = r"\(([^)]+)\)"
-
-        word_synsets = ger.synsets(word)
-        match_word = re.findall(reg_1, str(word_synsets))
-
-        for m1 in match_word:
-            s1 = ger.synset(m1)
-            lemmas.append([s.orthForm for s in s1.lemmas])
-
-        return lemmas
+        if len(ger.synsets(word)) > 0:
+            return True
+        else:
+            return False
 
     def search_germanet_synsets(self, word):
+        """ Helper function which returns a list of Synsets for a given word """
         return ger.synsets(word)
 
-    def return_germanet_lemmas(self, word):
-        return ger.lemmas(word)
-
-    def search_germanet_similarities(self, word_1, word_2):
+    def create_synsets_dictionary(self, word, return_lemmas=True, return_hypernyms=True, return_hyponyms=True, return_wiktionary_sense=True):
         """ TODO """
 
-        # print('Searching for: ', word)
+        synsets = ger.synsets(word)
+        synset_dict = {}
+        for syn in synsets:
 
-        reg_1 = r"\(([^)]+)\)"
-        reg_2 = r"(?<=\()(.*?)(?=\.)"
-        word_1_synset = ger.synsets(word_1)
-        word_2_synset = ger.synsets(word_2)
-        # print(word_synset)
-        match_word_1 = re.findall(reg_1, str(word_1_synset))
-        match_word_2 = re.findall(reg_1, str(word_2_synset))
+            lemmas = []
+            hypernyms = []
+            hyponyms = []
+            wiktionary_sense = []
 
-        match_word_1_synset_list = []
-        match_word_2_synset_list = []
+            if return_lemmas:
+                for l in syn.lemmas:
+                    lemmas.append(l.orthForm)
 
-        match_word_1_lemmas_list = []
-        match_word_2_lemmas_list = []
-        """
-        
-        b = ger.synset('Heide.n.1')
-        a = ger.synset('Graben.n.1')
-        
-        print(b.lowest_common_hypernyms(a))
-        print(b.shortest_path_length(a))
-        print(b.sim_lch(a))
-        print(b.sim_res(a))
-        print(b.sim_lin(a))
-        """
+            if return_hypernyms:
+                for h in syn.hypernyms:
+                    for l in h.lemmas:
+                        hypernyms.append(l.orthForm)
 
-        # print(match_word_1)
-        # print(match_word_2)
+            if return_hyponyms:
+                for h in syn.hyponyms:
+                    for l in h.lemmas:
+                        hyponyms.append(l.orthForm)
 
-        print(self.search_germanet_definitions(word_1))
-        print(self.search_germanet_definitions(word_2))
+            if return_wiktionary_sense:
+                for l in syn.lemmas:
+                    for x in l.paraphrases:
+                        wiktionary_sense.append(x['wiktionarySense'])
 
-        for m1 in match_word_1:
-            s1 = ger.synset(m1)
-            match_word_1_synset_list.append(s1)
-            match_word_1_lemmas_list.append(s1.lemmas)
+            features = [lemmas, hypernyms, hyponyms, wiktionary_sense]
+            synset_dict.update({syn: [item for sublist in features for item in sublist]})
 
-        for m2 in match_word_2:
-            s2 = ger.synset(m2)
-            match_word_2_synset_list.append(s2)
-            match_word_2_lemmas_list.append(s2.lemmas)
+        return synset_dict
 
-        print('Synsets for:', word_1, match_word_1_synset_list)
-        print('Synsets for:', word_2, match_word_2_synset_list)
+    def calculate_similarity_scores(self, word_1, word_2):
+        """ This function calculates similarity scores between two synsets """
 
-        print('Lemmas for:', word_1, match_word_1_lemmas_list)
-        print('Lemmas for:', word_2, match_word_2_lemmas_list)
+        word_1_senses = ger.synsets(word_1)
+        word_2_senses = ger.synsets(word_2)
 
-        if len(match_word_1_synset_list) > 0 and len(match_word_2_synset_list) > 0:
-            for p in itertools.product(match_word_1_synset_list, match_word_2_synset_list):
+        print(word_1_senses)
+        print(word_2_senses)
+
+        if len(word_1_senses) > 0 and len(word_2_senses) > 0:
+            for p in itertools.product(word_1_senses, word_2_senses):
                 print('===')
-                print(len(p[0].hypernym_distances), sorted(list(p[0].hypernym_distances), key=lambda tup: tup[1]))
-                print(len(p[1].hypernym_distances), sorted(list(p[1].hypernym_distances), key=lambda tup: tup[1]))
+                print('Hypernym distances for', word_1, len(p[0].hypernym_distances), sorted(list(p[0].hypernym_distances), key=lambda tup: tup[1]))
+                print('Hypernym distances for:', word_2, len(p[1].hypernym_distances), sorted(list(p[1].hypernym_distances), key=lambda tup: tup[1]))
                 # print(len(p[0].hypernym_paths), p[0].hypernym_paths)
                 # print(len(p[1].hypernym_paths), p[1].hypernym_paths)
                 print('LCH:', p[0], p[1], '=', p[0].sim_lch(p[1]))
@@ -252,52 +240,14 @@ class Wsd:
                 print('JCN:', p[0], p[1], '=', p[0].dist_jcn(p[1]))
                 print('LIN:', p[0], p[1], '=', p[0].sim_lin(p[1]))
                 print('---')
-                print('Common hypernyms:', p[0].common_hypernyms(p[1]), len(p[0].common_hypernyms(p[1])))
+                print('Common hypernyms:', len(p[0].common_hypernyms(p[1])), p[0].common_hypernyms(p[1]))
                 print('Lowest common hypernyms:', p[0].lowest_common_hypernyms(p[1]))
                 print('Nearest common hypernyms:', p[0].nearest_common_hypernyms(p[1]))
                 print('Shortest path lenght:', p[0].shortest_path_length(p[1]))
                 print('===')
 
-        else:
-            print('Synset not found')
-
-    def search_germanet_definitions(self, word):
-        pass
-        """ TODO """
-
-        # print('Searching for: ', word)
-
-        definitions = [word]
-
-        if self.is_in_germanet(word):
-            for synset in GN_ROOT:
-                orthforms = synset.findall('.//orthForm')
-                for item in orthforms:
-                    if word == item.text or word == item.text.lower() or word == item.text.lower().capitalize():
-                        parent = item.getparent()
-                        parent_id = item.getparent().get('id')
-                        # print(parent)
-                        # print('ID:', parent_id)
-                        ancestor = parent.getparent()
-                        ancestor_id = parent.getparent().get('id')
-                        # print(ancestor)
-                        # print('ID:', ancestor_id)
-                        # TODO get sense of synset id 1, 2 etc.
-                        # print('Synset by ID:', ger.get_lemma_by_id(ancestor_id))
-                        parent_sense = item.getparent().get('sense')
-                        parent_description = PARAROOT.find('.//wiktionaryParaphrase[@lexUnitId = "'+parent_id+'"]')
-                        try:
-                            sense_dict = {parent_sense: parent_description.get('wiktionarySense')}
-                        except AttributeError:
-                            sense_dict = {parent_sense: None}
-                        definitions.append(sense_dict)
-
-        if len(definitions) > 0:
-            return definitions
-        else:
-            return 0
-
     def lesk(self, ambigous_word, other_word, remove_stop_words=False, join_sense_and_example=False):
+        """ TODO: fix this function """
         try:
             # Sense 0 ambigous_word
             sense_0 = self.definition_dict[ambigous_word]['0']
@@ -374,6 +324,7 @@ class Wsd:
 
 
 class Style:
+    """ Helper class for nicer coloring """
     BLUE = '\033[94m'
     GREEN = '\033[92m'
     WARNING = '\033[93m'
@@ -387,8 +338,9 @@ if __name__ == "__main__":
         PREFIXOIDS WSD
     """
     PREF_WSD = Wsd('Prefixoids', DATA_PATH + 'wsd/' + PREF_JSON_DICT)
+    pref_inventory_list = PREF_WSD.read_file_to_list(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE)
 
-    # print(PREF.lesk('Bilderbuch', 'Absturz', pref_json_dict))
+    """ Loop """
     # counter = 0
     # for i in pref_inventory_list:
     #     counter += 1
@@ -399,23 +351,14 @@ if __name__ == "__main__":
     #     elif counter % 3 == 0:
     #         pass
     #     else:
-    #     print('Line:', str(counter) + ' ===============================', i[0], i[-1])
-    #     # PREF.search_germanet_similarities(PREF.split_word_at_pipe(i[1])[0], PREF.split_word_at_pipe(i[1])[1])
-    #     PREF_WSD.lesk(PREF_WSD.split_word_at_pipe(i[1])[0], PREF_WSD.split_word_at_pipe(i[1])[1], pref_json_dict)
+    #         print('Line:', str(counter) + ' ===============================', i[0], i[-1])
+    #         # PREF.calculate_similarity_scores(PREF.split_word_at_pipe(i[1])[0], PREF.split_word_at_pipe(i[1])[1])
 
-    # print(PREF_WSD.search_germanet_similarities('Bilderbuch', 'Bilderbuch', 'N'))
-    # print(PREF_WSD.search_germanet_similarities('Pferd', 'Hengst', 'N'))
-    # print(PREF_WSD.search_germanet_definitions('Pferd'))
-    # print(PREF_WSD.search_germanet_definitions('Hengst'))
-    # print(PREF_WSD.search_germanet_similarities('Kohle', 'Tagebuch'))
-    # print(PREF_WSD.search_germanet_similarities('Hund', 'Katze'))
-    # print(PREF_WSD.search_germanet_definitions('Wunsch'))
-    # print(PREF_WSD.search_germanet_definitions('Kohle'))
-    print(PREF_WSD.search_germanet_synonyms('Geld'))
-    print()
-    print(PREF_WSD.return_germanet_lemmas('Geld'))
-    print()
-    print(PREF_WSD.search_germanet_synsets('Geld'))
+    """ Tests """
+    print(PREF_WSD.is_in_germanet('Test'))
+    print(PREF_WSD.search_germanet_synsets('Bilderbuch'))
+    print(PREF_WSD.create_synsets_dictionary('Bilderbuch'))
+    print(PREF_WSD.calculate_similarity_scores('Bilderbuch', 'Auflage'))
 
     inventory = ['Bilderbuch',
                  'Blitz',
@@ -438,26 +381,5 @@ if __name__ == "__main__":
                  'Papst',
                  'Schwein']
 
-    """
-    <synset id="s38531" category="nomen" class="Mensch">
-    
-        <lexUnit id="l118841" sense="1" source="core" namedEntity="no" artificial="no" styleMarking="no">
-            <orthForm>Gottlose</orthForm>
-        </lexUnit>
-        
-        <lexUnit id="l118842" sense="1" source="core" namedEntity="no" artificial="no" styleMarking="no">
-            <orthForm>Gottloser</orthForm>
-        </lexUnit>
-        
-        <lexUnit id="l56466" sense="2" source="core" namedEntity="no" artificial="no" styleMarking="no">
-            <orthForm>Heide</orthForm>
-        </lexUnit>
-        
-        <lexUnit id="l56467" sense="1" source="core" namedEntity="no" artificial="no" styleMarking="no">
-            <orthForm>Heidin</orthForm>
-        </lexUnit>
-    </synset>
-    """
-
     # for i in inventory:
-    #     print(PREF.search_germanet_definitions(i))
+    #     print(PREF_WSD.create_synsets_dictionary(i))
