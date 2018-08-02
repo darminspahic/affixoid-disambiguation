@@ -26,6 +26,7 @@ import sys
 import math
 import matplotlib.pyplot as plt
 import numpy as np
+
 from lxml import etree
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -43,7 +44,7 @@ DATA_RESSOURCES_PATH = '../res/'
 FINAL_PREFIXOID_FILE = 'binary_unique_instance_prefixoid_segmentations.txt'
 FINAL_SUFFIXOID_FILE = 'binary_unique_instance_suffixoid_segmentations.txt'
 
-"""Frequencies"""
+""" Frequencies """
 FREQUENCY_PREFIXOID_FORMATIONS = 'lemma_frequencies_prefixoid_formations.csv'
 FREQUENCY_SUFFIXOID_FORMATIONS = 'lemma_frequencies_suffixoid_formations.csv'
 FREQUENCY_PREFIXOID_LEMMAS = 'prefixoid_lemmas_freqs.csv'
@@ -51,20 +52,20 @@ FREQUENCY_SUFFIXOID_LEMMAS = 'suffixoid_lemmas_freqs.csv'
 FREQUENCY_PREFIXOID_HEADS = 'lemma_frequencies_unique_heads_of_prefixoid_formations.csv'
 FREQUENCY_SUFFIXOID_MODIFIERS = 'modifiers_of_suffixoids_lemmas_freqs.csv'
 
-"""fastText vectors"""
+""" fastText vectors """
 FAST_TEXT_PREFIXOID_VECTORS = 'fastText/prefixoid-fastText-vectors.txt'
 FAST_TEXT_SUFFIXOID_VECTORS = 'fastText/suffixoid-fastText-vectors.txt'
 
-"""Polarity"""
+""" Polarity """
 SENTIMERGE_POLARITY = 'SentiMerge/sentimerge.txt'
 
-"""Psycholinguistic features; Affective norms"""
+""" Psycholinguistic features; Affective norms """
 AFFECTIVE_NORMS = 'AffectiveNorms/ratings_lrec16_koeper_ssiw.txt'
 
-"""Emolex"""
+""" Emolex """
 EMOLEX = 'EmoLex/NRC-Emotion-Lexicon-v0.92-DE-sorted.csv'
 
-"""PMI Lexicon"""
+""" PMI Lexicon """
 PMI_SCORES = '../../PMI/sdewac_npmi.csv.bz2'
 PMI_OUTPUT = 'PMI/'
 
@@ -75,23 +76,19 @@ TREE = etree.parse(DATA_RESSOURCES_PATH+'GermaNet/GN_full.xml')
 GN_ROOT = TREE.getroot()
 GN_WORDS = GN_ROOT.findall('.//orthForm')
 
-PARATREE = etree.parse(DATA_RESSOURCES_PATH+'GermaNet/GN_paraphrases.xml')
-PARAROOT = PARATREE.getroot()
-# PARAPHRASES = PARAROOT.findall('.//wiktionaryParaphrase')
-
-"""GermaNet Supersenses"""
+""" GermaNet Supersenses """
 GN_SUPERSENSES = {'Allgemein': 0, 'Bewegung': 0, 'Gefuehl': 0, 'Geist': 0, 'Gesellschaft': 0, 'Koerper': 0, 'Menge': 0, 'natPhaenomen': 0, 'Ort': 0, 'Pertonym': 0, 'Perzeption': 0, 'privativ': 0, 'Relation': 0, 'Substanz': 0, 'Verhalten': 0, 'Zeit': 0, 'Artefakt': 0, 'Attribut': 0, 'Besitz': 0, 'Form': 0, 'Geschehen': 0, 'Gruppe': 0, 'Kognition': 0, 'Kommunikation': 0, 'Mensch': 0, 'Motiv': 0, 'Nahrung': 0, 'natGegenstand': 0, 'Pflanze': 0, 'Tier': 0, 'Tops': 0, 'Koerperfunktion': 0, 'Konkurrenz': 0, 'Kontakt': 0, 'Lokation': 0, 'Schoepfung': 0, 'Veraenderung': 0, 'Verbrauch': 0}
 
-"""To prevent unnecessary parsing, use words already found"""
-# GN_PREF_FORMATIONS = ['Blitzgerät', 'Blitzkarriere', 'Blitzkrieg', 'Blitzkurs', 'Blitzlampe', 'Blitzröhre', 'Blitzschach', 'Blitzschlag', 'Bombenabwurf', 'Bombenalarm', 'Bombendrohung', 'Bombenexplosion', 'Bombenleger', 'Bombennacht', 'Bombenopfer', 'Bombenschacht', 'Bombenschaden', 'Bombensplitter', 'Bombenteppich', 'Bombentest', 'Bombentrichter', 'Glanzente', 'Glanzleistung', 'Glanzlicht', 'Glanzpunkt', 'Glanzrolle', 'Glanzstoff', 'Glanzstück', 'Glanzzeit', 'Jahrhundertfeier', 'Jahrhunderthälfte', 'Jahrhunderthochwasser', 'Jahrhundertsommer', 'Jahrhundertwechsel', 'Qualitätsbewusstsein', 'Qualitätskriterium', 'Qualitätsprüfung', 'Qualitätsstandard', 'Qualitätsverbesserung', 'Qualitätswein', 'Qualitätszuwachs', 'Schweineblut', 'Schweinebraten', 'Schweinefleisch', 'Schweinehaltung', 'Schweinehirte', 'Schweinepest', 'Spitzenfunktionär', 'Spitzenkandidatin', 'Spitzenkoch', 'Spitzenläufer', 'Spitzenleistung', 'Spitzenplatz', 'Spitzenreiter', 'Spitzenspiel', 'Spitzensportler', 'Spitzenverband', 'Spitzenverdiener', 'Spitzenverein', 'Spitzenwert', 'Traummädchen', 'Traumwelt']
-# GN_SUFF_FORMATIONS = ['Börsenguru', 'Burgunderkönig', 'Bürohengst', 'Dänenkönig', 'Donnergott', 'Dreikönig', 'Feenkönig', 'Feuergott', 'Froschkönig', 'Gegenkönig', 'Gegenpapst', 'Gotenkönig', 'Gottkönig', 'Großkönig', 'Hausschwein', 'Herzkönig', 'Himmelsgott', 'Hochkönig', 'Hunnenkönig', 'Kleinkönig', 'Langobardenkönig', 'Liebesgott', 'Märchenkönig', 'Marienikone', 'Meeresgott', 'Moralapostel', 'Normannenkönig', 'Perserkönig', 'Preußenkönig', 'Priesterkönig', 'Rattenkönig', 'Schlagbolzen', 'Schöpfergott', 'Schützenkönig', 'Schwedenkönig', 'Slawenapostel', 'Sonnenkönig', 'Stammapostel', 'Torschützenkönig', 'Unterkönig', 'Vizekönig', 'Vogelkönig', 'Wachtelkönig', 'Warzenschwein', 'Westgotenkönig', 'Wettergott', 'Wildschwein', 'Winterkönig', 'Zaunkönig', 'Zuchthengst', 'Zwergenkönig']
+""" To prevent unnecessary parsing, use formations already found in GermaNet """
+GN_PREF_FORMATIONS = ['Blitzgerät', 'Blitzkarriere', 'Blitzkrieg', 'Blitzkurs', 'Blitzlampe', 'Blitzröhre', 'Blitzschach', 'Blitzschlag', 'Bombenabwurf', 'Bombenalarm', 'Bombendrohung', 'Bombenexplosion', 'Bombenleger', 'Bombennacht', 'Bombenopfer', 'Bombenschacht', 'Bombenschaden', 'Bombensplitter', 'Bombenteppich', 'Bombentest', 'Bombentrichter', 'Glanzente', 'Glanzleistung', 'Glanzlicht', 'Glanzpunkt', 'Glanzrolle', 'Glanzstoff', 'Glanzstück', 'Glanzzeit', 'Jahrhundertfeier', 'Jahrhunderthälfte', 'Jahrhunderthochwasser', 'Jahrhundertsommer', 'Jahrhundertwechsel', 'Qualitätsbewusstsein', 'Qualitätskriterium', 'Qualitätsprüfung', 'Qualitätsstandard', 'Qualitätsverbesserung', 'Qualitätswein', 'Qualitätszuwachs', 'Schweineblut', 'Schweinebraten', 'Schweinefleisch', 'Schweinehaltung', 'Schweinehirte', 'Schweinepest', 'Spitzenfunktionär', 'Spitzenkandidatin', 'Spitzenkoch', 'Spitzenläufer', 'Spitzenleistung', 'Spitzenplatz', 'Spitzenreiter', 'Spitzenspiel', 'Spitzensportler', 'Spitzenverband', 'Spitzenverdiener', 'Spitzenverein', 'Spitzenwert', 'Traummädchen', 'Traumwelt']
+GN_SUFF_FORMATIONS = ['Börsenguru', 'Burgunderkönig', 'Bürohengst', 'Dänenkönig', 'Donnergott', 'Dreikönig', 'Feenkönig', 'Feuergott', 'Froschkönig', 'Gegenkönig', 'Gegenpapst', 'Gotenkönig', 'Gottkönig', 'Großkönig', 'Hausschwein', 'Herzkönig', 'Himmelsgott', 'Hochkönig', 'Hunnenkönig', 'Kleinkönig', 'Langobardenkönig', 'Liebesgott', 'Märchenkönig', 'Marienikone', 'Meeresgott', 'Moralapostel', 'Normannenkönig', 'Perserkönig', 'Preußenkönig', 'Priesterkönig', 'Rattenkönig', 'Schlagbolzen', 'Schöpfergott', 'Schützenkönig', 'Schwedenkönig', 'Slawenapostel', 'Sonnenkönig', 'Stammapostel', 'Torschützenkönig', 'Unterkönig', 'Vizekönig', 'Vogelkönig', 'Wachtelkönig', 'Warzenschwein', 'Westgotenkönig', 'Wettergott', 'Wildschwein', 'Winterkönig', 'Zaunkönig', 'Zuchthengst', 'Zwergenkönig']
 
-"""Affixoid dictionary with fastText similarities; sorted"""
+""" Affixoid dictionary with fastText similarities; sorted """
 AFFIXOID_DICTIONARY = 'fastText/affixoid_dict_fasttext_similarites.txt'
 PREFIXOID_DICTIONARY = 'fastText/prefixoid_dict_fasttext_similarites.txt'
 SUFFIXOID_DICTIONARY = 'fastText/suffixoid_dict_fasttext_similarites.txt'
 
-"""Empty words dictionary for collecting various data"""
+""" Empty words dictionary for collecting various data """
 EMPTY_WORDS_DICTIONARY = 'all_words_dict.txt'
 
 
@@ -100,7 +97,7 @@ class FeatureExtractor:
 
         Returns: Files with feature vectors
 
-        Example: PREF = FeatureExtractor()
+        Example: PREF = FeatureExtractor('Prefixoids', DATA_RESSOURCES_PATH + PREFIXOID_DICTIONARY)
 
     """
 
@@ -110,7 +107,6 @@ class FeatureExtractor:
         print('-' * 40)
 
         try:
-            # self.fasttext_similar_words_dict = fasttext_similar_words_dict  # Change for Affixoids
             print('Initializing dictionary...')
             self.fasttext_similar_words_dict = self.read_dict_from_file(similar_words_dict)
 
@@ -128,7 +124,7 @@ class FeatureExtractor:
                 Dictionary with class instances
 
             Example:
-                >>> self.create_affixoid_dictionary(DATA_FINAL_PATH+FINAL_PREFIXOID_FILE, 'Y')
+                >>> self.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE, 'Y')
 
         """
         dictionary = {}
@@ -161,7 +157,7 @@ class FeatureExtractor:
                 List of lines from file
 
             Example:
-                >>> self.read_file_to_list(DATA_FINAL_PATH+FINAL_PREFIXOID_FILE)
+                >>> self.read_file_to_list(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE)
 
         """
         file_as_list = []
@@ -222,12 +218,14 @@ class FeatureExtractor:
         print(Style.BOLD + 'Dictionary written to:' + Style.END, output_file)
 
     def read_dict_from_file(self, dictionary_file):
+        """ Helper function to read a dictionary from a file. """
         with open(dictionary_file, "rb") as data:
             dictionary = ast.literal_eval(data.read().decode('utf-8'))
 
         return dictionary
 
     def read_json_from_file(self, json_file):
+        """ Helper function to read a json file. """
         j = open(json_file, 'r', encoding='utf-8')
         json_data = json.load(j)
 
@@ -315,7 +313,7 @@ class FeatureExtractor:
                 Dictionary with frequency instances of affixoids
 
             Example:
-                >>> self.create_frequency_dictionary(DATA_PATH+FREQUENCY_PREFIXOID_LEMMAS)
+                >>> self.create_frequency_dictionary(DATA_PATH + FREQUENCY_PREFIXOID_LEMMAS)
 
         """
 
@@ -338,12 +336,13 @@ class FeatureExtractor:
 
             Args:
                 vector_file (file): File with vector values from FastText
+                multiword (bool): Set to True if the word in vector file has multiple parts
 
             Returns:
                 Dictionary with vector values as list
 
             Example:
-                >>> self.create_vector_dictionary(DATA_PATH+FREQUENCY_PREFIXOID_LEMMAS)
+                >>> self.create_vector_dictionary(DATA_RESSOURCES_PATH + FAST_TEXT_PREFIXOID_VECTORS)
 
         """
 
@@ -363,7 +362,7 @@ class FeatureExtractor:
         return dictionary
 
     def create_splitword_dictionary(self, splitword):
-        """TODO"""
+        """ Helper function create a dictionary from splitwords """
 
         dictionary = {}
         dict_key = splitword
@@ -401,7 +400,7 @@ class FeatureExtractor:
         n_candidates = dict_2.values()
         rects2 = ax.bar(ind + width, n_candidates, width, color='r')
 
-        # add some text for labels, title and axes ticks
+        # adds text for labels, title and axes ticks
         ax.set_ylabel('Counts')
         ax.set_title('Counts per ' + title + ' candidate. Total: ' + str(sum(dict_1.values()) + sum(dict_2.values())) + '')
         ax.set_xticks(ind + width)
@@ -410,7 +409,7 @@ class FeatureExtractor:
         ax.legend((rects1[0], rects2[0]), ('Y', 'N'))
 
         def autolabel(rects):
-            # attach some text labels
+            # attaches text labels
             for rect in rects:
                 height = rect.get_height()
                 ax.text(rect.get_x() + rect.get_width() / 2., 1.05 * height, '%d' % int(height),
@@ -531,7 +530,6 @@ class FeatureExtractor:
             for synset in GN_ROOT:
                 classes = synset.get('class')
                 orthforms = synset.findall('.//orthForm')
-                # gn_supersenses_dict.update({classes: 0})
                 for item in orthforms:
                     if word == item.text or word == item.text.lower() or word == item.text.lower().capitalize():
                         print(Style.BOLD + item.text + Style.END, 'supersense >', Style.BOLD + classes + Style.END)
@@ -553,8 +551,6 @@ class FeatureExtractor:
                         # return similar_word_supersense
                         break
 
-            #    this worked; remember to uncomment # similar_word_supersense = '', line 517
-
             if len(similar_word_supersense) > 0:
                 print('Word from fastText found in GermaNet...')
                 return similar_word_supersense
@@ -569,7 +565,7 @@ class FeatureExtractor:
             return similar_word_supersense
 
     def is_in_germanet(self, word):
-        """This function parses GermaNet for word and returns a boolean if the word is found"""
+        """ This function parses GermaNet for a word and returns a boolean if the word is found """
 
         for item in GN_WORDS:
             if word == item.text or word == item.text.lower() or word == item.text.lower().capitalize():
@@ -578,7 +574,7 @@ class FeatureExtractor:
         return False
 
     def is_in_germanet_fast(self, word):
-        """TODO Check if correct"""
+        """ A slightly faster version that parses GermaNet for a word and returns a boolean if the word is found """
 
         if GN_ROOT.xpath('.//orthForm[text()="'+word+'"]') is not None:
             return True
@@ -586,16 +582,14 @@ class FeatureExtractor:
             return False
 
     def return_similar_words_from_fasttext(self, word):
-        """TODO"""
+        """ This function returns a list of similar words from fastText """
         if word in self.fasttext_similar_words_dict.keys():
             return self.fasttext_similar_words_dict.get(word)
         else:
             return None
 
     def return_single_word_from_fasttext(self, word, dictionary):
-        """TODO"""
-        # Return a word similar to the searched word, that is also in given dictionary.
-        # NOTE: Check if in fastText, if fails return similar cosine word from inventory
+        """ This function returns a single word from fastText with a given dictionary """
 
         similar_words_from_fasttext = self.return_similar_words_from_fasttext(word)
 
@@ -646,8 +640,6 @@ class FeatureExtractor:
         if from_germanet:
             for x in sorted_cosine_similarity_dict:
                 if x[0] in fast_text_vector_dict.keys():
-                    # print(Style.BOLD + 'Similar word:' + Style.END, x[0])
-                    # print(Style.BOLD + 'Cosine similarity:' + Style.END, x[1])
                     if self.is_in_germanet(x[0]):
                         print(Style.BOLD + x[0] + Style.END, 'Found in GermaNet!')
                         print(Style.BOLD + 'Cosine similarity:' + Style.END, x[1])
@@ -656,8 +648,6 @@ class FeatureExtractor:
         else:
             print('Searching in PolarityDict')
             for x in sorted_cosine_similarity_dict:
-                # print(Style.BOLD + 'Similar word:' + Style.END, x[0])
-                # print(Style.BOLD + 'Cosine similarity:' + Style.END, x[1])
                 if x[0] in polarity_dict.keys():
                     print(Style.BOLD + x[0] + Style.END, 'Found in PolarityDict!')
                     print(Style.BOLD + 'Cosine similarity:' + Style.END, x[1])
@@ -696,7 +686,7 @@ class FeatureExtractor:
             return 0
 
     def extract_pmi_values(self, splitwords_dictionary, output_file):
-        """TODO"""
+        """ Helper function to extract PMI values for a word from a bz2 file and write values to a file """
 
         print('Extracting PMI scores...')
 
@@ -709,7 +699,6 @@ class FeatureExtractor:
                     decoded.append(word)
                 try:
                     splitword = str(decoded[0]) + '|' + str(decoded[1])
-                    # print(splitword)
                     if splitword in splitwords_dictionary.keys():
                         print('Found!', decoded)
                         splitwords_dictionary.update({splitword: [decoded[2], decoded[3]]})
@@ -722,6 +711,7 @@ class FeatureExtractor:
 
 
 class Style:
+    """ Helper class for nicer coloring """
     BLUE = '\033[94m'
     GREEN = '\033[92m'
     WARNING = '\033[93m'
@@ -731,10 +721,12 @@ class Style:
 
 
 def sigmoid(x):
+    """ Helper function to calculate sigmoid value for x """
     return 1 / (1 + math.exp(-x))
 
 
 def min_max_scaling(x, min_x, max_x):
+    """ Helper function to calculate min/max scaling for x """
     return (x - min_x) / (max_x - min_x)
 
 
@@ -742,496 +734,496 @@ if __name__ == "__main__":
     """
         PREFIXOIDS
     """
-    # PREF = FeatureExtractor('Prefixoids', DATA_RESSOURCES_PATH + PREFIXOID_DICTIONARY)
-    # pref_inventory_list = PREF.read_file_to_list(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE)
-    # y_pref_dict = PREF.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE, 'Y')
-    # n_pref_dict = PREF.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE, 'N')
-    # print('Y:\t', y_pref_dict)
-    # print('N:\t', n_pref_dict)
-    # print('Total:\t', sum(y_pref_dict.values()) + sum(n_pref_dict.values()))
-    # print(len(pref_inventory_list))
-    # # PREF.plot_statistics(y_pref_dict, n_pref_dict, 'Prefixoids')
-    #
-    # f0_pref_list = []  # prefix coded into dictionary
-    # f1_pref_list = []  # binary indicator, if affixoid
-    # f2_pref_list = []  # frequency of complex word
-    # f3_pref_list = []  # frequency of first part
-    # f4_pref_list = []  # frequency of second part
-    # f5_pref_list = []  # cosine similarity between complex word and head
-    # f6_pref_list = []  # vector of GermaNet supersenses for complex word
-    # f7_pref_list = []  # vector of GermaNet supersenses for first part
-    # f8_pref_list = []  # vector of GermaNet supersenses for second part
-    # f9_pref_list = []  # SentiMerge Polarity for complex word
-    # f10_pref_list = []  # SentiMerge Polarity for first part
-    # f11_pref_list = []  # SentiMerge Polarity for second part
-    # f12_pref_list = []  # Affective Norms for complex word
-    # f13_pref_list = []  # Affective Norms for first part
-    # f14_pref_list = []  # Affective Norms for second part
-    # f15_pref_list = []  # Emotion for complex word
-    # f16_pref_list = []  # Emotion for first part
-    # f17_pref_list = []  # Emotion for second part
-    #
-    # f2_pref_formations = PREF.create_frequency_dictionary(DATA_PATH + FREQUENCY_PREFIXOID_FORMATIONS)
-    # f3_pref_lemmas = PREF.create_frequency_dictionary(DATA_PATH + FREQUENCY_PREFIXOID_LEMMAS)
-    # f4_pref_heads = PREF.create_frequency_dictionary(DATA_PATH + FREQUENCY_PREFIXOID_HEADS)
-    # f5_pref_vector_dict = PREF.create_vector_dictionary(DATA_RESSOURCES_PATH + FAST_TEXT_PREFIXOID_VECTORS)
-    # f9_pref_polarity_dict = PREF.create_polarity_dict(DATA_RESSOURCES_PATH + SENTIMERGE_POLARITY)
-    # f12_pref_affective_norms_dict = PREF.create_vector_dictionary(DATA_RESSOURCES_PATH + AFFECTIVE_NORMS)
-    # f15_pref_emolex_dict = PREF.create_vector_dictionary(DATA_RESSOURCES_PATH + EMOLEX, multiword=True)
-    # f18_pref_splitwords_dict = {}
+    PREF = FeatureExtractor('Prefixoids', DATA_RESSOURCES_PATH + PREFIXOID_DICTIONARY)
+    pref_inventory_list = PREF.read_file_to_list(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE)
+    y_pref_dict = PREF.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE, 'Y')
+    n_pref_dict = PREF.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE, 'N')
+    print('Y:\t', y_pref_dict)
+    print('N:\t', n_pref_dict)
+    print('Total:\t', sum(y_pref_dict.values()) + sum(n_pref_dict.values()))
+    print(len(pref_inventory_list))
+    # PREF.plot_statistics(y_pref_dict, n_pref_dict, 'Prefixoids')
 
-    # maximum_f2_pref_formations = max(f2_pref_formations, key=f2_pref_formations.get)
-    # maximum_f3_pref_lemmas = max(f3_pref_lemmas, key=f3_pref_lemmas.get)
-    # maximum_f4_pref_heads = max(f4_pref_heads, key=f4_pref_heads.get)
-    #
-    # print('Max frequencies')
-    # print('Formations:', f2_pref_formations[maximum_f2_pref_formations],
-    #       'Lemmas:', f3_pref_lemmas[maximum_f3_pref_lemmas],
-    #       'Heads:', f4_pref_heads[maximum_f4_pref_heads])
-    ## Formations: 97 Lemmas: 94232 Heads: 9988
-    #
-    # counter = 0
-    # for i in pref_inventory_list:
-    #     counter += 1
-    #     print('Line:', str(counter) + ' ===============================', i[0], i[-1])
-    #
-    #     f0 = PREF.extract_frequency(i[-3], y_pref_dict, True)  # y_pref_dict or n_pref_dict
-    #     f1 = PREF.transform_class_name_to_binary(i[-1])
-    #     f2 = PREF.extract_frequency(i[0], f2_pref_formations)
-    #     f3 = PREF.extract_frequency(PREF.split_word_at_pipe(i[1])[0], f3_pref_lemmas)
-    #     f4 = PREF.extract_frequency(PREF.split_word_at_pipe(i[1])[1], f4_pref_heads)
-    #     f5 = PREF.calculate_cosine_similarity(i[0], PREF.split_word_at_pipe(i[1])[0], f5_pref_vector_dict)  # reverse for SUFFIXOIDS
-    #     f6 = PREF.search_germanet_supersenses(i[0], f5_pref_vector_dict)
-    #     f7 = PREF.search_germanet_supersenses(PREF.split_word_at_pipe(i[1])[0], f5_pref_vector_dict)
-    #     f8 = PREF.search_germanet_supersenses(PREF.split_word_at_pipe(i[1])[1], f5_pref_vector_dict)
-    #
-    #     f9 = PREF.extract_dictionary_values(i[0], f9_pref_polarity_dict)
-    #     if f9 == 0:
-    #         f9_similar_pol = PREF.return_single_word_from_fasttext(i[0], f9_pref_polarity_dict)
-    #         if f9_similar_pol == 0:
-    #             f9_similar_pol = PREF.return_similar_cosine_word(i[0], f5_pref_vector_dict, False, polarity_dict=f9_pref_polarity_dict)
-    #             f9_similar_pol_value = PREF.extract_dictionary_values(f9_similar_pol, f9_pref_polarity_dict)
-    #         else:
-    #             f9_similar_pol_value = PREF.extract_dictionary_values(f9_similar_pol, f9_pref_polarity_dict)
-    #         f9 = f9_similar_pol_value
-    #
-    #     f10 = PREF.extract_dictionary_values(PREF.split_word_at_pipe(i[1])[0], f9_pref_polarity_dict)
-    #     if f10 == 0:
-    #         f10_similar_pol = PREF.return_single_word_from_fasttext(PREF.split_word_at_pipe(i[1])[0], f9_pref_polarity_dict)
-    #         if f10_similar_pol == 0:
-    #             f10_similar_pol = PREF.return_similar_cosine_word(PREF.split_word_at_pipe(i[1])[0], f5_pref_vector_dict, False, polarity_dict=f9_pref_polarity_dict)
-    #             f10_similar_pol_value = PREF.extract_dictionary_values(f10_similar_pol, f9_pref_polarity_dict)
-    #         else:
-    #             f10_similar_pol_value = PREF.extract_dictionary_values(f10_similar_pol, f9_pref_polarity_dict)
-    #         f10 = f10_similar_pol_value
-    #
-    #     f11 = PREF.extract_dictionary_values(PREF.split_word_at_pipe(i[1])[1], f9_pref_polarity_dict)
-    #     if f11 == 0:
-    #         f11_similar_pol = PREF.return_single_word_from_fasttext(PREF.split_word_at_pipe(i[1])[1], f9_pref_polarity_dict)
-    #         if f11_similar_pol == 0:
-    #             f11_similar_pol = PREF.return_similar_cosine_word(PREF.split_word_at_pipe(i[1])[1], f5_pref_vector_dict, False, polarity_dict=f9_pref_polarity_dict)
-    #             f11_similar_pol_value = PREF.extract_dictionary_values(f11_similar_pol, f9_pref_polarity_dict)
-    #         else:
-    #             f11_similar_pol_value = PREF.extract_dictionary_values(f11_similar_pol, f9_pref_polarity_dict)
-    #         f11 = f11_similar_pol_value
-    #
-    #
-    #     f12 = PREF.extract_dictionary_values(i[0], f12_pref_affective_norms_dict)
-    #     if f12 == 0:
-    #         f12_similar_pol = PREF.return_single_word_from_fasttext(i[0], f12_pref_affective_norms_dict)
-    #         if f12_similar_pol == 0:
-    #             f12_similar_pol = PREF.return_similar_cosine_word(i[0], f5_pref_vector_dict, False, polarity_dict=f12_pref_affective_norms_dict)
-    #             f12_similar_pol_value = PREF.extract_dictionary_values(f12_similar_pol, f12_pref_affective_norms_dict)
-    #         else:
-    #             f12_similar_pol_value = PREF.extract_dictionary_values(f12_similar_pol, f12_pref_affective_norms_dict)
-    #         f12 = f12_similar_pol_value
-    #
-    #     f13 = PREF.extract_dictionary_values(PREF.split_word_at_pipe(i[1])[0], f12_pref_affective_norms_dict)
-    #     if f13 == 0:
-    #         f13_similar_pol = PREF.return_single_word_from_fasttext(PREF.split_word_at_pipe(i[1])[0], f12_pref_affective_norms_dict)
-    #         if f13_similar_pol == 0:
-    #             f13_similar_pol = PREF.return_similar_cosine_word(PREF.split_word_at_pipe(i[1])[0], f5_pref_vector_dict, False, polarity_dict=f12_pref_affective_norms_dict)
-    #             f13_similar_pol_value = PREF.extract_dictionary_values(f13_similar_pol, f12_pref_affective_norms_dict)
-    #         else:
-    #             f13_similar_pol_value = PREF.extract_dictionary_values(f13_similar_pol, f12_pref_affective_norms_dict)
-    #         f13 = f13_similar_pol_value
-    #
-    #     f14 = PREF.extract_dictionary_values(PREF.split_word_at_pipe(i[1])[1], f12_pref_affective_norms_dict)
-    #     if f14 == 0:
-    #         f14_similar_pol = PREF.return_single_word_from_fasttext(PREF.split_word_at_pipe(i[1])[1], f12_pref_affective_norms_dict)
-    #         if f14_similar_pol == 0:
-    #             f14_similar_pol = PREF.return_similar_cosine_word(PREF.split_word_at_pipe(i[1])[1], f5_pref_vector_dict, False, polarity_dict=f12_pref_affective_norms_dict)
-    #             f14_similar_pol_value = PREF.extract_dictionary_values(f14_similar_pol, f12_pref_affective_norms_dict)
-    #         else:
-    #             f14_similar_pol_value = PREF.extract_dictionary_values(f14_similar_pol, f12_pref_affective_norms_dict)
-    #         f14 = f14_similar_pol_value
-    #
-    #     f15 = PREF.extract_dictionary_values(i[0], f15_pref_emolex_dict)
-    #     if f15 == 0:
-    #         f15_similar_pol = PREF.return_single_word_from_fasttext(i[0], f15_pref_emolex_dict)
-    #         if f15_similar_pol == 0:
-    #             f15_similar_pol = PREF.return_similar_cosine_word(i[0], f5_pref_vector_dict, False, polarity_dict=f15_pref_emolex_dict)
-    #             f15_similar_pol_value = PREF.extract_dictionary_values(f15_similar_pol, f15_pref_emolex_dict)
-    #         else:
-    #             f15_similar_pol_value = PREF.extract_dictionary_values(f15_similar_pol, f15_pref_emolex_dict)
-    #         f15 = f15_similar_pol_value
-    #
-    #     f16 = PREF.extract_dictionary_values(PREF.split_word_at_pipe(i[1])[0], f15_pref_emolex_dict)
-    #     if f16 == 0:
-    #         f16_similar_pol = PREF.return_single_word_from_fasttext(PREF.split_word_at_pipe(i[1])[0], f15_pref_emolex_dict)
-    #         if f16_similar_pol == 0:
-    #             f16_similar_pol = PREF.return_similar_cosine_word(PREF.split_word_at_pipe(i[1])[0], f5_pref_vector_dict, False, polarity_dict=f15_pref_emolex_dict)
-    #             f16_similar_pol_value = PREF.extract_dictionary_values(f16_similar_pol, f15_pref_emolex_dict)
-    #         else:
-    #             f16_similar_pol_value = PREF.extract_dictionary_values(f16_similar_pol, f15_pref_emolex_dict)
-    #         f16 = f16_similar_pol_value
-    #
-    #     f17 = PREF.extract_dictionary_values(PREF.split_word_at_pipe(i[1])[1], f15_pref_emolex_dict)
-    #     if f17 == 0:
-    #         f17_similar_pol = PREF.return_single_word_from_fasttext(PREF.split_word_at_pipe(i[1])[1], f15_pref_emolex_dict)
-    #         if f17_similar_pol == 0:
-    #             f17_similar_pol = PREF.return_similar_cosine_word(PREF.split_word_at_pipe(i[1])[1], f5_pref_vector_dict, False, polarity_dict=f15_pref_emolex_dict)
-    #             f17_similar_pol_value = PREF.extract_dictionary_values(f17_similar_pol, f15_pref_emolex_dict)
-    #         else:
-    #             f17_similar_pol_value = PREF.extract_dictionary_values(f17_similar_pol, f15_pref_emolex_dict)
-    #         f17 = f17_similar_pol_value
-    #
-    #     f0_pref_list.append(f0)
-    #     f1_pref_list.append(f1)
-    #     f2_pref_list.append(f2)
-    #     f3_pref_list.append(f3)
-    #     f4_pref_list.append(f4)
-    #     f5_pref_list.append(f5)
-    #     f6_pref_list.append(f6)
-    #     f7_pref_list.append(f7)
-    #     f8_pref_list.append(f8)
-    #     f9_pref_list.append(f9)
-    #     f10_pref_list.append(f10)
-    #     f11_pref_list.append(f11)
-    #     f12_pref_list.append(f12)
-    #     f13_pref_list.append(f13)
-    #     f14_pref_list.append(f14)
-    #     f15_pref_list.append(f15)
-    #     f16_pref_list.append(f16)
-    #     f17_pref_list.append(f17)
-    #
-    #     f18_pref_splitwords_dict.update({i[1]: [10 ** -3, 10 ** -3]})
-    #
-    # # print(f0_pref_list)
-    # print(len(f0_pref_list))
-    # # print(f1_pref_list)
-    # print(len(f1_pref_list))
-    # # print(f2_pref_list)
-    # print(len(f2_pref_list))
-    # # print(f3_pref_list)
-    # print(len(f3_pref_list))
-    # # print(f4_pref_list)
-    # print(len(f4_pref_list))
-    # # print(f5_pref_list)
-    # print(len(f5_pref_list))
-    # # print(f6_pref_list)
-    # print(len(f6_pref_list))
-    # # print(f7_pref_list)
-    # print(len(f7_pref_list))
-    # # print(f8_pref_list)
-    # print(len(f8_pref_list))
-    # # print(f9_pref_list)
-    # print(len(f9_pref_list))
-    # # print(f10_pref_list)
-    # print(len(f10_pref_list))
-    # # print(f11_pref_list)
-    # print(len(f11_pref_list))
-    # # print(f12_pref_list)
-    # print(len(f12_pref_list))
-    # # print(f13_pref_list)
-    # print(len(f13_pref_list))
-    # # print(f14_pref_list)
-    # print(len(f14_pref_list))
-    # # print(f15_pref_list)
-    # print(len(f15_pref_list))
-    # # print(f16_pref_list)
-    # print(len(f16_pref_list))
-    # # print(f17_pref_list)
-    # print(len(f17_pref_list))
+    f0_pref_list = []  # prefix coded into dictionary
+    f1_pref_list = []  # binary indicator, if affixoid
+    f2_pref_list = []  # frequency of complex word
+    f3_pref_list = []  # frequency of first part
+    f4_pref_list = []  # frequency of second part
+    f5_pref_list = []  # cosine similarity between complex word and head
+    f6_pref_list = []  # vector of GermaNet supersenses for complex word
+    f7_pref_list = []  # vector of GermaNet supersenses for first part
+    f8_pref_list = []  # vector of GermaNet supersenses for second part
+    f9_pref_list = []  # SentiMerge Polarity for complex word
+    f10_pref_list = []  # SentiMerge Polarity for first part
+    f11_pref_list = []  # SentiMerge Polarity for second part
+    f12_pref_list = []  # Affective Norms for complex word
+    f13_pref_list = []  # Affective Norms for first part
+    f14_pref_list = []  # Affective Norms for second part
+    f15_pref_list = []  # Emotion for complex word
+    f16_pref_list = []  # Emotion for first part
+    f17_pref_list = []  # Emotion for second part
 
-    """Write files"""
-    # PREF.write_list_to_file(f0_pref_list, DATA_FEATURES_PATH + 'f0_pref.txt')  # DONE
-    # PREF.write_list_to_file(f1_pref_list, DATA_FEATURES_PATH + 'f1_pref.txt')  # DONE
-    # PREF.write_list_to_file(f2_pref_list, DATA_FEATURES_PATH + 'f2_pref.txt')  # DONE
-    # PREF.write_list_to_file(f3_pref_list, DATA_FEATURES_PATH + 'f3_pref.txt')  # DONE
-    # PREF.write_list_to_file(f4_pref_list, DATA_FEATURES_PATH + 'f4_pref.txt')  # DONE
-    # PREF.write_list_to_file(f5_pref_list, DATA_FEATURES_PATH + 'f5_pref.txt')  # DONE
-    # PREF.write_list_to_file(f6_pref_list, DATA_FEATURES_PATH + 'f6_pref.txt')  # DONE
-    # PREF.write_list_to_file(f7_pref_list, DATA_FEATURES_PATH + 'f7_pref.txt')  # DONE
-    # PREF.write_list_to_file(f8_pref_list, DATA_FEATURES_PATH + 'f8_pref.txt')  # DONE
-    # PREF.write_list_to_file(f9_pref_list, DATA_FEATURES_PATH + 'f9_pref.txt')  # DONE
-    # PREF.write_list_to_file(f10_pref_list, DATA_FEATURES_PATH + 'f10_pref.txt')  # DONE
-    # PREF.write_list_to_file(f11_pref_list, DATA_FEATURES_PATH + 'f11_pref.txt')  # DONE
-    # PREF.write_list_to_file(f12_pref_list, DATA_FEATURES_PATH + 'f12_pref.txt')  # DONE
-    # PREF.write_list_to_file(f13_pref_list, DATA_FEATURES_PATH + 'f13_pref.txt')  # DONE
-    # PREF.write_list_to_file(f14_pref_list, DATA_FEATURES_PATH + 'f14_pref.txt')  # DONE
-    # PREF.write_list_to_file(f15_pref_list, DATA_FEATURES_PATH + 'f15_pref.txt')  # DONE
-    # PREF.write_list_to_file(f16_pref_list, DATA_FEATURES_PATH + 'f16_pref.txt')  # DONE
-    # PREF.write_list_to_file(f17_pref_list, DATA_FEATURES_PATH + 'f17_pref.txt')  # DONE
+    f2_pref_formations = PREF.create_frequency_dictionary(DATA_PATH + FREQUENCY_PREFIXOID_FORMATIONS)
+    f3_pref_lemmas = PREF.create_frequency_dictionary(DATA_PATH + FREQUENCY_PREFIXOID_LEMMAS)
+    f4_pref_heads = PREF.create_frequency_dictionary(DATA_PATH + FREQUENCY_PREFIXOID_HEADS)
+    f5_pref_vector_dict = PREF.create_vector_dictionary(DATA_RESSOURCES_PATH + FAST_TEXT_PREFIXOID_VECTORS)
+    f9_pref_polarity_dict = PREF.create_polarity_dict(DATA_RESSOURCES_PATH + SENTIMERGE_POLARITY)
+    f12_pref_affective_norms_dict = PREF.create_vector_dictionary(DATA_RESSOURCES_PATH + AFFECTIVE_NORMS)
+    f15_pref_emolex_dict = PREF.create_vector_dictionary(DATA_RESSOURCES_PATH + EMOLEX, multiword=True)
+    f18_pref_splitwords_dict = {}
 
-    """PMI Scores"""
-    # f18_pref_pmi_dict = PREF.extract_pmi_values(f18_pref_splitwords_dict, DATA_RESSOURCES_PATH + PMI_OUTPUT + 'pref_PMI_scores.txt')
-    # f18_pref_list = []  # PMI Scores for first and second part of word
-    #
-    # """Second loop over inventory (after collecting splitwords)"""
-    # for i in pref_inventory_list:
-    #     f18 = PREF.extract_dictionary_values(i[1], f18_pref_pmi_dict)
-    #     f18_pref_list.append(f18)
-    #
-    # # print(f18_pref_list)
-    # print(len(f18_pref_list))
-    #
-    # PREF.write_list_to_file(f18_pref_list, DATA_FEATURES_PATH + 'f18_pref.txt')
+    maximum_f2_pref_formations = max(f2_pref_formations, key=f2_pref_formations.get)
+    maximum_f3_pref_lemmas = max(f3_pref_lemmas, key=f3_pref_lemmas.get)
+    maximum_f4_pref_heads = max(f4_pref_heads, key=f4_pref_heads.get)
+
+    print('Max frequencies')
+    print('Formations:', f2_pref_formations[maximum_f2_pref_formations],
+          'Lemmas:', f3_pref_lemmas[maximum_f3_pref_lemmas],
+          'Heads:', f4_pref_heads[maximum_f4_pref_heads])
+    # Formations: 97 Lemmas: 94232 Heads: 9988
+
+    counter = 0
+    for i in pref_inventory_list:
+        counter += 1
+        print('Line:', str(counter) + ' ===============================', i[0], i[-1])
+
+        f0 = PREF.extract_frequency(i[-3], y_pref_dict, True)  # y_pref_dict or n_pref_dict
+        f1 = PREF.transform_class_name_to_binary(i[-1])
+        f2 = PREF.extract_frequency(i[0], f2_pref_formations)
+        f3 = PREF.extract_frequency(PREF.split_word_at_pipe(i[1])[0], f3_pref_lemmas)
+        f4 = PREF.extract_frequency(PREF.split_word_at_pipe(i[1])[1], f4_pref_heads)
+        f5 = PREF.calculate_cosine_similarity(i[0], PREF.split_word_at_pipe(i[1])[0], f5_pref_vector_dict)  # split_word_at_pipe(i[1])[1] for SUFFIXOIDS
+        f6 = PREF.search_germanet_supersenses(i[0], f5_pref_vector_dict)
+        f7 = PREF.search_germanet_supersenses(PREF.split_word_at_pipe(i[1])[0], f5_pref_vector_dict)
+        f8 = PREF.search_germanet_supersenses(PREF.split_word_at_pipe(i[1])[1], f5_pref_vector_dict)
+
+        f9 = PREF.extract_dictionary_values(i[0], f9_pref_polarity_dict)
+        if f9 == 0:
+            f9_similar_pol = PREF.return_single_word_from_fasttext(i[0], f9_pref_polarity_dict)
+            if f9_similar_pol == 0:
+                f9_similar_pol = PREF.return_similar_cosine_word(i[0], f5_pref_vector_dict, False, polarity_dict=f9_pref_polarity_dict)
+                f9_similar_pol_value = PREF.extract_dictionary_values(f9_similar_pol, f9_pref_polarity_dict)
+            else:
+                f9_similar_pol_value = PREF.extract_dictionary_values(f9_similar_pol, f9_pref_polarity_dict)
+            f9 = f9_similar_pol_value
+
+        f10 = PREF.extract_dictionary_values(PREF.split_word_at_pipe(i[1])[0], f9_pref_polarity_dict)
+        if f10 == 0:
+            f10_similar_pol = PREF.return_single_word_from_fasttext(PREF.split_word_at_pipe(i[1])[0], f9_pref_polarity_dict)
+            if f10_similar_pol == 0:
+                f10_similar_pol = PREF.return_similar_cosine_word(PREF.split_word_at_pipe(i[1])[0], f5_pref_vector_dict, False, polarity_dict=f9_pref_polarity_dict)
+                f10_similar_pol_value = PREF.extract_dictionary_values(f10_similar_pol, f9_pref_polarity_dict)
+            else:
+                f10_similar_pol_value = PREF.extract_dictionary_values(f10_similar_pol, f9_pref_polarity_dict)
+            f10 = f10_similar_pol_value
+
+        f11 = PREF.extract_dictionary_values(PREF.split_word_at_pipe(i[1])[1], f9_pref_polarity_dict)
+        if f11 == 0:
+            f11_similar_pol = PREF.return_single_word_from_fasttext(PREF.split_word_at_pipe(i[1])[1], f9_pref_polarity_dict)
+            if f11_similar_pol == 0:
+                f11_similar_pol = PREF.return_similar_cosine_word(PREF.split_word_at_pipe(i[1])[1], f5_pref_vector_dict, False, polarity_dict=f9_pref_polarity_dict)
+                f11_similar_pol_value = PREF.extract_dictionary_values(f11_similar_pol, f9_pref_polarity_dict)
+            else:
+                f11_similar_pol_value = PREF.extract_dictionary_values(f11_similar_pol, f9_pref_polarity_dict)
+            f11 = f11_similar_pol_value
+
+
+        f12 = PREF.extract_dictionary_values(i[0], f12_pref_affective_norms_dict)
+        if f12 == 0:
+            f12_similar_pol = PREF.return_single_word_from_fasttext(i[0], f12_pref_affective_norms_dict)
+            if f12_similar_pol == 0:
+                f12_similar_pol = PREF.return_similar_cosine_word(i[0], f5_pref_vector_dict, False, polarity_dict=f12_pref_affective_norms_dict)
+                f12_similar_pol_value = PREF.extract_dictionary_values(f12_similar_pol, f12_pref_affective_norms_dict)
+            else:
+                f12_similar_pol_value = PREF.extract_dictionary_values(f12_similar_pol, f12_pref_affective_norms_dict)
+            f12 = f12_similar_pol_value
+
+        f13 = PREF.extract_dictionary_values(PREF.split_word_at_pipe(i[1])[0], f12_pref_affective_norms_dict)
+        if f13 == 0:
+            f13_similar_pol = PREF.return_single_word_from_fasttext(PREF.split_word_at_pipe(i[1])[0], f12_pref_affective_norms_dict)
+            if f13_similar_pol == 0:
+                f13_similar_pol = PREF.return_similar_cosine_word(PREF.split_word_at_pipe(i[1])[0], f5_pref_vector_dict, False, polarity_dict=f12_pref_affective_norms_dict)
+                f13_similar_pol_value = PREF.extract_dictionary_values(f13_similar_pol, f12_pref_affective_norms_dict)
+            else:
+                f13_similar_pol_value = PREF.extract_dictionary_values(f13_similar_pol, f12_pref_affective_norms_dict)
+            f13 = f13_similar_pol_value
+
+        f14 = PREF.extract_dictionary_values(PREF.split_word_at_pipe(i[1])[1], f12_pref_affective_norms_dict)
+        if f14 == 0:
+            f14_similar_pol = PREF.return_single_word_from_fasttext(PREF.split_word_at_pipe(i[1])[1], f12_pref_affective_norms_dict)
+            if f14_similar_pol == 0:
+                f14_similar_pol = PREF.return_similar_cosine_word(PREF.split_word_at_pipe(i[1])[1], f5_pref_vector_dict, False, polarity_dict=f12_pref_affective_norms_dict)
+                f14_similar_pol_value = PREF.extract_dictionary_values(f14_similar_pol, f12_pref_affective_norms_dict)
+            else:
+                f14_similar_pol_value = PREF.extract_dictionary_values(f14_similar_pol, f12_pref_affective_norms_dict)
+            f14 = f14_similar_pol_value
+
+        f15 = PREF.extract_dictionary_values(i[0], f15_pref_emolex_dict)
+        if f15 == 0:
+            f15_similar_pol = PREF.return_single_word_from_fasttext(i[0], f15_pref_emolex_dict)
+            if f15_similar_pol == 0:
+                f15_similar_pol = PREF.return_similar_cosine_word(i[0], f5_pref_vector_dict, False, polarity_dict=f15_pref_emolex_dict)
+                f15_similar_pol_value = PREF.extract_dictionary_values(f15_similar_pol, f15_pref_emolex_dict)
+            else:
+                f15_similar_pol_value = PREF.extract_dictionary_values(f15_similar_pol, f15_pref_emolex_dict)
+            f15 = f15_similar_pol_value
+
+        f16 = PREF.extract_dictionary_values(PREF.split_word_at_pipe(i[1])[0], f15_pref_emolex_dict)
+        if f16 == 0:
+            f16_similar_pol = PREF.return_single_word_from_fasttext(PREF.split_word_at_pipe(i[1])[0], f15_pref_emolex_dict)
+            if f16_similar_pol == 0:
+                f16_similar_pol = PREF.return_similar_cosine_word(PREF.split_word_at_pipe(i[1])[0], f5_pref_vector_dict, False, polarity_dict=f15_pref_emolex_dict)
+                f16_similar_pol_value = PREF.extract_dictionary_values(f16_similar_pol, f15_pref_emolex_dict)
+            else:
+                f16_similar_pol_value = PREF.extract_dictionary_values(f16_similar_pol, f15_pref_emolex_dict)
+            f16 = f16_similar_pol_value
+
+        f17 = PREF.extract_dictionary_values(PREF.split_word_at_pipe(i[1])[1], f15_pref_emolex_dict)
+        if f17 == 0:
+            f17_similar_pol = PREF.return_single_word_from_fasttext(PREF.split_word_at_pipe(i[1])[1], f15_pref_emolex_dict)
+            if f17_similar_pol == 0:
+                f17_similar_pol = PREF.return_similar_cosine_word(PREF.split_word_at_pipe(i[1])[1], f5_pref_vector_dict, False, polarity_dict=f15_pref_emolex_dict)
+                f17_similar_pol_value = PREF.extract_dictionary_values(f17_similar_pol, f15_pref_emolex_dict)
+            else:
+                f17_similar_pol_value = PREF.extract_dictionary_values(f17_similar_pol, f15_pref_emolex_dict)
+            f17 = f17_similar_pol_value
+
+        f0_pref_list.append(f0)
+        f1_pref_list.append(f1)
+        f2_pref_list.append(f2)
+        f3_pref_list.append(f3)
+        f4_pref_list.append(f4)
+        f5_pref_list.append(f5)
+        f6_pref_list.append(f6)
+        f7_pref_list.append(f7)
+        f8_pref_list.append(f8)
+        f9_pref_list.append(f9)
+        f10_pref_list.append(f10)
+        f11_pref_list.append(f11)
+        f12_pref_list.append(f12)
+        f13_pref_list.append(f13)
+        f14_pref_list.append(f14)
+        f15_pref_list.append(f15)
+        f16_pref_list.append(f16)
+        f17_pref_list.append(f17)
+
+        f18_pref_splitwords_dict.update({i[1]: [10 ** -3, 10 ** -3]})
+
+    # print(f0_pref_list)
+    print(len(f0_pref_list))
+    # print(f1_pref_list)
+    print(len(f1_pref_list))
+    # print(f2_pref_list)
+    print(len(f2_pref_list))
+    # print(f3_pref_list)
+    print(len(f3_pref_list))
+    # print(f4_pref_list)
+    print(len(f4_pref_list))
+    # print(f5_pref_list)
+    print(len(f5_pref_list))
+    # print(f6_pref_list)
+    print(len(f6_pref_list))
+    # print(f7_pref_list)
+    print(len(f7_pref_list))
+    # print(f8_pref_list)
+    print(len(f8_pref_list))
+    # print(f9_pref_list)
+    print(len(f9_pref_list))
+    # print(f10_pref_list)
+    print(len(f10_pref_list))
+    # print(f11_pref_list)
+    print(len(f11_pref_list))
+    # print(f12_pref_list)
+    print(len(f12_pref_list))
+    # print(f13_pref_list)
+    print(len(f13_pref_list))
+    # print(f14_pref_list)
+    print(len(f14_pref_list))
+    # print(f15_pref_list)
+    print(len(f15_pref_list))
+    # print(f16_pref_list)
+    print(len(f16_pref_list))
+    # print(f17_pref_list)
+    print(len(f17_pref_list))
+
+    """ Write files """
+    PREF.write_list_to_file(f0_pref_list, DATA_FEATURES_PATH + 'f0_pref.txt')  # DONE
+    PREF.write_list_to_file(f1_pref_list, DATA_FEATURES_PATH + 'f1_pref.txt')  # DONE
+    PREF.write_list_to_file(f2_pref_list, DATA_FEATURES_PATH + 'f2_pref.txt')  # DONE
+    PREF.write_list_to_file(f3_pref_list, DATA_FEATURES_PATH + 'f3_pref.txt')  # DONE
+    PREF.write_list_to_file(f4_pref_list, DATA_FEATURES_PATH + 'f4_pref.txt')  # DONE
+    PREF.write_list_to_file(f5_pref_list, DATA_FEATURES_PATH + 'f5_pref.txt')  # DONE
+    PREF.write_list_to_file(f6_pref_list, DATA_FEATURES_PATH + 'f6_pref.txt')  # DONE
+    PREF.write_list_to_file(f7_pref_list, DATA_FEATURES_PATH + 'f7_pref.txt')  # DONE
+    PREF.write_list_to_file(f8_pref_list, DATA_FEATURES_PATH + 'f8_pref.txt')  # DONE
+    PREF.write_list_to_file(f9_pref_list, DATA_FEATURES_PATH + 'f9_pref.txt')  # DONE
+    PREF.write_list_to_file(f10_pref_list, DATA_FEATURES_PATH + 'f10_pref.txt')  # DONE
+    PREF.write_list_to_file(f11_pref_list, DATA_FEATURES_PATH + 'f11_pref.txt')  # DONE
+    PREF.write_list_to_file(f12_pref_list, DATA_FEATURES_PATH + 'f12_pref.txt')  # DONE
+    PREF.write_list_to_file(f13_pref_list, DATA_FEATURES_PATH + 'f13_pref.txt')  # DONE
+    PREF.write_list_to_file(f14_pref_list, DATA_FEATURES_PATH + 'f14_pref.txt')  # DONE
+    PREF.write_list_to_file(f15_pref_list, DATA_FEATURES_PATH + 'f15_pref.txt')  # DONE
+    PREF.write_list_to_file(f16_pref_list, DATA_FEATURES_PATH + 'f16_pref.txt')  # DONE
+    PREF.write_list_to_file(f17_pref_list, DATA_FEATURES_PATH + 'f17_pref.txt')  # DONE
+
+    """ PMI Scores """
+    f18_pref_pmi_dict = PREF.extract_pmi_values(f18_pref_splitwords_dict, DATA_RESSOURCES_PATH + PMI_OUTPUT + 'pref_PMI_scores.txt')
+    f18_pref_list = []  # PMI Scores for first and second part of word
+
+    """ Second loop over inventory (after collecting splitwords) """
+    for i in pref_inventory_list:
+        f18 = PREF.extract_dictionary_values(i[1], f18_pref_pmi_dict)
+        f18_pref_list.append(f18)
+
+    # print(f18_pref_list)
+    print(len(f18_pref_list))
+
+    PREF.write_list_to_file(f18_pref_list, DATA_FEATURES_PATH + 'f18_pref.txt')
 
     """
         SUFFIXOIDS
     """
-    # SUFF = FeatureExtractor('Suffixoids', DATA_RESSOURCES_PATH + SUFFIXOID_DICTIONARY)
-    # suff_inventory_list = SUFF.read_file_to_list(DATA_FINAL_PATH + FINAL_SUFFIXOID_FILE)
-    # y_suff_dict = SUFF.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_SUFFIXOID_FILE, 'Y')
-    # n_suff_dict = SUFF.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_SUFFIXOID_FILE, 'N')
-    # print('Y:\t', y_suff_dict)
-    # print('N:\t', n_suff_dict)
-    # print('Total:\t', sum(y_suff_dict.values()) + sum(n_suff_dict.values()))
-    # print(len(suff_inventory_list))
-    # # SUFF.plot_statistics(y_suff_dict, n_suff_dict, 'Suffixoids')
-    #
-    # f0_suff_list = []  # prefix coded into dictionary
-    # f1_suff_list = []  # binary indicator, if affixoid
-    # f2_suff_list = []  # frequency of complex word
-    # f3_suff_list = []  # frequency of first part
-    # f4_suff_list = []  # frequency of second part
-    # f5_suff_list = []  # cosine similarity between complex word and head
-    # f6_suff_list = []  # vector of GermaNet supersenses for complex word
-    # f7_suff_list = []  # vector of GermaNet supersenses for first part
-    # f8_suff_list = []  # vector of GermaNet supersenses for second part
-    # f9_suff_list = []  # SentiMerge Polarity for complex word
-    # f10_suff_list = []  # SentiMerge Polarity for first part
-    # f11_suff_list = []  # SentiMerge Polarity for second part
-    # f12_suff_list = []  # Affective Norms for complex word
-    # f13_suff_list = []  # Affective Norms for first part
-    # f14_suff_list = []  # Affective Norms for second part
-    # f15_suff_list = []  # Emotion for complex word
-    # f16_suff_list = []  # Emotion for first part
-    # f17_suff_list = []  # Emotion for second part
-    #
-    # f2_suff_formations = SUFF.create_frequency_dictionary(DATA_PATH + FREQUENCY_SUFFIXOID_FORMATIONS)
-    # f3_suff_lemmas = SUFF.create_frequency_dictionary(DATA_PATH + FREQUENCY_SUFFIXOID_MODIFIERS)
-    # f4_suff_heads = SUFF.create_frequency_dictionary(DATA_PATH + FREQUENCY_SUFFIXOID_LEMMAS)
-    # f5_suff_vector_dict = SUFF.create_vector_dictionary(DATA_RESSOURCES_PATH + FAST_TEXT_SUFFIXOID_VECTORS)
-    # f9_suff_polarity_dict = SUFF.create_polarity_dict(DATA_RESSOURCES_PATH + SENTIMERGE_POLARITY)
-    # f12_suff_affective_norms_dict = SUFF.create_vector_dictionary(DATA_RESSOURCES_PATH + AFFECTIVE_NORMS)
-    # f15_suff_emolex_dict = SUFF.create_vector_dictionary(DATA_RESSOURCES_PATH + EMOLEX, multiword=True)
-    # f18_suff_splitwords_dict = {}
+    SUFF = FeatureExtractor('Suffixoids', DATA_RESSOURCES_PATH + SUFFIXOID_DICTIONARY)
+    suff_inventory_list = SUFF.read_file_to_list(DATA_FINAL_PATH + FINAL_SUFFIXOID_FILE)
+    y_suff_dict = SUFF.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_SUFFIXOID_FILE, 'Y')
+    n_suff_dict = SUFF.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_SUFFIXOID_FILE, 'N')
+    print('Y:\t', y_suff_dict)
+    print('N:\t', n_suff_dict)
+    print('Total:\t', sum(y_suff_dict.values()) + sum(n_suff_dict.values()))
+    print(len(suff_inventory_list))
+    # SUFF.plot_statistics(y_suff_dict, n_suff_dict, 'Suffixoids')
 
-    # maximum_f2_suff_formations = max(f2_suff_formations, key=f2_suff_formations.get)
-    # maximum_f3_suff_lemmas = max(f3_suff_lemmas, key=f3_suff_lemmas.get)
-    # maximum_f4_suff_heads = max(f4_suff_heads, key=f4_suff_heads.get)
-    #
-    # print('Max frequencies')
-    # print('Formations:', f2_suff_formations[maximum_f2_suff_formations],
-    #       'Lemmas:', f3_suff_lemmas[maximum_f3_suff_lemmas],
-    #       'Heads:', f4_suff_heads[maximum_f4_suff_heads])
-    ## Formations: 99 Lemmas: 931 Heads: 998048
-    #
-    # counter = 0
-    # for i in suff_inventory_list:
-    #     counter += 1
-    #     print('Line:', str(counter) + ' ===============================', i[0], i[-1])
-    #
-    #     f0 = SUFF.extract_frequency(i[-3], y_suff_dict, True)  # y_suff_dict or n_suff_dict
-    #     f1 = SUFF.transform_class_name_to_binary(i[-1])
-    #     f2 = SUFF.extract_frequency(i[0], f2_suff_formations)
-    #     f3 = SUFF.extract_frequency(SUFF.split_word_at_pipe(i[1])[0], f3_suff_lemmas)
-    #     f4 = SUFF.extract_frequency(SUFF.split_word_at_pipe(i[1])[1], f4_suff_heads)
-    #     f5 = SUFF.calculate_cosine_similarity(i[0], SUFF.split_word_at_pipe(i[1])[1], f5_suff_vector_dict)  # reverse for SUFFIXOIDS
-    #     f6 = SUFF.search_germanet_supersenses(i[0], f5_suff_vector_dict)
-    #     f7 = SUFF.search_germanet_supersenses(SUFF.split_word_at_pipe(i[1])[0], f5_suff_vector_dict)
-    #     f8 = SUFF.search_germanet_supersenses(SUFF.split_word_at_pipe(i[1])[1], f5_suff_vector_dict)
-    #
-    #     f9 = SUFF.extract_dictionary_values(i[0], f9_suff_polarity_dict)
-    #     if f9 == 0:
-    #         f9_similar_pol = SUFF.return_single_word_from_fasttext(i[0], f9_suff_polarity_dict)
-    #         if f9_similar_pol == 0:
-    #             f9_similar_pol = SUFF.return_similar_cosine_word(i[0], f5_suff_vector_dict, False, polarity_dict=f9_suff_polarity_dict)
-    #             f9_similar_pol_value = SUFF.extract_dictionary_values(f9_similar_pol, f9_suff_polarity_dict)
-    #         else:
-    #             f9_similar_pol_value = SUFF.extract_dictionary_values(f9_similar_pol, f9_suff_polarity_dict)
-    #         f9 = f9_similar_pol_value
-    #
-    #     f10 = SUFF.extract_dictionary_values(SUFF.split_word_at_pipe(i[1])[0], f9_suff_polarity_dict)
-    #     if f10 == 0:
-    #         f10_similar_pol = SUFF.return_single_word_from_fasttext(SUFF.split_word_at_pipe(i[1])[0], f9_suff_polarity_dict)
-    #         if f10_similar_pol == 0:
-    #             f10_similar_pol = SUFF.return_similar_cosine_word(SUFF.split_word_at_pipe(i[1])[0], f5_suff_vector_dict, False, polarity_dict=f9_suff_polarity_dict)
-    #             f10_similar_pol_value = SUFF.extract_dictionary_values(f10_similar_pol, f9_suff_polarity_dict)
-    #         else:
-    #             f10_similar_pol_value = SUFF.extract_dictionary_values(f10_similar_pol, f9_suff_polarity_dict)
-    #         f10 = f10_similar_pol_value
-    #
-    #     f11 = SUFF.extract_dictionary_values(SUFF.split_word_at_pipe(i[1])[1], f9_suff_polarity_dict)
-    #     if f11 == 0:
-    #         f11_similar_pol = SUFF.return_single_word_from_fasttext(SUFF.split_word_at_pipe(i[1])[1], f9_suff_polarity_dict)
-    #         if f11_similar_pol == 0:
-    #             f11_similar_pol = SUFF.return_similar_cosine_word(SUFF.split_word_at_pipe(i[1])[1], f5_suff_vector_dict, False, polarity_dict=f9_suff_polarity_dict)
-    #             f11_similar_pol_value = SUFF.extract_dictionary_values(f11_similar_pol, f9_suff_polarity_dict)
-    #         else:
-    #             f11_similar_pol_value = SUFF.extract_dictionary_values(f11_similar_pol, f9_suff_polarity_dict)
-    #         f11 = f11_similar_pol_value
-    #
-    #     f12 = SUFF.extract_dictionary_values(i[0], f12_suff_affective_norms_dict)
-    #     if f12 == 0:
-    #         f12_similar_pol = SUFF.return_single_word_from_fasttext(i[0], f12_suff_affective_norms_dict)
-    #         if f12_similar_pol == 0:
-    #             f12_similar_pol = SUFF.return_similar_cosine_word(i[0], f5_suff_vector_dict, False, polarity_dict=f12_suff_affective_norms_dict)
-    #             f12_similar_pol_value = SUFF.extract_dictionary_values(f12_similar_pol, f12_suff_affective_norms_dict)
-    #         else:
-    #             f12_similar_pol_value = SUFF.extract_dictionary_values(f12_similar_pol, f12_suff_affective_norms_dict)
-    #         f12 = f12_similar_pol_value
-    #
-    #     f13 = SUFF.extract_dictionary_values(SUFF.split_word_at_pipe(i[1])[0], f12_suff_affective_norms_dict)
-    #     if f13 == 0:
-    #         f13_similar_pol = SUFF.return_single_word_from_fasttext(SUFF.split_word_at_pipe(i[1])[0], f12_suff_affective_norms_dict)
-    #         if f13_similar_pol == 0:
-    #             f13_similar_pol = SUFF.return_similar_cosine_word(SUFF.split_word_at_pipe(i[1])[0], f5_suff_vector_dict, False, polarity_dict=f12_suff_affective_norms_dict)
-    #             f13_similar_pol_value = SUFF.extract_dictionary_values(f13_similar_pol, f12_suff_affective_norms_dict)
-    #         else:
-    #             f13_similar_pol_value = SUFF.extract_dictionary_values(f13_similar_pol, f12_suff_affective_norms_dict)
-    #         f13 = f13_similar_pol_value
-    #
-    #     f14 = SUFF.extract_dictionary_values(SUFF.split_word_at_pipe(i[1])[1], f12_suff_affective_norms_dict)
-    #     if f14 == 0:
-    #         f14_similar_pol = SUFF.return_single_word_from_fasttext(SUFF.split_word_at_pipe(i[1])[1], f12_suff_affective_norms_dict)
-    #         if f14_similar_pol == 0:
-    #             f14_similar_pol = SUFF.return_similar_cosine_word(SUFF.split_word_at_pipe(i[1])[1], f5_suff_vector_dict, False, polarity_dict=f12_suff_affective_norms_dict)
-    #             f14_similar_pol_value = SUFF.extract_dictionary_values(f14_similar_pol, f12_suff_affective_norms_dict)
-    #         else:
-    #             f14_similar_pol_value = SUFF.extract_dictionary_values(f14_similar_pol, f12_suff_affective_norms_dict)
-    #         f14 = f14_similar_pol_value
-    #
-    #     f15 = SUFF.extract_dictionary_values(i[0], f15_suff_emolex_dict)
-    #     if f15 == 0:
-    #         f15_similar_pol = SUFF.return_single_word_from_fasttext(i[0], f15_suff_emolex_dict)
-    #         if f15_similar_pol == 0:
-    #             f15_similar_pol = SUFF.return_similar_cosine_word(i[0], f5_suff_vector_dict, False, polarity_dict=f15_suff_emolex_dict)
-    #             f15_similar_pol_value = SUFF.extract_dictionary_values(f15_similar_pol, f15_suff_emolex_dict)
-    #         else:
-    #             f15_similar_pol_value = SUFF.extract_dictionary_values(f15_similar_pol, f15_suff_emolex_dict)
-    #         f15 = f15_similar_pol_value
-    #
-    #     f16 = SUFF.extract_dictionary_values(SUFF.split_word_at_pipe(i[1])[0], f15_suff_emolex_dict)
-    #     if f16 == 0:
-    #         f16_similar_pol = SUFF.return_single_word_from_fasttext(SUFF.split_word_at_pipe(i[1])[0], f15_suff_emolex_dict)
-    #         if f16_similar_pol == 0:
-    #             f16_similar_pol = SUFF.return_similar_cosine_word(SUFF.split_word_at_pipe(i[1])[0], f5_suff_vector_dict, False, polarity_dict=f15_suff_emolex_dict)
-    #             f16_similar_pol_value = SUFF.extract_dictionary_values(f16_similar_pol, f15_suff_emolex_dict)
-    #         else:
-    #             f16_similar_pol_value = SUFF.extract_dictionary_values(f16_similar_pol, f15_suff_emolex_dict)
-    #         f16 = f16_similar_pol_value
-    #
-    #     f17 = SUFF.extract_dictionary_values(SUFF.split_word_at_pipe(i[1])[1], f15_suff_emolex_dict)
-    #     if f17 == 0:
-    #         f17_similar_pol = SUFF.return_single_word_from_fasttext(SUFF.split_word_at_pipe(i[1])[1], f15_suff_emolex_dict)
-    #         if f17_similar_pol == 0:
-    #             f17_similar_pol = SUFF.return_similar_cosine_word(SUFF.split_word_at_pipe(i[1])[1], f5_suff_vector_dict, False, polarity_dict=f15_suff_emolex_dict)
-    #             f17_similar_pol_value = SUFF.extract_dictionary_values(f17_similar_pol, f15_suff_emolex_dict)
-    #         else:
-    #             f17_similar_pol_value = SUFF.extract_dictionary_values(f17_similar_pol, f15_suff_emolex_dict)
-    #         f17 = f17_similar_pol_value
-    #
-    #     f0_suff_list.append(f0)
-    #     f1_suff_list.append(f1)
-    #     f2_suff_list.append(f2)
-    #     f3_suff_list.append(f3)
-    #     f4_suff_list.append(f4)
-    #     f5_suff_list.append(f5)
-    #     f6_suff_list.append(f6)
-    #     f7_suff_list.append(f7)
-    #     f8_suff_list.append(f8)
-    #     f9_suff_list.append(f9)
-    #     f10_suff_list.append(f10)
-    #     f11_suff_list.append(f11)
-    #     f12_suff_list.append(f12)
-    #     f13_suff_list.append(f13)
-    #     f14_suff_list.append(f14)
-    #     f15_suff_list.append(f15)
-    #     f16_suff_list.append(f16)
-    #     f17_suff_list.append(f17)
-    #
-    #     f18_suff_splitwords_dict.update({i[1]: [10 ** -3, 10 ** -3]})
-    #
-    # # print(f0_suff_list)
-    # print(len(f0_suff_list))
-    # # print(f1_suff_list)
-    # print(len(f1_suff_list))
-    # # print(f2_suff_list)
-    # print(len(f2_suff_list))
-    # # print(f3_suff_list)
-    # print(len(f3_suff_list))
-    # # print(f4_suff_list)
-    # print(len(f4_suff_list))
-    # # print(f5_suff_list)
-    # print(len(f5_suff_list))
-    # # print(f6_suff_list)
-    # print(len(f6_suff_list))
-    # # print(f7_suff_list)
-    # print(len(f7_suff_list))
-    # # print(f8_suff_list)
-    # print(len(f8_suff_list))
-    # # print(f9_suff_list)
-    # print(len(f9_suff_list))
-    # # print(f10_suff_list)
-    # print(len(f10_suff_list))
-    # # print(f11_suff_list)
-    # print(len(f11_suff_list))
-    # # print(f12_suff_list)
-    # print(len(f12_suff_list))
-    # # print(f13_suff_list)
-    # print(len(f13_suff_list))
-    # # print(f14_suff_list)
-    # print(len(f14_suff_list))
-    # # print(f15_suff_list)
-    # print(len(f15_suff_list))
-    # # print(f16_suff_list)
-    # print(len(f16_suff_list))
-    # # print(f17_suff_list)
-    # print(len(f17_suff_list))
+    f0_suff_list = []  # prefix coded into dictionary
+    f1_suff_list = []  # binary indicator, if affixoid
+    f2_suff_list = []  # frequency of complex word
+    f3_suff_list = []  # frequency of first part
+    f4_suff_list = []  # frequency of second part
+    f5_suff_list = []  # cosine similarity between complex word and head
+    f6_suff_list = []  # vector of GermaNet supersenses for complex word
+    f7_suff_list = []  # vector of GermaNet supersenses for first part
+    f8_suff_list = []  # vector of GermaNet supersenses for second part
+    f9_suff_list = []  # SentiMerge Polarity for complex word
+    f10_suff_list = []  # SentiMerge Polarity for first part
+    f11_suff_list = []  # SentiMerge Polarity for second part
+    f12_suff_list = []  # Affective Norms for complex word
+    f13_suff_list = []  # Affective Norms for first part
+    f14_suff_list = []  # Affective Norms for second part
+    f15_suff_list = []  # Emotion for complex word
+    f16_suff_list = []  # Emotion for first part
+    f17_suff_list = []  # Emotion for second part
 
-    """Write files"""
-    # SUFF.write_list_to_file(f0_suff_list, DATA_FEATURES_PATH + 'f0_suff.txt')  # DONE
-    # SUFF.write_list_to_file(f1_suff_list, DATA_FEATURES_PATH + 'f1_suff.txt')  # DONE
-    # SUFF.write_list_to_file(f2_suff_list, DATA_FEATURES_PATH + 'f2_suff.txt')  # DONE
-    # SUFF.write_list_to_file(f3_suff_list, DATA_FEATURES_PATH + 'f3_suff.txt')  # DONE
-    # SUFF.write_list_to_file(f4_suff_list, DATA_FEATURES_PATH + 'f4_suff.txt')  # DONE
-    # SUFF.write_list_to_file(f5_suff_list, DATA_FEATURES_PATH + 'f5_suff.txt')  # DONE
-    # SUFF.write_list_to_file(f6_suff_list, DATA_FEATURES_PATH + 'f6_suff.txt')  # DONE
-    # SUFF.write_list_to_file(f7_suff_list, DATA_FEATURES_PATH + 'f7_suff.txt')  # DONE
-    # SUFF.write_list_to_file(f8_suff_list, DATA_FEATURES_PATH + 'f8_suff.txt')  # DONE
-    # SUFF.write_list_to_file(f9_suff_list, DATA_FEATURES_PATH + 'f9_suff.txt')  # DONE
-    # SUFF.write_list_to_file(f10_suff_list, DATA_FEATURES_PATH + 'f10_suff.txt')  # DONE
-    # SUFF.write_list_to_file(f11_suff_list, DATA_FEATURES_PATH + 'f11_suff.txt')  # DONE
-    # SUFF.write_list_to_file(f12_suff_list, DATA_FEATURES_PATH + 'f12_suff.txt')  # DONE
-    # SUFF.write_list_to_file(f13_suff_list, DATA_FEATURES_PATH + 'f13_suff.txt')  # DONE
-    # SUFF.write_list_to_file(f14_suff_list, DATA_FEATURES_PATH + 'f14_suff.txt')  # DONE
-    # SUFF.write_list_to_file(f15_suff_list, DATA_FEATURES_PATH + 'f15_suff.txt')  # DONE
-    # SUFF.write_list_to_file(f16_suff_list, DATA_FEATURES_PATH + 'f16_suff.txt')  # DONE
-    # SUFF.write_list_to_file(f17_suff_list, DATA_FEATURES_PATH + 'f17_suff.txt')  # DONE
+    f2_suff_formations = SUFF.create_frequency_dictionary(DATA_PATH + FREQUENCY_SUFFIXOID_FORMATIONS)
+    f3_suff_lemmas = SUFF.create_frequency_dictionary(DATA_PATH + FREQUENCY_SUFFIXOID_MODIFIERS)
+    f4_suff_heads = SUFF.create_frequency_dictionary(DATA_PATH + FREQUENCY_SUFFIXOID_LEMMAS)
+    f5_suff_vector_dict = SUFF.create_vector_dictionary(DATA_RESSOURCES_PATH + FAST_TEXT_SUFFIXOID_VECTORS)
+    f9_suff_polarity_dict = SUFF.create_polarity_dict(DATA_RESSOURCES_PATH + SENTIMERGE_POLARITY)
+    f12_suff_affective_norms_dict = SUFF.create_vector_dictionary(DATA_RESSOURCES_PATH + AFFECTIVE_NORMS)
+    f15_suff_emolex_dict = SUFF.create_vector_dictionary(DATA_RESSOURCES_PATH + EMOLEX, multiword=True)
+    f18_suff_splitwords_dict = {}
 
-    """PMI Scores"""
-    # f18_suff_pmi_dict = SUFF.extract_pmi_values(f18_suff_splitwords_dict, DATA_RESSOURCES_PATH + PMI_OUTPUT + 'suff_PMI_scores.txt')
-    # f18_suff_list = []  # PMI Scores for first and second part of word
-    #
-    # """Second loop over inventory (after collecting splitwords)"""
-    # for i in suff_inventory_list:
-    #     f18 = SUFF.extract_dictionary_values(i[1], f18_suff_pmi_dict)
-    #     f18_suff_list.append(f18)
-    #
-    # # print(f18_suff_list)
-    # print(len(f18_suff_list))
-    #
-    # SUFF.write_list_to_file(f18_suff_list, DATA_FEATURES_PATH + 'f18_suff.txt')
+    maximum_f2_suff_formations = max(f2_suff_formations, key=f2_suff_formations.get)
+    maximum_f3_suff_lemmas = max(f3_suff_lemmas, key=f3_suff_lemmas.get)
+    maximum_f4_suff_heads = max(f4_suff_heads, key=f4_suff_heads.get)
+
+    print('Max frequencies')
+    print('Formations:', f2_suff_formations[maximum_f2_suff_formations],
+          'Lemmas:', f3_suff_lemmas[maximum_f3_suff_lemmas],
+          'Heads:', f4_suff_heads[maximum_f4_suff_heads])
+    # Formations: 99 Lemmas: 931 Heads: 998048
+
+    counter = 0
+    for i in suff_inventory_list:
+        counter += 1
+        print('Line:', str(counter) + ' ===============================', i[0], i[-1])
+
+        f0 = SUFF.extract_frequency(i[-3], y_suff_dict, True)  # y_suff_dict or n_suff_dict
+        f1 = SUFF.transform_class_name_to_binary(i[-1])
+        f2 = SUFF.extract_frequency(i[0], f2_suff_formations)
+        f3 = SUFF.extract_frequency(SUFF.split_word_at_pipe(i[1])[0], f3_suff_lemmas)
+        f4 = SUFF.extract_frequency(SUFF.split_word_at_pipe(i[1])[1], f4_suff_heads)
+        f5 = SUFF.calculate_cosine_similarity(i[0], SUFF.split_word_at_pipe(i[1])[1], f5_suff_vector_dict)  # split_word_at_pipe(i[1])[0] for PREFIXOIDS
+        f6 = SUFF.search_germanet_supersenses(i[0], f5_suff_vector_dict)
+        f7 = SUFF.search_germanet_supersenses(SUFF.split_word_at_pipe(i[1])[0], f5_suff_vector_dict)
+        f8 = SUFF.search_germanet_supersenses(SUFF.split_word_at_pipe(i[1])[1], f5_suff_vector_dict)
+
+        f9 = SUFF.extract_dictionary_values(i[0], f9_suff_polarity_dict)
+        if f9 == 0:
+            f9_similar_pol = SUFF.return_single_word_from_fasttext(i[0], f9_suff_polarity_dict)
+            if f9_similar_pol == 0:
+                f9_similar_pol = SUFF.return_similar_cosine_word(i[0], f5_suff_vector_dict, False, polarity_dict=f9_suff_polarity_dict)
+                f9_similar_pol_value = SUFF.extract_dictionary_values(f9_similar_pol, f9_suff_polarity_dict)
+            else:
+                f9_similar_pol_value = SUFF.extract_dictionary_values(f9_similar_pol, f9_suff_polarity_dict)
+            f9 = f9_similar_pol_value
+
+        f10 = SUFF.extract_dictionary_values(SUFF.split_word_at_pipe(i[1])[0], f9_suff_polarity_dict)
+        if f10 == 0:
+            f10_similar_pol = SUFF.return_single_word_from_fasttext(SUFF.split_word_at_pipe(i[1])[0], f9_suff_polarity_dict)
+            if f10_similar_pol == 0:
+                f10_similar_pol = SUFF.return_similar_cosine_word(SUFF.split_word_at_pipe(i[1])[0], f5_suff_vector_dict, False, polarity_dict=f9_suff_polarity_dict)
+                f10_similar_pol_value = SUFF.extract_dictionary_values(f10_similar_pol, f9_suff_polarity_dict)
+            else:
+                f10_similar_pol_value = SUFF.extract_dictionary_values(f10_similar_pol, f9_suff_polarity_dict)
+            f10 = f10_similar_pol_value
+
+        f11 = SUFF.extract_dictionary_values(SUFF.split_word_at_pipe(i[1])[1], f9_suff_polarity_dict)
+        if f11 == 0:
+            f11_similar_pol = SUFF.return_single_word_from_fasttext(SUFF.split_word_at_pipe(i[1])[1], f9_suff_polarity_dict)
+            if f11_similar_pol == 0:
+                f11_similar_pol = SUFF.return_similar_cosine_word(SUFF.split_word_at_pipe(i[1])[1], f5_suff_vector_dict, False, polarity_dict=f9_suff_polarity_dict)
+                f11_similar_pol_value = SUFF.extract_dictionary_values(f11_similar_pol, f9_suff_polarity_dict)
+            else:
+                f11_similar_pol_value = SUFF.extract_dictionary_values(f11_similar_pol, f9_suff_polarity_dict)
+            f11 = f11_similar_pol_value
+
+        f12 = SUFF.extract_dictionary_values(i[0], f12_suff_affective_norms_dict)
+        if f12 == 0:
+            f12_similar_pol = SUFF.return_single_word_from_fasttext(i[0], f12_suff_affective_norms_dict)
+            if f12_similar_pol == 0:
+                f12_similar_pol = SUFF.return_similar_cosine_word(i[0], f5_suff_vector_dict, False, polarity_dict=f12_suff_affective_norms_dict)
+                f12_similar_pol_value = SUFF.extract_dictionary_values(f12_similar_pol, f12_suff_affective_norms_dict)
+            else:
+                f12_similar_pol_value = SUFF.extract_dictionary_values(f12_similar_pol, f12_suff_affective_norms_dict)
+            f12 = f12_similar_pol_value
+
+        f13 = SUFF.extract_dictionary_values(SUFF.split_word_at_pipe(i[1])[0], f12_suff_affective_norms_dict)
+        if f13 == 0:
+            f13_similar_pol = SUFF.return_single_word_from_fasttext(SUFF.split_word_at_pipe(i[1])[0], f12_suff_affective_norms_dict)
+            if f13_similar_pol == 0:
+                f13_similar_pol = SUFF.return_similar_cosine_word(SUFF.split_word_at_pipe(i[1])[0], f5_suff_vector_dict, False, polarity_dict=f12_suff_affective_norms_dict)
+                f13_similar_pol_value = SUFF.extract_dictionary_values(f13_similar_pol, f12_suff_affective_norms_dict)
+            else:
+                f13_similar_pol_value = SUFF.extract_dictionary_values(f13_similar_pol, f12_suff_affective_norms_dict)
+            f13 = f13_similar_pol_value
+
+        f14 = SUFF.extract_dictionary_values(SUFF.split_word_at_pipe(i[1])[1], f12_suff_affective_norms_dict)
+        if f14 == 0:
+            f14_similar_pol = SUFF.return_single_word_from_fasttext(SUFF.split_word_at_pipe(i[1])[1], f12_suff_affective_norms_dict)
+            if f14_similar_pol == 0:
+                f14_similar_pol = SUFF.return_similar_cosine_word(SUFF.split_word_at_pipe(i[1])[1], f5_suff_vector_dict, False, polarity_dict=f12_suff_affective_norms_dict)
+                f14_similar_pol_value = SUFF.extract_dictionary_values(f14_similar_pol, f12_suff_affective_norms_dict)
+            else:
+                f14_similar_pol_value = SUFF.extract_dictionary_values(f14_similar_pol, f12_suff_affective_norms_dict)
+            f14 = f14_similar_pol_value
+
+        f15 = SUFF.extract_dictionary_values(i[0], f15_suff_emolex_dict)
+        if f15 == 0:
+            f15_similar_pol = SUFF.return_single_word_from_fasttext(i[0], f15_suff_emolex_dict)
+            if f15_similar_pol == 0:
+                f15_similar_pol = SUFF.return_similar_cosine_word(i[0], f5_suff_vector_dict, False, polarity_dict=f15_suff_emolex_dict)
+                f15_similar_pol_value = SUFF.extract_dictionary_values(f15_similar_pol, f15_suff_emolex_dict)
+            else:
+                f15_similar_pol_value = SUFF.extract_dictionary_values(f15_similar_pol, f15_suff_emolex_dict)
+            f15 = f15_similar_pol_value
+
+        f16 = SUFF.extract_dictionary_values(SUFF.split_word_at_pipe(i[1])[0], f15_suff_emolex_dict)
+        if f16 == 0:
+            f16_similar_pol = SUFF.return_single_word_from_fasttext(SUFF.split_word_at_pipe(i[1])[0], f15_suff_emolex_dict)
+            if f16_similar_pol == 0:
+                f16_similar_pol = SUFF.return_similar_cosine_word(SUFF.split_word_at_pipe(i[1])[0], f5_suff_vector_dict, False, polarity_dict=f15_suff_emolex_dict)
+                f16_similar_pol_value = SUFF.extract_dictionary_values(f16_similar_pol, f15_suff_emolex_dict)
+            else:
+                f16_similar_pol_value = SUFF.extract_dictionary_values(f16_similar_pol, f15_suff_emolex_dict)
+            f16 = f16_similar_pol_value
+
+        f17 = SUFF.extract_dictionary_values(SUFF.split_word_at_pipe(i[1])[1], f15_suff_emolex_dict)
+        if f17 == 0:
+            f17_similar_pol = SUFF.return_single_word_from_fasttext(SUFF.split_word_at_pipe(i[1])[1], f15_suff_emolex_dict)
+            if f17_similar_pol == 0:
+                f17_similar_pol = SUFF.return_similar_cosine_word(SUFF.split_word_at_pipe(i[1])[1], f5_suff_vector_dict, False, polarity_dict=f15_suff_emolex_dict)
+                f17_similar_pol_value = SUFF.extract_dictionary_values(f17_similar_pol, f15_suff_emolex_dict)
+            else:
+                f17_similar_pol_value = SUFF.extract_dictionary_values(f17_similar_pol, f15_suff_emolex_dict)
+            f17 = f17_similar_pol_value
+
+        f0_suff_list.append(f0)
+        f1_suff_list.append(f1)
+        f2_suff_list.append(f2)
+        f3_suff_list.append(f3)
+        f4_suff_list.append(f4)
+        f5_suff_list.append(f5)
+        f6_suff_list.append(f6)
+        f7_suff_list.append(f7)
+        f8_suff_list.append(f8)
+        f9_suff_list.append(f9)
+        f10_suff_list.append(f10)
+        f11_suff_list.append(f11)
+        f12_suff_list.append(f12)
+        f13_suff_list.append(f13)
+        f14_suff_list.append(f14)
+        f15_suff_list.append(f15)
+        f16_suff_list.append(f16)
+        f17_suff_list.append(f17)
+
+        f18_suff_splitwords_dict.update({i[1]: [10 ** -3, 10 ** -3]})
+
+    # print(f0_suff_list)
+    print(len(f0_suff_list))
+    # print(f1_suff_list)
+    print(len(f1_suff_list))
+    # print(f2_suff_list)
+    print(len(f2_suff_list))
+    # print(f3_suff_list)
+    print(len(f3_suff_list))
+    # print(f4_suff_list)
+    print(len(f4_suff_list))
+    # print(f5_suff_list)
+    print(len(f5_suff_list))
+    # print(f6_suff_list)
+    print(len(f6_suff_list))
+    # print(f7_suff_list)
+    print(len(f7_suff_list))
+    # print(f8_suff_list)
+    print(len(f8_suff_list))
+    # print(f9_suff_list)
+    print(len(f9_suff_list))
+    # print(f10_suff_list)
+    print(len(f10_suff_list))
+    # print(f11_suff_list)
+    print(len(f11_suff_list))
+    # print(f12_suff_list)
+    print(len(f12_suff_list))
+    # print(f13_suff_list)
+    print(len(f13_suff_list))
+    # print(f14_suff_list)
+    print(len(f14_suff_list))
+    # print(f15_suff_list)
+    print(len(f15_suff_list))
+    # print(f16_suff_list)
+    print(len(f16_suff_list))
+    # print(f17_suff_list)
+    print(len(f17_suff_list))
+
+    """ Write files """
+    SUFF.write_list_to_file(f0_suff_list, DATA_FEATURES_PATH + 'f0_suff.txt')  # DONE
+    SUFF.write_list_to_file(f1_suff_list, DATA_FEATURES_PATH + 'f1_suff.txt')  # DONE
+    SUFF.write_list_to_file(f2_suff_list, DATA_FEATURES_PATH + 'f2_suff.txt')  # DONE
+    SUFF.write_list_to_file(f3_suff_list, DATA_FEATURES_PATH + 'f3_suff.txt')  # DONE
+    SUFF.write_list_to_file(f4_suff_list, DATA_FEATURES_PATH + 'f4_suff.txt')  # DONE
+    SUFF.write_list_to_file(f5_suff_list, DATA_FEATURES_PATH + 'f5_suff.txt')  # DONE
+    SUFF.write_list_to_file(f6_suff_list, DATA_FEATURES_PATH + 'f6_suff.txt')  # DONE
+    SUFF.write_list_to_file(f7_suff_list, DATA_FEATURES_PATH + 'f7_suff.txt')  # DONE
+    SUFF.write_list_to_file(f8_suff_list, DATA_FEATURES_PATH + 'f8_suff.txt')  # DONE
+    SUFF.write_list_to_file(f9_suff_list, DATA_FEATURES_PATH + 'f9_suff.txt')  # DONE
+    SUFF.write_list_to_file(f10_suff_list, DATA_FEATURES_PATH + 'f10_suff.txt')  # DONE
+    SUFF.write_list_to_file(f11_suff_list, DATA_FEATURES_PATH + 'f11_suff.txt')  # DONE
+    SUFF.write_list_to_file(f12_suff_list, DATA_FEATURES_PATH + 'f12_suff.txt')  # DONE
+    SUFF.write_list_to_file(f13_suff_list, DATA_FEATURES_PATH + 'f13_suff.txt')  # DONE
+    SUFF.write_list_to_file(f14_suff_list, DATA_FEATURES_PATH + 'f14_suff.txt')  # DONE
+    SUFF.write_list_to_file(f15_suff_list, DATA_FEATURES_PATH + 'f15_suff.txt')  # DONE
+    SUFF.write_list_to_file(f16_suff_list, DATA_FEATURES_PATH + 'f16_suff.txt')  # DONE
+    SUFF.write_list_to_file(f17_suff_list, DATA_FEATURES_PATH + 'f17_suff.txt')  # DONE
+
+    """ PMI Scores """
+    f18_suff_pmi_dict = SUFF.extract_pmi_values(f18_suff_splitwords_dict, DATA_RESSOURCES_PATH + PMI_OUTPUT + 'suff_PMI_scores.txt')
+    f18_suff_list = []  # PMI Scores for first and second part of word
+
+    """ Second loop over inventory (after collecting splitwords) """
+    for i in suff_inventory_list:
+        f18 = SUFF.extract_dictionary_values(i[1], f18_suff_pmi_dict)
+        f18_suff_list.append(f18)
+
+    # print(f18_suff_list)
+    print(len(f18_suff_list))
+
+    SUFF.write_list_to_file(f18_suff_list, DATA_FEATURES_PATH + 'f18_suff.txt')
