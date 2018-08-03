@@ -19,6 +19,10 @@ Version: 1.0
 
 import itertools
 import json
+import requests
+import sys
+import time
+import urllib.parse
 
 from pygermanet import load_germanet
 from nltk.corpus import stopwords
@@ -55,6 +59,14 @@ stop_words = set(stopwords.words('german'))
 # Word Tokenizer
 # word_tok = TreebankWordTokenizer()
 word_tok = RegexpTokenizer(r'\w+')
+
+# Sketch Engine
+s = requests.Session()
+base_url = 'https://api.sketchengine.co.uk/bonito/run.cgi'
+corpname = 'sdewac2'
+username = 'spahic'
+api_key = '3c09af0e68784050a71a5aa8be81d544'
+method = '/view'
 
 """ WSD Dictionaries """
 PREF_JSON_DICT = 'pref_dictionary.json'
@@ -151,6 +163,30 @@ class Wsd:
 
         return json_data
 
+    def transform_class_name_to_binary(self, class_name):
+        """ This function transforms class labels to binary indicators
+
+            Args:
+                class_name (str): Class label (Y|N)
+
+            Returns:
+                Binary indicator for class label [0,1]
+
+            Example:
+                >>> self.transform_class_name_to_binary('Y')
+
+        """
+
+        if class_name == 'Y':
+            return 1
+
+        if class_name == 'N':
+            return 0
+
+        else:
+            print(Style.BOLD + 'Class Label not known. Exiting program' + Style.END)
+            sys.exit()
+
     def split_word_at_pipe(self, word):
         """ This function splits a word separated by a | symbol
 
@@ -246,11 +282,15 @@ class Wsd:
                 print('Shortest path lenght:', p[0].shortest_path_length(p[1]))
                 print('===')
 
-    def lesk(self, ambigous_word, other_word, remove_stop_words=False, join_sense_and_example=False):
+    def lesk(self, ambigous_part_of_word, full_word, remove_stop_words=False, join_sense_and_example=False):
         """ TODO: fix this function """
+
+        score_sense_0 = 0
+        score_sense_1 = 0
+
         try:
             # Sense 0 ambigous_word
-            sense_0 = self.definition_dict[ambigous_word]['0']
+            sense_0 = self.definition_dict[ambigous_part_of_word]['0']
             sense_0_germanet = sense_0['GermaNet']['Bedeutung']
             sense_0_wiktionary = sense_0['Wiktionary']['Bedeutung']
             sense_0_duden = sense_0['Duden']['Bedeutung']
@@ -271,7 +311,7 @@ class Wsd:
             sense_0_beispiel_words_distinct = set(sense_0_beispiel_words_clean)
 
             # Sense 1 ambigous_word
-            sense_1 = self.definition_dict[ambigous_word]['1']
+            sense_1 = self.definition_dict[ambigous_part_of_word]['1']
             sense_1_germanet = sense_1['GermaNet']['Bedeutung']
             sense_1_wiktionary = sense_1['Wiktionary']['Bedeutung']
             sense_1_duden = sense_1['Duden']['Bedeutung']
@@ -285,20 +325,20 @@ class Wsd:
 
             sense_1_bedeutung_words = word_tok.tokenize(sense_1_bedeutung)
             sense_1_bedeutung_words_clean = [w for w in sense_1_bedeutung_words if w not in stop_words]
-            sense_1_bedeutung_words_distinct = set(sense_1_bedeutung_words)
+            sense_1_bedeutung_words_distinct = set(sense_1_bedeutung_words_clean)
 
             sense_1_beispiel_words = word_tok.tokenize(sense_1_beispiel)
             sense_1_beispiel_words_clean = [w for w in sense_1_beispiel_words if w not in stop_words]
-            sense_1_beispiel_words_distinct = set(sense_1_beispiel_words)
+            sense_1_beispiel_words_distinct = set(sense_1_beispiel_words_clean)
 
             # Other Word
-            other_word = self.search_germanet_definitions(other_word)
-            other_word_bedeutung = [list(s.values()) for s in other_word[1:]]
-            other_word_bedeutung = ' '.join([item for sublist in other_word_bedeutung for item in sublist if item is not None])
-            other_word_bedeutung_words = word_tok.tokenize(other_word_bedeutung)
+            full_word_context = self.get_sentence_for_word(full_word)
+            # other_word_bedeutung = [list(s.values()) for s in full_word[1:]]
+            # other_word_bedeutung = ' '.join([item for sublist in other_word_bedeutung for item in sublist if item is not None])
+            other_word_bedeutung_words = word_tok.tokenize(full_word_context)
             other_word_bedeutung_words_clean = [w for w in other_word_bedeutung_words if w not in stop_words]
 
-            other_word_bedeutung_words_distinct = set(other_word_bedeutung_words)
+            other_word_bedeutung_words_distinct = set(other_word_bedeutung_words_clean)
 
             # print(sense_0_bedeutung_words_distinct)
             # print(sense_0_beispiel_words_distinct)
@@ -314,14 +354,77 @@ class Wsd:
             overlap_sense_0_beispiel = sense_0_beispiel_words_distinct.intersection(other_word_bedeutung_words_distinct)
             overlap_sense_1_beispiel = sense_1_beispiel_words_distinct.intersection(other_word_bedeutung_words_distinct)
 
-            print('Overlap in sense_N', len(overlap_sense_0), overlap_sense_0)
-            print('Overlap in sense_Y', len(overlap_sense_1), overlap_sense_1)
-            print('Overlap in Beisp_N', len(overlap_sense_0_beispiel), overlap_sense_0_beispiel)
-            print('Overlap in Beisp_Y', len(overlap_sense_1_beispiel), overlap_sense_1_beispiel)
+            # print('Overlap in sense_N', len(overlap_sense_0), overlap_sense_0)
+            # print('Overlap in sense_Y', len(overlap_sense_1), overlap_sense_1)
+            # print('Overlap in Beisp_N', len(overlap_sense_0_beispiel), overlap_sense_0_beispiel)
+            # print('Overlap in Beisp_Y', len(overlap_sense_1_beispiel), overlap_sense_1_beispiel)
+
+            score_sense_0 += len(overlap_sense_0)
+            score_sense_0 += len(overlap_sense_0_beispiel)
+            score_sense_1 += len(overlap_sense_1)
+            score_sense_1 += len(overlap_sense_1_beispiel)
 
         except KeyError:
             pass
 
+        if score_sense_0 > score_sense_1:
+            return 0
+        if score_sense_1 > score_sense_0:
+            return 1
+        if score_sense_0 == 0 and score_sense_1 == 0:
+            return 1
+        else:
+            return 0
+
+    def get_sentence_for_word(self, word):
+        """ TODO """
+        """
+            if you want to do fewer than 50 requests, you don’t need to use any waiting,
+            if you want to do up to 900 requests, you need to use the interval of 4 seconds per query,
+            if you want to do more than 2000 requests, you need to use interval ca 44 seconds.
+        """
+
+        attrs = dict(corpname=corpname, q='', pagesize='200', format='json', username=username, api_key=api_key, viewmode='sentence', lpos= '-n', kwicleftctx=20, kwicrightctx=20)
+        attrs['q'] = 'q' + '[lemma="'+word+'"]'
+        # encoded_attrs = urllib.parse.urlencode(attrs)
+        url = base_url + method
+        # The requests module can handle building the url parameter stuff
+        # We just give it a dictionary (attrs)
+        r = s.get(url, params=attrs)
+        # print(r)
+
+        # json data stuff
+        # the requests module also handles the json output nicely. ;)
+        json_obj = r.json()
+        # print(json_obj)
+        result_count = int(json_obj.get('concsize', '0'))
+        # print(word + '\t' + str(json_obj.get('concsize', '0')))
+        text = ''
+        if result_count > 0:
+            response = json.dumps(json_obj["Lines"], sort_keys=True, indent=4, ensure_ascii=False)
+            item_dict = json.loads(response)
+            sentences_count = len(item_dict)
+            if sentences_count > 0:
+                counter = 0
+                while counter < sentences_count:
+                    left = ''
+                    kwic = item_dict[counter]['Kwic'][0]['str']
+                    right = ''
+
+                    try:
+                        left = item_dict[counter]['Left'][0]['str']
+                    except IndexError:
+                        pass
+
+                    try:
+                        right = item_dict[counter]['Right'][0]['str']
+                    except IndexError:
+                        pass
+
+                    text += left + kwic + right + ' '
+
+                    counter += 1
+        return text
 
 class Style:
     """ Helper class for nicer coloring """
@@ -339,26 +442,42 @@ if __name__ == "__main__":
     """
     PREF_WSD = Wsd('Prefixoids', DATA_PATH + 'wsd/' + PREF_JSON_DICT)
     pref_inventory_list = PREF_WSD.read_file_to_list(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE)
+    f0_pref_wsd_labels = []  # wsd labels
+    f1_pref_wsd_list = []  # wsd feature
 
     """ Loop """
-    # counter = 0
-    # for i in pref_inventory_list:
-    #     counter += 1
-    #     if counter == 310:
-    #         break
-    #     elif counter <= 210:
-    #         pass
-    #     elif counter % 3 == 0:
-    #         pass
-    #     else:
-    #         print('Line:', str(counter) + ' ===============================', i[0], i[-1])
-    #         # PREF.calculate_similarity_scores(PREF.split_word_at_pipe(i[1])[0], PREF.split_word_at_pipe(i[1])[1])
+    counter = 0
+    for i in pref_inventory_list:
+        counter += 1
+        if counter == 500:
+            break
+        elif counter <= 450:
+            pass
+        # elif counter % 3 == 0:
+        #     pass
+        else:
+            # print('Line:', str(counter) + ' ===============================', i[0], i[-1])
+            f0 = PREF_WSD.transform_class_name_to_binary(i[-1])
+            f1 = PREF_WSD.lesk(PREF_WSD.split_word_at_pipe(i[1])[0], i[0])
+            # print(PREF_WSD.create_synsets_dictionary(PREF_WSD.split_word_at_pipe(i[1])[1]))
+            # PREF.calculate_similarity_scores(PREF.split_word_at_pipe(i[1])[0], PREF.split_word_at_pipe(i[1])[1])
+            f0_pref_wsd_labels.append(f0)
+            f1_pref_wsd_list.append(f1)
+
+    PREF_WSD.write_list_to_file(f0_pref_wsd_labels, DATA_FEATURES_PATH + 'f0_pref_wsd.txt')
+    PREF_WSD.write_list_to_file(f1_pref_wsd_list, DATA_FEATURES_PATH + 'f1_pref_wsd.txt')
 
     """ Tests """
-    print(PREF_WSD.is_in_germanet('Test'))
-    print(PREF_WSD.search_germanet_synsets('Bilderbuch'))
-    print(PREF_WSD.create_synsets_dictionary('Bilderbuch'))
-    print(PREF_WSD.calculate_similarity_scores('Bilderbuch', 'Auflage'))
+    # print(PREF_WSD.is_in_germanet('Test'))
+    # print(PREF_WSD.search_germanet_synsets('Bilderbuch'))
+    # print(PREF_WSD.create_synsets_dictionary('Bilderbuch'))
+    # print(PREF_WSD.calculate_similarity_scores('Bilderbuch', 'Auflage'))
+    # print(PREF_WSD.get_sentence_for_word('Traumstrand'))
+    # print(PREF_WSD.get_sentence_for_word('Traumsymbol'))
+
+    # print(PREF_WSD.lesk('Bilderbuch', 'Bilderbuchauftakt'))
+    # print(PREF_WSD.lesk('Bombe', 'Bombenprozeß'))
+    # print(PREF_WSD.lesk('Bombe', 'Bombenspezialist'))
 
     inventory = ['Bilderbuch',
                  'Blitz',
