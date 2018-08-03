@@ -180,6 +180,8 @@ if __name__ == "__main__":
                                             'f15_suff.txt', 'f15_suff.txt', 'f17_suff.txt',
                                             'f18_suff.txt'])
 
+    pref_WSD_X = PREF.read_features_from_files(['f1_pref_wsd.txt'])
+
     scaler_s = preprocessing.StandardScaler()
     scaler_m = preprocessing.MinMaxScaler()
     scaler_r = preprocessing.RobustScaler()
@@ -193,6 +195,8 @@ if __name__ == "__main__":
     """ Labels """
     pref_y = PREF.read_labels_from_file('f1_pref.txt')
     suff_y = SUFF.read_labels_from_file('f1_suff.txt')
+
+    pref_WSD_y = PREF.read_features_from_files(['f0_pref_wsd.txt'])
 
     """ Split data """
     X_train_pref, X_test_pref, y_train_pref, y_test_pref = train_test_split(pref_X_scaled, pref_y, test_size=0.3, random_state=5, shuffle=True)
@@ -268,3 +272,9 @@ if __name__ == "__main__":
 
     # print(svc_param_selection(pref_X_scaled, pref_y, 10))
     # print(svc_param_selection(suff_X_scaled, suff_y, 10))
+
+    print('WSD scores')
+    print('Precision: ', precision_score(pref_WSD_X, pref_WSD_y))
+    print('Recall: ', recall_score(pref_WSD_X, pref_WSD_y))
+    print('Average P-R score: ', average_precision_score(pref_WSD_X, pref_WSD_y))
+    print('F-1 Score: ', f1_score(pref_WSD_X, pref_WSD_y, average='weighted'))
