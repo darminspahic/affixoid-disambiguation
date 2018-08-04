@@ -290,8 +290,8 @@ class Wsd:
                 print('Shortest path lenght:', p[0].shortest_path_length(p[1]))
                 print('===')
 
-    def lesk(self, ambigous_part_of_word, full_word, remove_stop_words=False, join_sense_and_example=False):
-        """ TODO: fix this function """
+    def lesk(self, ambigous_part_of_word, full_word, remove_stop_words=True, join_sense_and_example=True):
+        """ TODO: optimize this function """
 
         score_sense_0 = 0
         score_sense_1 = 0
@@ -312,11 +312,9 @@ class Wsd:
 
             sense_0_bedeutung_words = word_tok.tokenize(sense_0_bedeutung)
             sense_0_bedeutung_words_clean = [w for w in sense_0_bedeutung_words if w not in stop_words]
-            sense_0_bedeutung_words_distinct = set(sense_0_bedeutung_words_clean)
 
             sense_0_beispiel_words = word_tok.tokenize(sense_0_beispiel)
             sense_0_beispiel_words_clean = [w for w in sense_0_beispiel_words if w not in stop_words]
-            sense_0_beispiel_words_distinct = set(sense_0_beispiel_words_clean)
 
             # Sense 1 ambigous_word
             sense_1 = self.definition_dict[ambigous_part_of_word]['1']
@@ -333,28 +331,30 @@ class Wsd:
 
             sense_1_bedeutung_words = word_tok.tokenize(sense_1_bedeutung)
             sense_1_bedeutung_words_clean = [w for w in sense_1_bedeutung_words if w not in stop_words]
-            sense_1_bedeutung_words_distinct = set(sense_1_bedeutung_words_clean)
 
             sense_1_beispiel_words = word_tok.tokenize(sense_1_beispiel)
             sense_1_beispiel_words_clean = [w for w in sense_1_beispiel_words if w not in stop_words]
-            sense_1_beispiel_words_distinct = set(sense_1_beispiel_words_clean)
 
             # Other Word
-            full_word_context = self.get_sentence_for_word(full_word)
-            # other_word_bedeutung = [list(s.values()) for s in full_word[1:]]
-            # other_word_bedeutung = ' '.join([item for sublist in other_word_bedeutung for item in sublist if item is not None])
-            other_word_bedeutung_words = word_tok.tokenize(full_word_context)
-            other_word_bedeutung_words_clean = [w for w in other_word_bedeutung_words if w not in stop_words]
+            if self.get_sentence_for_word(full_word):
+                full_word_context = self.get_sentence_for_word(full_word)
+                other_word_bedeutung_words = word_tok.tokenize(full_word_context)
+                other_word_bedeutung_words_clean = [w for w in other_word_bedeutung_words if w not in stop_words]
+            else:
+                return -1
 
-            other_word_bedeutung_words_distinct = set(other_word_bedeutung_words_clean)
-
-            # print(sense_0_bedeutung_words_distinct)
-            # print(sense_0_beispiel_words_distinct)
-            # print()
-            # print(sense_1_bedeutung_words_distinct)
-            # print(sense_1_beispiel_words_distinct)
-            # print()
-            # print(other_word_bedeutung_words_distinct)
+            if remove_stop_words:
+                sense_0_bedeutung_words_distinct = set(sense_0_bedeutung_words_clean)
+                sense_1_bedeutung_words_distinct = set(sense_1_bedeutung_words_clean)
+                sense_0_beispiel_words_distinct = set(sense_0_beispiel_words_clean)
+                sense_1_beispiel_words_distinct = set(sense_1_beispiel_words_clean)
+                other_word_bedeutung_words_distinct = set(other_word_bedeutung_words_clean)
+            else:
+                sense_0_bedeutung_words_distinct = set(sense_0_bedeutung_words)
+                sense_1_bedeutung_words_distinct = set(sense_1_bedeutung_words)
+                sense_0_beispiel_words_distinct = set(sense_0_beispiel_words)
+                sense_1_beispiel_words_distinct = set(sense_1_beispiel_words)
+                other_word_bedeutung_words_distinct = set(other_word_bedeutung_words)
 
             overlap_sense_0 = sense_0_bedeutung_words_distinct.intersection(other_word_bedeutung_words_distinct)
             overlap_sense_1 = sense_1_bedeutung_words_distinct.intersection(other_word_bedeutung_words_distinct)
@@ -362,15 +362,19 @@ class Wsd:
             overlap_sense_0_beispiel = sense_0_beispiel_words_distinct.intersection(other_word_bedeutung_words_distinct)
             overlap_sense_1_beispiel = sense_1_beispiel_words_distinct.intersection(other_word_bedeutung_words_distinct)
 
-            # print('Overlap in sense_N', len(overlap_sense_0), overlap_sense_0)
-            # print('Overlap in sense_Y', len(overlap_sense_1), overlap_sense_1)
-            # print('Overlap in Beisp_N', len(overlap_sense_0_beispiel), overlap_sense_0_beispiel)
-            # print('Overlap in Beisp_Y', len(overlap_sense_1_beispiel), overlap_sense_1_beispiel)
+            if join_sense_and_example:
+                score_sense_0 += len(overlap_sense_0)
+                score_sense_0 += len(overlap_sense_0_beispiel)
+                score_sense_1 += len(overlap_sense_1)
+                score_sense_1 += len(overlap_sense_1_beispiel)
+            else:
+                score_sense_0 += len(overlap_sense_0)
+                score_sense_1 += len(overlap_sense_1)
 
-            score_sense_0 += len(overlap_sense_0)
-            score_sense_0 += len(overlap_sense_0_beispiel)
-            score_sense_1 += len(overlap_sense_1)
-            score_sense_1 += len(overlap_sense_1_beispiel)
+            print('Overlap in sense_0', len(overlap_sense_0), overlap_sense_0)
+            print('Overlap in sense_1', len(overlap_sense_1), overlap_sense_1)
+            print('Overlap in Beisp_0', len(overlap_sense_0_beispiel), overlap_sense_0_beispiel)
+            print('Overlap in Beisp_1', len(overlap_sense_1_beispiel), overlap_sense_1_beispiel)
 
         except KeyError:
             pass
@@ -393,24 +397,19 @@ class Wsd:
         """
         time.sleep(10)
 
+        url = base_url + method
         attrs = dict(corpname=corpname, q='', pagesize='200', format='json', username=username, api_key=api_key, viewmode='sentence', lpos='-n', kwicleftctx=20, kwicrightctx=20, async=0)
         attrs['q'] = 'q' + '[lemma="'+word+'"]'
-        # encoded_attrs = urllib.parse.urlencode(attrs)
-        url = base_url + method
-        # The requests module can handle building the url parameter stuff
-        # We just give it a dictionary (attrs)
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
         r = s.get(url, params=attrs, headers=headers)
+
         if r.status_code == 429:
             print('Error: 429')
+            return False
+
         else:
-            # print(r)
-            # json data stuff
-            # the requests module also handles the json output nicely. ;)
             json_obj = r.json()
-            # print(json_obj)
             result_count = int(json_obj.get('concsize', '0'))
-            # print(word + '\t' + str(json_obj.get('concsize', '0')))
             text = ''
             if result_count > 0:
                 response = json.dumps(json_obj["Lines"], sort_keys=True, indent=4, ensure_ascii=False)
@@ -418,7 +417,7 @@ class Wsd:
                 sentences_count = len(item_dict)
                 if sentences_count > 0:
                     counter = 0
-                    while counter < sentences_count:
+                    while counter <= sentences_count:  # <= ?
                         left = ''
                         kwic = item_dict[counter]['Kwic'][0]['str']
                         right = ''
@@ -436,7 +435,12 @@ class Wsd:
                         text += left + kwic + right + ' '
 
                         counter += 1
+
             return text
+
+            # else:
+            #     return False
+
 
 class Style:
     """ Helper class for nicer coloring """
@@ -449,33 +453,57 @@ class Style:
 
 
 if __name__ == "__main__":
-    # """
-    #     PREFIXOIDS WSD
-    # """
-    # PREF_WSD = Wsd('Prefixoids', DATA_PATH + 'wsd/' + PREF_JSON_DICT)
-    # pref_inventory_list = PREF_WSD.read_file_to_list(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE)
-    # f0_pref_wsd_labels = []  # wsd labels
-    # f1_pref_wsd_list = []  # wsd prediciton
-    #
-    # """ Loop """
-    # counter = 0
-    # for i in pref_inventory_list:
-    #     counter += 1
-    #     # if counter == 855:
-    #     #     break
-    #     # elif counter < 805:
-    #     #     pass
-    #     if counter % 10 == 0:
-    #         print('Line:', str(counter) + ' ===============================', i[0], i[-1])
-    #         f0 = PREF_WSD.transform_class_name_to_binary(i[-1])
-    #         f1 = PREF_WSD.lesk(PREF_WSD.split_word_at_pipe(i[1])[0], i[0])
-    #         f0_pref_wsd_labels.append(f0)
-    #         f1_pref_wsd_list.append(f1)
-    #     else:
-    #         pass
-    #
-    # PREF_WSD.write_list_to_file(f0_pref_wsd_labels, DATA_PATH + 'wsd/' + 'f0_pref_wsd.txt')
-    # PREF_WSD.write_list_to_file(f1_pref_wsd_list, DATA_PATH + 'wsd/' + 'f1_pref_wsd.txt')
+    """
+        PREFIXOIDS WSD
+    """
+    PREF_WSD = Wsd('Prefixoids', DATA_PATH + 'wsd/' + PREF_JSON_DICT)
+    pref_inventory_list = PREF_WSD.read_file_to_list(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE)
+    f0_pref_wsd_labels = []  # wsd labels
+    f1_pref_wsd_list = []  # wsd predicitons
+
+    def write_pref():
+        print('Writing files...')
+        # PREF_WSD.write_list_to_file(f0_pref_wsd_labels, DATA_PATH + 'wsd/' + 'f0_pref_wsd.txt')
+        # PREF_WSD.write_list_to_file(f1_pref_wsd_list, DATA_PATH + 'wsd/' + 'f1_pref_wsd.txt')
+        sys.exit('Exit')
+
+    """ Loop """
+    counter = 0
+    for i in pref_inventory_list:
+        counter += 1
+        # stopped at 1000
+        if counter < 1000:
+            pass
+        elif counter == 1500:
+            break
+        # if counter % 10 == 0:
+        #     pass
+        # else:
+        #     print('Line:', str(counter) + ' ===============================', i[0], i[-1])
+        #     try:
+        #         f0 = PREF_WSD.transform_class_name_to_binary(i[-1])
+        #         f1 = PREF_WSD.lesk(PREF_WSD.split_word_at_pipe(i[1])[0], i[0])
+        #         if f1 == -1:
+        #             pass
+        #         else:
+        #             f0_pref_wsd_labels.append(f0)
+        #             f1_pref_wsd_list.append(f1)
+        #             #  return -1 from lesk and skip line for items without example sentence
+        #     except TypeError:
+        #         print('Function errored')
+        #         write_pref()
+
+        else:
+            print('Line:', str(counter) + ' ===============================', i[0], i[-1])
+            f0 = PREF_WSD.transform_class_name_to_binary(i[-1])
+            f1 = PREF_WSD.lesk(PREF_WSD.split_word_at_pipe(i[1])[0], i[0])
+            if f1 == -1:
+                pass
+            else:
+                f0_pref_wsd_labels.append(f0)
+                f1_pref_wsd_list.append(f1)
+
+    write_pref()
 
     """
         SUFFIXOIDS WSD
@@ -483,7 +511,7 @@ if __name__ == "__main__":
     # SUFF_WSD = Wsd('Prefixoids', DATA_PATH + 'wsd/' + SUFF_JSON_DICT)
     # suff_inventory_list = SUFF_WSD.read_file_to_list(DATA_FINAL_PATH + FINAL_SUFFIXOID_FILE)
     # f0_suff_wsd_labels = []  # wsd labels
-    # f1_suff_wsd_list = []  # wsd prediciton
+    # f1_suff_wsd_list = []  # wsd predicitons
     #
     # """ Loop """
     # counter = 0
