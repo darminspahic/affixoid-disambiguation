@@ -17,32 +17,31 @@ License: MIT License
 Version: 1.0
 
 """
-
+import ast
 import sys
 import numpy as np
-import ast
+import matplotlib.pyplot as plt
+
 from sklearn import svm
+from sklearn import preprocessing
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import train_test_split
+from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import cross_val_predict
+from sklearn.model_selection import ShuffleSplit
 from sklearn.metrics import average_precision_score
 from sklearn.metrics import f1_score
 from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
-
-from sklearn.model_selection import cross_val_score
-from sklearn.model_selection import cross_val_predict
-from sklearn.model_selection import ShuffleSplit
-from sklearn import preprocessing
-from sklearn import metrics
 from sklearn.metrics import precision_recall_curve
-import matplotlib.pyplot as plt
 from sklearn.metrics import average_precision_score
-
 
 ################
 # PATH SETTINGS
 ################
 DATA_FEATURES_PATH = '../data/features/'
+DATA_WSD_PATH = '../data/wsd/'
 
 
 class Classifier:
@@ -57,14 +56,14 @@ class Classifier:
     def __init__(self):
         print('-' * 40)
 
-    def read_features_from_files(self, feature_files_list):
+    def read_features_from_files(self, feature_files_list, path=DATA_FEATURES_PATH):
         """TODO"""
 
         feature_instances = []
         files = []
 
         for file in feature_files_list:
-            f = open(DATA_FEATURES_PATH+file, 'r', encoding='utf-8')
+            f = open(path+file, 'r', encoding='utf-8')
             files.append(f)
 
         zipped_files = zip(*files)
@@ -80,12 +79,12 @@ class Classifier:
 
         return feature_instances
 
-    def read_labels_from_file(self, file):
+    def read_labels_from_file(self, file, path=DATA_FEATURES_PATH):
         """"""
 
         labels = []
 
-        with open(DATA_FEATURES_PATH+file, 'r', encoding='utf-8') as feat_1:
+        with open(path+file, 'r', encoding='utf-8') as feat_1:
             for line in feat_1:
                 item = ast.literal_eval(line)
                 labels.append(item)
@@ -180,7 +179,7 @@ if __name__ == "__main__":
                                             'f15_suff.txt', 'f15_suff.txt', 'f17_suff.txt',
                                             'f18_suff.txt'])
 
-    pref_WSD_X = PREF.read_features_from_files(['f1_pref_wsd.txt'])
+
 
     scaler_s = preprocessing.StandardScaler()
     scaler_m = preprocessing.MinMaxScaler()
@@ -195,8 +194,6 @@ if __name__ == "__main__":
     """ Labels """
     pref_y = PREF.read_labels_from_file('f1_pref.txt')
     suff_y = SUFF.read_labels_from_file('f1_suff.txt')
-
-    pref_WSD_y = PREF.read_features_from_files(['f0_pref_wsd.txt'])
 
     """ Split data """
     X_train_pref, X_test_pref, y_train_pref, y_test_pref = train_test_split(pref_X_scaled, pref_y, test_size=0.3, random_state=5, shuffle=True)
@@ -234,10 +231,11 @@ if __name__ == "__main__":
         cv = ShuffleSplit(n_splits=5, test_size=0.3, random_state=5)
         scores = cross_val_score(clf, instances, labels, cv=cv)
         print('Crossvalidation scores:', scores)
-        print()
 
     cross_validate(clf_pref, pref_X_scaled, pref_y)
     cross_validate(clf_suff, suff_X_scaled, suff_y)
+
+    print()
 
     def plot(y_test, y_score):
         average_precision = average_precision_score(y_test, y_score)
@@ -257,9 +255,7 @@ if __name__ == "__main__":
     # plot(y_test_pref, results_pref)
     # plot(y_test_suff, results_suff)
 
-    # ----------------------------
-
-    from sklearn.model_selection import GridSearchCV
+    # ---------------------------
 
     def svc_param_selection(X, y, nfolds):
         Cs = [0.001, 0.01, 0.1, 1, 10]
@@ -273,8 +269,24 @@ if __name__ == "__main__":
     # print(svc_param_selection(pref_X_scaled, pref_y, 10))
     # print(svc_param_selection(suff_X_scaled, suff_y, 10))
 
-    print('WSD scores')
-    print('Precision: ', precision_score(pref_WSD_X, pref_WSD_y))
-    print('Recall: ', recall_score(pref_WSD_X, pref_WSD_y))
-    print('Average P-R score: ', average_precision_score(pref_WSD_X, pref_WSD_y))
-    print('F-1 Score: ', f1_score(pref_WSD_X, pref_WSD_y, average='weighted'))
+    """ 
+        Word Sense Disambiguation 
+    """
+
+    pref_WSD_labels = PREF.read_features_from_files(['f0_pref_wsd_10.txt'], path=DATA_WSD_PATH)
+    pref_WSD_scores = PREF.read_features_from_files(['f1_pref_wsd_10.txt'], path=DATA_WSD_PATH)
+
+    suff_WSD_labels = SUFF.read_features_from_files(['f0_suff_wsd_10.txt'], path=DATA_WSD_PATH)
+    suff_WSD_scores = SUFF.read_features_from_files(['f1_suff_wsd_10.txt'], path=DATA_WSD_PATH)
+
+    print(Style.BOLD + 'WSD Scores Prefixoids' + Style.END)
+    print('Precision: ', precision_score(pref_WSD_labels, pref_WSD_scores))
+    print('Recall: ', recall_score(pref_WSD_labels, pref_WSD_scores))
+    print('F-1 Score: ', f1_score(pref_WSD_labels, pref_WSD_scores, average='weighted'))
+    print()
+
+    print(Style.BOLD + 'WSD Scores Suffixoids' + Style.END)
+    print('Precision: ', precision_score(suff_WSD_labels, suff_WSD_scores))
+    print('Recall: ', recall_score(suff_WSD_labels, suff_WSD_scores))
+    print('F-1 Score: ', f1_score(suff_WSD_labels, suff_WSD_scores, average='weighted'))
+    print()
