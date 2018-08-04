@@ -24,6 +24,7 @@ import matplotlib.pyplot as plt
 
 from sklearn import svm
 from sklearn import preprocessing
+from sklearn.datasets import load_files
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import GridSearchCV
@@ -36,6 +37,8 @@ from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
 from sklearn.metrics import precision_recall_curve
 from sklearn.metrics import average_precision_score
+
+from sklearn.ensemble import RandomForestClassifier
 
 ################
 # PATH SETTINGS
@@ -188,6 +191,8 @@ if __name__ == "__main__":
     pref_X_scaled = scaler_m.fit_transform(pref_X)
     suff_X_scaled = scaler_m.fit_transform(suff_X)
 
+    # print(pref_X[0])
+    # print(suff_X[0])
     # print(pref_X_scaled[0])
     # print(suff_X_scaled[0])
 
@@ -200,7 +205,7 @@ if __name__ == "__main__":
     X_train_suff, X_test_suff, y_train_suff, y_test_suff = train_test_split(suff_X_scaled, suff_y, test_size=0.3, random_state=5, shuffle=True)
 
     """ SVM """
-    clf_pref = svm.SVC(kernel="rbf", gamma=0.1, C=10).fit(X_train_pref, y_train_pref)
+    clf_pref = svm.SVC(kernel="rbf", gamma=0.01, C=100).fit(X_train_pref, y_train_pref)
     clf_suff = svm.SVC(kernel="rbf", gamma=0.01, C=10).fit(X_train_suff, y_train_suff)
 
     # clf = svm.SVC(kernel='linear', C=1).fit(X_train, y_train)
@@ -211,12 +216,12 @@ if __name__ == "__main__":
     results_suff = clf_suff.predict(X_test_suff)
 
     """ SCORES """
-    def print_scores(classifier, classifer_results, test_instances, test_labels):
+    def print_scores(score_title, classifier, classifer_results, test_instances, test_labels):
+        # print()
+        # print(Style.BOLD + 'RESULTS' + Style.END)
+        # print(classifer_results)
         print()
-        print(Style.BOLD + 'RESULTS' + Style.END)
-        print(classifer_results)
-        print()
-        print(Style.BOLD + 'SCORES' + Style.END)
+        print(Style.BOLD + 'SCORES', score_title + Style.END)
         print('Classifier score: ', classifier.score(test_instances, test_labels))
         print('Precision: ', precision_score(test_labels, classifer_results))
         print('Recall: ', recall_score(test_labels, classifer_results))
@@ -224,8 +229,8 @@ if __name__ == "__main__":
         print('F-1 Score: ', f1_score(test_labels, classifer_results, average='weighted'))
         print()
 
-    print_scores(clf_pref, results_pref, X_test_pref, y_test_pref)
-    print_scores(clf_suff, results_suff, X_test_suff, y_test_suff)
+    print_scores('Prefixoids', clf_pref, results_pref, X_test_pref, y_test_pref)
+    print_scores('Suffixoids', clf_suff, results_suff, X_test_suff, y_test_suff)
 
     def cross_validate(clf, instances, labels):
         cv = ShuffleSplit(n_splits=5, test_size=0.3, random_state=5)
@@ -258,16 +263,17 @@ if __name__ == "__main__":
     # ---------------------------
 
     def svm_parameter_selection(X, y, nfolds):
-        cs = [0.001, 0.01, 0.1, 1, 10]
-        gammas = [0.001, 0.01, 0.1, 1, 10]
+        cs = [0.01, 0.1, 1, 10, 100, 1000, 10000]
+        gammas = [0.0001, 0.001, 0.01, 0.1, 1, 10, 100]
         parameter_grid = {'C': cs, 'gamma': gammas}
         grid_search = GridSearchCV(svm.SVC(kernel='rbf'), parameter_grid, cv=nfolds)
         grid_search.fit(X, y)
         # grid_search.best_params_
         return grid_search.best_params_
 
-    # print(svm_parameter_selection(pref_X_scaled, pref_y, 10))
-    # print(svm_parameter_selection(suff_X_scaled, suff_y, 10))
+    # print(svm_parameter_selection(pref_X_scaled, pref_y, 10))  # {'C': 100, 'gamma': 0.01}
+    # print(svm_parameter_selection(suff_X_scaled, suff_y, 10))  # {'C': 10, 'gamma': 0.01}
+    # print()
 
     """ 
         Scores for: Word Sense Disambiguation 
