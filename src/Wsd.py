@@ -48,7 +48,7 @@ FINAL_SUFFIXOID_FILE = 'binary_unique_instance_suffixoid_segmentations.txt'
 ################
 # GermaNet & WordNet
 ################
-ger = load_germanet()
+# ger = load_germanet()
 
 # Sentence tokenizer
 sent_tok = load('tokenizers/punkt/german.pickle')
@@ -65,8 +65,16 @@ s = requests.Session()
 base_url = 'https://api.sketchengine.co.uk/bonito/run.cgi'
 corpname = 'sdewac2'
 username = 'spahic'
-api_key = '3c09af0e68784050a71a5aa8be81d544'
+api_key = '159b841f61a64092bc630d20b0f56c93'
+# username = 'api_testing'
+# api_key = 'YNSC0B9OXN57XB48T9HWUFFLPY4TZ6OE'
 method = '/view'
+"""
+https://www.sketchengine.eu/documentation/api-documentation/
+https://www.sketchengine.eu/documentation/methods-documentation/
+login: api_testing
+api_key: YNSC0B9OXN57XB48T9HWUFFLPY4TZ6OE
+"""
 
 """ WSD Dictionaries """
 PREF_JSON_DICT = 'pref_dictionary.json'
@@ -136,7 +144,7 @@ class Wsd:
 
         """
 
-        f = open(output_file, 'w', encoding='utf-8')
+        f = open(output_file, 'a', encoding='utf-8')
 
         for item in input_list:
             if split_second_word:
@@ -383,48 +391,52 @@ class Wsd:
             if you want to do up to 900 requests, you need to use the interval of 4 seconds per query,
             if you want to do more than 2000 requests, you need to use interval ca 44 seconds.
         """
+        time.sleep(10)
 
-        attrs = dict(corpname=corpname, q='', pagesize='200', format='json', username=username, api_key=api_key, viewmode='sentence', lpos= '-n', kwicleftctx=20, kwicrightctx=20)
+        attrs = dict(corpname=corpname, q='', pagesize='200', format='json', username=username, api_key=api_key, viewmode='sentence', lpos='-n', kwicleftctx=20, kwicrightctx=20, async=0)
         attrs['q'] = 'q' + '[lemma="'+word+'"]'
         # encoded_attrs = urllib.parse.urlencode(attrs)
         url = base_url + method
         # The requests module can handle building the url parameter stuff
         # We just give it a dictionary (attrs)
-        r = s.get(url, params=attrs)
-        # print(r)
+        headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+        r = s.get(url, params=attrs, headers=headers)
+        if r.status_code == 429:
+            print('Error: 429')
+        else:
+            # print(r)
+            # json data stuff
+            # the requests module also handles the json output nicely. ;)
+            json_obj = r.json()
+            # print(json_obj)
+            result_count = int(json_obj.get('concsize', '0'))
+            # print(word + '\t' + str(json_obj.get('concsize', '0')))
+            text = ''
+            if result_count > 0:
+                response = json.dumps(json_obj["Lines"], sort_keys=True, indent=4, ensure_ascii=False)
+                item_dict = json.loads(response)
+                sentences_count = len(item_dict)
+                if sentences_count > 0:
+                    counter = 0
+                    while counter < sentences_count:
+                        left = ''
+                        kwic = item_dict[counter]['Kwic'][0]['str']
+                        right = ''
 
-        # json data stuff
-        # the requests module also handles the json output nicely. ;)
-        json_obj = r.json()
-        # print(json_obj)
-        result_count = int(json_obj.get('concsize', '0'))
-        # print(word + '\t' + str(json_obj.get('concsize', '0')))
-        text = ''
-        if result_count > 0:
-            response = json.dumps(json_obj["Lines"], sort_keys=True, indent=4, ensure_ascii=False)
-            item_dict = json.loads(response)
-            sentences_count = len(item_dict)
-            if sentences_count > 0:
-                counter = 0
-                while counter < sentences_count:
-                    left = ''
-                    kwic = item_dict[counter]['Kwic'][0]['str']
-                    right = ''
+                        try:
+                            left = item_dict[counter]['Left'][0]['str']
+                        except IndexError:
+                            pass
 
-                    try:
-                        left = item_dict[counter]['Left'][0]['str']
-                    except IndexError:
-                        pass
+                        try:
+                            right = item_dict[counter]['Right'][0]['str']
+                        except IndexError:
+                            pass
 
-                    try:
-                        right = item_dict[counter]['Right'][0]['str']
-                    except IndexError:
-                        pass
+                        text += left + kwic + right + ' '
 
-                    text += left + kwic + right + ' '
-
-                    counter += 1
-        return text
+                        counter += 1
+            return text
 
 class Style:
     """ Helper class for nicer coloring """
@@ -437,35 +449,61 @@ class Style:
 
 
 if __name__ == "__main__":
-    """
-        PREFIXOIDS WSD
-    """
-    PREF_WSD = Wsd('Prefixoids', DATA_PATH + 'wsd/' + PREF_JSON_DICT)
-    pref_inventory_list = PREF_WSD.read_file_to_list(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE)
-    f0_pref_wsd_labels = []  # wsd labels
-    f1_pref_wsd_list = []  # wsd feature
+    # """
+    #     PREFIXOIDS WSD
+    # """
+    # PREF_WSD = Wsd('Prefixoids', DATA_PATH + 'wsd/' + PREF_JSON_DICT)
+    # pref_inventory_list = PREF_WSD.read_file_to_list(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE)
+    # f0_pref_wsd_labels = []  # wsd labels
+    # f1_pref_wsd_list = []  # wsd prediciton
+    #
+    # """ Loop """
+    # counter = 0
+    # for i in pref_inventory_list:
+    #     counter += 1
+    #     # if counter == 855:
+    #     #     break
+    #     # elif counter < 805:
+    #     #     pass
+    #     if counter % 10 == 0:
+    #         print('Line:', str(counter) + ' ===============================', i[0], i[-1])
+    #         f0 = PREF_WSD.transform_class_name_to_binary(i[-1])
+    #         f1 = PREF_WSD.lesk(PREF_WSD.split_word_at_pipe(i[1])[0], i[0])
+    #         f0_pref_wsd_labels.append(f0)
+    #         f1_pref_wsd_list.append(f1)
+    #     else:
+    #         pass
+    #
+    # PREF_WSD.write_list_to_file(f0_pref_wsd_labels, DATA_PATH + 'wsd/' + 'f0_pref_wsd.txt')
+    # PREF_WSD.write_list_to_file(f1_pref_wsd_list, DATA_PATH + 'wsd/' + 'f1_pref_wsd.txt')
 
-    """ Loop """
-    counter = 0
-    for i in pref_inventory_list:
-        counter += 1
-        if counter == 500:
-            break
-        elif counter <= 450:
-            pass
-        # elif counter % 3 == 0:
-        #     pass
-        else:
-            # print('Line:', str(counter) + ' ===============================', i[0], i[-1])
-            f0 = PREF_WSD.transform_class_name_to_binary(i[-1])
-            f1 = PREF_WSD.lesk(PREF_WSD.split_word_at_pipe(i[1])[0], i[0])
-            # print(PREF_WSD.create_synsets_dictionary(PREF_WSD.split_word_at_pipe(i[1])[1]))
-            # PREF.calculate_similarity_scores(PREF.split_word_at_pipe(i[1])[0], PREF.split_word_at_pipe(i[1])[1])
-            f0_pref_wsd_labels.append(f0)
-            f1_pref_wsd_list.append(f1)
-
-    PREF_WSD.write_list_to_file(f0_pref_wsd_labels, DATA_FEATURES_PATH + 'f0_pref_wsd.txt')
-    PREF_WSD.write_list_to_file(f1_pref_wsd_list, DATA_FEATURES_PATH + 'f1_pref_wsd.txt')
+    """
+        SUFFIXOIDS WSD
+    """
+    # SUFF_WSD = Wsd('Prefixoids', DATA_PATH + 'wsd/' + SUFF_JSON_DICT)
+    # suff_inventory_list = SUFF_WSD.read_file_to_list(DATA_FINAL_PATH + FINAL_SUFFIXOID_FILE)
+    # f0_suff_wsd_labels = []  # wsd labels
+    # f1_suff_wsd_list = []  # wsd prediciton
+    #
+    # """ Loop """
+    # counter = 0
+    # for i in suff_inventory_list:
+    #     counter += 1
+    #     # if counter == 855:
+    #     #     break
+    #     # elif counter < 805:
+    #     #     pass
+    #     if counter % 10 == 0:
+    #         print('Line:', str(counter) + ' ===============================', i[0], i[-1])
+    #         f0 = SUFF_WSD.transform_class_name_to_binary(i[-1])
+    #         f1 = SUFF_WSD.lesk(SUFF_WSD.split_word_at_pipe(i[1])[1], i[0])
+    #         f0_suff_wsd_labels.append(f0)
+    #         f1_suff_wsd_list.append(f1)
+    #     else:
+    #         pass
+    #
+    # SUFF_WSD.write_list_to_file(f0_suff_wsd_labels, DATA_PATH + 'wsd/' + 'f0_suff_wsd.txt')
+    # SUFF_WSD.write_list_to_file(f1_suff_wsd_list, DATA_PATH + 'wsd/' + 'f1_suff_wsd.txt')
 
     """ Tests """
     # print(PREF_WSD.is_in_germanet('Test'))
@@ -473,7 +511,8 @@ if __name__ == "__main__":
     # print(PREF_WSD.create_synsets_dictionary('Bilderbuch'))
     # print(PREF_WSD.calculate_similarity_scores('Bilderbuch', 'Auflage'))
     # print(PREF_WSD.get_sentence_for_word('Traumstrand'))
-    # print(PREF_WSD.get_sentence_for_word('Traumsymbol'))
+    # print(PREF_WSD.get_sentence_for_word('Heidenbammel'))
+    # print(PREF_WSD.get_sentence_for_word('Bombenspezialist'))
 
     # print(PREF_WSD.lesk('Bilderbuch', 'Bilderbuchauftakt'))
     # print(PREF_WSD.lesk('Bombe', 'Bombenprozeß'))
