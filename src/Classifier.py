@@ -163,23 +163,23 @@ if __name__ == "__main__":
     PREF = Classifier()
     SUFF = Classifier()
 
-    pref_X = PREF.read_features_from_files(['f2_pref.txt',
-                                            'f3_pref.txt', 'f4_pref.txt', 'f5_pref.txt',
+    pref_X = PREF.read_features_from_files(['f2_pref.txt', 'f3_pref.txt', 'f4_pref.txt',
+                                            'f5_pref.txt',
                                             'f6_pref.txt', 'f7_pref.txt', 'f8_pref.txt',
                                             'f9_pref.txt', 'f10_pref.txt', 'f11_pref.txt',
                                             'f12_pref.txt', 'f13_pref.txt', 'f14_pref.txt',
-                                            'f15_pref.txt', 'f15_pref.txt', 'f17_pref.txt',
-                                            'f18_pref.txt'])
+                                            'f15_pref.txt', 'f16_pref.txt', 'f17_pref.txt',
+                                            'f18_pref.txt'
+                                            ])
 
-    suff_X = SUFF.read_features_from_files(['f2_suff.txt',
-                                            'f3_suff.txt', 'f4_suff.txt', 'f5_suff.txt',
+    suff_X = SUFF.read_features_from_files(['f2_suff.txt', 'f3_suff.txt', 'f4_suff.txt',
+                                            'f5_suff.txt',
                                             'f6_suff.txt', 'f7_suff.txt', 'f8_suff.txt',
                                             'f9_suff.txt', 'f10_suff.txt', 'f11_suff.txt',
                                             'f12_suff.txt', 'f13_suff.txt', 'f14_suff.txt',
-                                            'f15_suff.txt', 'f15_suff.txt', 'f17_suff.txt',
-                                            'f18_suff.txt'])
-
-
+                                            'f15_suff.txt', 'f16_suff.txt', 'f17_suff.txt',
+                                            'f18_suff.txt'
+                                            ])
 
     scaler_s = preprocessing.StandardScaler()
     scaler_m = preprocessing.MinMaxScaler()
@@ -200,8 +200,8 @@ if __name__ == "__main__":
     X_train_suff, X_test_suff, y_train_suff, y_test_suff = train_test_split(suff_X_scaled, suff_y, test_size=0.3, random_state=5, shuffle=True)
 
     """ SVM """
-    clf_pref = svm.SVC(kernel="rbf", gamma=0.1, C=1).fit(X_train_pref, y_train_pref)
-    clf_suff = svm.SVC(kernel="rbf", gamma=0.1, C=10).fit(X_train_suff, y_train_suff)
+    clf_pref = svm.SVC(kernel="rbf", gamma=0.1, C=10).fit(X_train_pref, y_train_pref)
+    clf_suff = svm.SVC(kernel="rbf", gamma=0.01, C=10).fit(X_train_suff, y_train_suff)
 
     # clf = svm.SVC(kernel='linear', C=1).fit(X_train, y_train)
     # clf = svm.SVC(C=1.0, cache_size=200, class_weight=None, coef0=0.0, decision_function_shape='ovr', degree=3, gamma='auto', kernel='linear', max_iter=-1, probability=False, random_state=None, shrinking=True, tol=0.001, verbose=False).fit(X_train, y_train)
@@ -220,7 +220,7 @@ if __name__ == "__main__":
         print('Classifier score: ', classifier.score(test_instances, test_labels))
         print('Precision: ', precision_score(test_labels, classifer_results))
         print('Recall: ', recall_score(test_labels, classifer_results))
-        print('Average P-R score: ', average_precision_score(test_labels, classifer_results))
+        # print('Average P-R score: ', average_precision_score(test_labels, classifer_results))
         print('F-1 Score: ', f1_score(test_labels, classifer_results, average='weighted'))
         print()
 
@@ -257,20 +257,20 @@ if __name__ == "__main__":
 
     # ---------------------------
 
-    def svc_param_selection(X, y, nfolds):
-        Cs = [0.001, 0.01, 0.1, 1, 10]
-        gammas = [0.001, 0.01, 0.1, 1]
-        param_grid = {'C': Cs, 'gamma': gammas}
-        grid_search = GridSearchCV(svm.SVC(kernel='rbf'), param_grid, cv=nfolds)
+    def svm_parameter_selection(X, y, nfolds):
+        cs = [0.001, 0.01, 0.1, 1, 10]
+        gammas = [0.001, 0.01, 0.1, 1, 10]
+        parameter_grid = {'C': cs, 'gamma': gammas}
+        grid_search = GridSearchCV(svm.SVC(kernel='rbf'), parameter_grid, cv=nfolds)
         grid_search.fit(X, y)
         # grid_search.best_params_
         return grid_search.best_params_
 
-    # print(svc_param_selection(pref_X_scaled, pref_y, 10))
-    # print(svc_param_selection(suff_X_scaled, suff_y, 10))
+    # print(svm_parameter_selection(pref_X_scaled, pref_y, 10))
+    # print(svm_parameter_selection(suff_X_scaled, suff_y, 10))
 
     """ 
-        Word Sense Disambiguation 
+        Scores for: Word Sense Disambiguation 
     """
 
     pref_WSD_labels = PREF.read_features_from_files(['f0_pref_wsd_10.txt'], path=DATA_WSD_PATH)
@@ -279,13 +279,13 @@ if __name__ == "__main__":
     suff_WSD_labels = SUFF.read_features_from_files(['f0_suff_wsd_10.txt'], path=DATA_WSD_PATH)
     suff_WSD_scores = SUFF.read_features_from_files(['f1_suff_wsd_10.txt'], path=DATA_WSD_PATH)
 
-    print(Style.BOLD + 'WSD Scores Prefixoids' + Style.END)
+    print(Style.BOLD + 'WSD SCORES Prefixoids' + Style.END)
     print('Precision: ', precision_score(pref_WSD_labels, pref_WSD_scores))
     print('Recall: ', recall_score(pref_WSD_labels, pref_WSD_scores))
     print('F-1 Score: ', f1_score(pref_WSD_labels, pref_WSD_scores, average='weighted'))
     print()
 
-    print(Style.BOLD + 'WSD Scores Suffixoids' + Style.END)
+    print(Style.BOLD + 'WSD SCORES Suffixoids' + Style.END)
     print('Precision: ', precision_score(suff_WSD_labels, suff_WSD_scores))
     print('Recall: ', recall_score(suff_WSD_labels, suff_WSD_scores))
     print('F-1 Score: ', f1_score(suff_WSD_labels, suff_WSD_scores, average='weighted'))
