@@ -10,35 +10,27 @@ Module name:
 Classifier
 
 Short description:
-TODO
-This module...
+Classifier module
 
 License: MIT License
 Version: 1.0
 
 """
 import ast
-import sys
-import numpy as np
 import matplotlib.pyplot as plt
 
 from sklearn import svm
 from sklearn import preprocessing
-from sklearn.datasets import load_files
-from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import cross_val_score
-from sklearn.model_selection import cross_val_predict
 from sklearn.model_selection import ShuffleSplit
-from sklearn.metrics import average_precision_score
 from sklearn.metrics import f1_score
 from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
 from sklearn.metrics import precision_recall_curve
 from sklearn.metrics import average_precision_score
-
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import classification_report
 
 ################
 # PATH SETTINGS
@@ -52,11 +44,13 @@ class Classifier:
 
         Returns: Results
 
-        Example: PREF = Classifier()
+        Example: CLSF = Classifier()
 
     """
 
     def __init__(self):
+        print('=' * 40)
+        print(Style.BOLD + "Running Classifier:" + Style.END)
         print('-' * 40)
 
     def read_features_from_files(self, feature_files_list, path=DATA_FEATURES_PATH):
@@ -94,39 +88,6 @@ class Classifier:
 
         return labels
 
-    def leave_one_out(self, feature_files_list, leave_out=None):
-        """ TODO
-            Leave out 0-9
-
-        """
-
-        files = []
-
-        all_instances = []
-        test_instances = []
-        test_labels = []
-
-        for file in feature_files_list:
-            f = open(DATA_FEATURES_PATH + file, 'r', encoding='utf-8')
-            files.append(f)
-
-        zipped_files = zip(*files)
-
-        for line in zipped_files:
-            feature_vector = []
-            for t in line:
-                vec = t.split()
-                for v in vec:
-                    item = ast.literal_eval(v)  # evaluate type
-                    feature_vector.append(item)
-            all_instances.append(feature_vector)
-
-        for item in all_instances:
-            if item[leave_out] == 1:
-                test_instances.append(item)
-                test_labels.append(item[10])
-        return test_instances, test_labels
-
 
 class Style:
     BOLD = '\033[1m'
@@ -136,7 +97,7 @@ class Style:
 if __name__ == "__main__":
     """ Features 
         'f0_' = candidate vector
-        'f1_' = binary indicator, if affixoid
+        'f1_' = binary indicator if affixoid; labels
 
         'f2_' = frequency of complex word
         'f3_' = frequency of first part
@@ -163,10 +124,9 @@ if __name__ == "__main__":
         'f18_' = PMI Scores for first and second part of word
     """
 
-    PREF = Classifier()
-    SUFF = Classifier()
+    CLSF = Classifier()
 
-    pref_X = PREF.read_features_from_files(['f2_pref.txt', 'f3_pref.txt', 'f4_pref.txt',
+    pref_X = CLSF.read_features_from_files(['f2_pref.txt', 'f3_pref.txt', 'f4_pref.txt',
                                             'f5_pref.txt',
                                             'f6_pref.txt', 'f7_pref.txt', 'f8_pref.txt',
                                             'f9_pref.txt', 'f10_pref.txt', 'f11_pref.txt',
@@ -175,7 +135,7 @@ if __name__ == "__main__":
                                             'f18_pref.txt'
                                             ])
 
-    suff_X = SUFF.read_features_from_files(['f2_suff.txt', 'f3_suff.txt', 'f4_suff.txt',
+    suff_X = CLSF.read_features_from_files(['f2_suff.txt', 'f3_suff.txt', 'f4_suff.txt',
                                             'f5_suff.txt',
                                             'f6_suff.txt', 'f7_suff.txt', 'f8_suff.txt',
                                             'f9_suff.txt', 'f10_suff.txt', 'f11_suff.txt',
@@ -184,6 +144,7 @@ if __name__ == "__main__":
                                             'f18_suff.txt'
                                             ])
 
+    """ Scale data """
     scaler_s = preprocessing.StandardScaler()
     scaler_m = preprocessing.MinMaxScaler()
     scaler_r = preprocessing.RobustScaler()
@@ -197,23 +158,71 @@ if __name__ == "__main__":
     # print(suff_X_scaled[0])
 
     """ Labels """
-    pref_y = PREF.read_labels_from_file('f1_pref.txt')
-    suff_y = SUFF.read_labels_from_file('f1_suff.txt')
+    pref_y = CLSF.read_labels_from_file('f1_pref.txt')
+    suff_y = CLSF.read_labels_from_file('f1_suff.txt')
 
     """ Split data """
     X_train_pref, X_test_pref, y_train_pref, y_test_pref = train_test_split(pref_X_scaled, pref_y, test_size=0.3, random_state=5, shuffle=True)
     X_train_suff, X_test_suff, y_train_suff, y_test_suff = train_test_split(suff_X_scaled, suff_y, test_size=0.3, random_state=5, shuffle=True)
 
-    """ SVM """
-    clf_pref = svm.SVC(kernel="rbf", gamma=0.01, C=100).fit(X_train_pref, y_train_pref)
-    clf_suff = svm.SVC(kernel="rbf", gamma=0.01, C=10).fit(X_train_suff, y_train_suff)
+    """ Parameter Selection with GridSearch """
+    def grid_search_report(X_train, y_train, X_test, y_test, affixoid_class):
+        import warnings
+        warnings.filterwarnings("ignore")
 
-    # clf = svm.SVC(kernel='linear', C=1).fit(X_train, y_train)
-    # clf = svm.SVC(C=1.0, cache_size=200, class_weight=None, coef0=0.0, decision_function_shape='ovr', degree=3, gamma='auto', kernel='linear', max_iter=-1, probability=False, random_state=None, shrinking=True, tol=0.001, verbose=False).fit(X_train, y_train)
-    # clf = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(5, 1), random_state=1).fit(X_train, y_train)
+        tuned_parameters = [{'kernel': ['rbf'], 'gamma': [1e-5, 1e-4, 1e-3, 1e-2, 0.1], 'C': [1, 10, 100, 1000]},
+                            {'kernel': ['linear'], 'C': [1, 10, 100, 1000]}]
+
+        scores = ['precision', 'recall']
+
+        for score in scores:
+            print("Tuning hyper-parameters for %s" % score)
+            print()
+
+            clf = GridSearchCV(svm.SVC(), tuned_parameters, cv=5, scoring='%s_macro' % score)
+            clf.fit(X_train, y_train)
+
+            print("Best parameters set found on development set for:", affixoid_class)
+            print()
+            print(clf.best_params_)
+            print()
+            print("Grid scores on development set:")
+            print()
+            means = clf.cv_results_['mean_test_score']
+            stds = clf.cv_results_['std_test_score']
+            for mean, std, params in zip(means, stds, clf.cv_results_['params']):
+                print("%0.3f (+/-%0.03f) for %r" % (mean, std * 2, params))
+            print()
+
+            print("Detailed classification report:")
+            print()
+            print("The model is trained on the full development set.")
+            print("The scores are computed on the full evaluation set.")
+            print()
+            y_true, y_pred = y_test, clf.predict(X_test)
+            print(classification_report(y_true, y_pred))
+            print()
+
+    # grid_search_report(X_train_pref, y_train_pref, X_test_pref, y_test_pref, 'Prefixoids')
+    # grid_search_report(X_train_suff, y_train_suff, X_test_suff, y_test_suff, 'Suffixoids')
+
+    """ SVM """
+    clf_pref = svm.SVC(kernel="rbf", gamma=0.01, C=100).fit(X_train_pref, y_train_pref)  # gamma=0.01, C=100
+    clf_suff = svm.SVC(kernel="rbf", gamma=0.1, C=10).fit(X_train_suff, y_train_suff)  # gamma=0.1, C=10
 
     results_pref = clf_pref.predict(X_test_pref)
     results_suff = clf_suff.predict(X_test_suff)
+
+    """ Crossvalidation """
+    def cross_validate(clf, instances, labels):
+        cv = ShuffleSplit(n_splits=5, test_size=0.3, random_state=5)
+        scores = cross_val_score(clf, instances, labels, cv=cv)
+        print('Crossvalidation scores:', scores)
+
+    cross_validate(clf_pref, pref_X_scaled, pref_y)
+    cross_validate(clf_suff, suff_X_scaled, suff_y)
+
+    print()
 
     """ SCORES """
     def print_scores(score_title, classifier, classifer_results, test_instances, test_labels):
@@ -225,22 +234,11 @@ if __name__ == "__main__":
         print('Classifier score: ', classifier.score(test_instances, test_labels))
         print('Precision: ', precision_score(test_labels, classifer_results))
         print('Recall: ', recall_score(test_labels, classifer_results))
-        # print('Average P-R score: ', average_precision_score(test_labels, classifer_results))
         print('F-1 Score: ', f1_score(test_labels, classifer_results, average='weighted'))
         print()
 
     print_scores('Prefixoids', clf_pref, results_pref, X_test_pref, y_test_pref)
     print_scores('Suffixoids', clf_suff, results_suff, X_test_suff, y_test_suff)
-
-    def cross_validate(clf, instances, labels):
-        cv = ShuffleSplit(n_splits=5, test_size=0.3, random_state=5)
-        scores = cross_val_score(clf, instances, labels, cv=cv)
-        print('Crossvalidation scores:', scores)
-
-    cross_validate(clf_pref, pref_X_scaled, pref_y)
-    cross_validate(clf_suff, suff_X_scaled, suff_y)
-
-    print()
 
     def plot(y_test, y_score):
         average_precision = average_precision_score(y_test, y_score)
@@ -262,37 +260,40 @@ if __name__ == "__main__":
 
     # ---------------------------
 
-    def svm_parameter_selection(X, y, nfolds):
-        cs = [0.01, 0.1, 1, 10, 100, 1000, 10000]
-        gammas = [0.0001, 0.001, 0.01, 0.1, 1, 10, 100]
-        parameter_grid = {'C': cs, 'gamma': gammas}
-        grid_search = GridSearchCV(svm.SVC(kernel='rbf'), parameter_grid, cv=nfolds)
-        grid_search.fit(X, y)
-        # grid_search.best_params_
-        return grid_search.best_params_
-
-    # print(svm_parameter_selection(pref_X_scaled, pref_y, 10))  # {'C': 100, 'gamma': 0.01}
-    # print(svm_parameter_selection(suff_X_scaled, suff_y, 10))  # {'C': 10, 'gamma': 0.01}
-    # print()
-
     """ 
         Scores for: Word Sense Disambiguation 
     """
 
-    pref_WSD_labels = PREF.read_features_from_files(['f0_pref_wsd_10.txt'], path=DATA_WSD_PATH)
-    pref_WSD_scores = PREF.read_features_from_files(['f1_pref_wsd_10.txt'], path=DATA_WSD_PATH)
+    pref_WSD_labels = CLSF.read_features_from_files(['f0_pref_wsd.txt'], path=DATA_WSD_PATH)
+    pref_WSD_scores = CLSF.read_features_from_files(['f1_pref_wsd.txt'], path=DATA_WSD_PATH)
+    pref_WSD_labels_10 = CLSF.read_features_from_files(['f0_pref_wsd_10.txt'], path=DATA_WSD_PATH)
+    pref_WSD_scores_10 = CLSF.read_features_from_files(['f1_pref_wsd_10.txt'], path=DATA_WSD_PATH)
+    pref_WSD_labels_100 = CLSF.read_features_from_files(['f0_pref_wsd_100.txt'], path=DATA_WSD_PATH)
+    pref_WSD_scores_100 = CLSF.read_features_from_files(['f1_pref_wsd_100.txt'], path=DATA_WSD_PATH)
 
-    suff_WSD_labels = SUFF.read_features_from_files(['f0_suff_wsd_10.txt'], path=DATA_WSD_PATH)
-    suff_WSD_scores = SUFF.read_features_from_files(['f1_suff_wsd_10.txt'], path=DATA_WSD_PATH)
+    suff_WSD_labels_10 = CLSF.read_features_from_files(['f0_suff_wsd_10.txt'], path=DATA_WSD_PATH)
+    suff_WSD_scores_10 = CLSF.read_features_from_files(['f1_suff_wsd_10.txt'], path=DATA_WSD_PATH)
 
-    print(Style.BOLD + 'WSD SCORES Prefixoids' + Style.END)
+    print(Style.BOLD + 'WSD SCORES Prefixoids 10%' + Style.END)
+    print('Precision: ', precision_score(pref_WSD_labels_10, pref_WSD_scores_10))
+    print('Recall: ', recall_score(pref_WSD_labels_10, pref_WSD_scores_10))
+    print('F-1 Score: ', f1_score(pref_WSD_labels_10, pref_WSD_scores_10, average='weighted'))
+    print()
+
+    print(Style.BOLD + 'WSD SCORES Prefixoids 100%' + Style.END)
+    print('Precision: ', precision_score(pref_WSD_labels_100, pref_WSD_scores_100))
+    print('Recall: ', recall_score(pref_WSD_labels_100, pref_WSD_scores_100))
+    print('F-1 Score: ', f1_score(pref_WSD_labels_100, pref_WSD_scores_100, average='weighted'))
+    print()
+
+    print(Style.BOLD + 'WSD SCORES Prefixoids skip sentences' + Style.END)
     print('Precision: ', precision_score(pref_WSD_labels, pref_WSD_scores))
     print('Recall: ', recall_score(pref_WSD_labels, pref_WSD_scores))
     print('F-1 Score: ', f1_score(pref_WSD_labels, pref_WSD_scores, average='weighted'))
     print()
 
-    print(Style.BOLD + 'WSD SCORES Suffixoids' + Style.END)
-    print('Precision: ', precision_score(suff_WSD_labels, suff_WSD_scores))
-    print('Recall: ', recall_score(suff_WSD_labels, suff_WSD_scores))
-    print('F-1 Score: ', f1_score(suff_WSD_labels, suff_WSD_scores, average='weighted'))
+    print(Style.BOLD + 'WSD SCORES Suffixoids 10%' + Style.END)
+    print('Precision: ', precision_score(suff_WSD_labels_10, suff_WSD_scores_10))
+    print('Recall: ', recall_score(suff_WSD_labels_10, suff_WSD_scores_10))
+    print('F-1 Score: ', f1_score(suff_WSD_labels_10, suff_WSD_scores_10, average='weighted'))
     print()
