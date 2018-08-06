@@ -1,6 +1,7 @@
 {
   "Apostel": {
     "0": {
+      "ID": "Religion",
       "GermaNet": {
         "Bedeutung": "Religion: Missionar, der sich bei einem Volk besonders verdient gemacht hat",
         "Beispiel": ""
@@ -12,9 +13,13 @@
       "Duden": {
         "Bedeutung": "einer aus dem Kreis der zwölf Jünger Jesu; urchristlicher Missionar",
         "Beispiel": "der Apostel Paulus"
+      },
+      "Crowdsourcing": {
+        "Bedeutung": "(Religion) urchristlicher Missionar (z.B. Kirechenapostel, Römerapostel)"
       }
     },
     "1": {
+      "ID": "Befürworter",
       "GermaNet": {
         "Bedeutung": "",
         "Beispiel": ""
@@ -26,11 +31,15 @@
       "Duden": {
         "Bedeutung": "[allzu] eifriger Befürworter, Vertreter einer [neuen] Lehre o.Ä.",
         "Beispiel": "ein Apostel der Gewaltlosigkeit, der Enthaltsamkeit, der freien Marktwirtschaft"
+      },
+      "Crowdsourcing": {
+        "Bedeutung": "(Befürworter) [allzu] eifriger Befürworter, Vertreter einer [neuen] Lehre (z.B. Moralapostel)"
       }
     }
   },
   "Bolzen": {
     "0": {
+      "ID": "Stift, Projektil",
       "GermaNet": {
         "Bedeutung": "",
         "Beispiel": ""
@@ -42,9 +51,13 @@
       "Duden": {
         "Bedeutung": "dicker Metall- oder Holzstift besonders zum Verbinden von Metall- oder Holzteilen; (früher) auf dem Ofen zum Glühen gebrachte Einlage aus Stahl für Bügeleisen; Geschoss für die Armbrust, bestehend aus einem kurzen Holzstab und aufsetzbarer Eisenspitze",
         "Beispiel": ""
+      },
+      "Crowdsourcing": {
+        "Bedeutung": "(Stift) dicker Metall- oder Holzstift besonders zum Verbinden von Metall- oder Holzteilen (z.B. Motorbefestigungsbolzen); (Projektil) Geschoss für die Armbrust, bestehend aus einem kurzen Holzstab und aufsetzbarer Eisenspitze (z.B. Armbrustbolzen)"
       }
     },
     "1": {
+      "ID": "Maß",
       "GermaNet": {
         "Bedeutung": "",
         "Beispiel": ""
@@ -56,11 +69,15 @@
       "Duden": {
         "Bedeutung": "",
         "Beispiel": ""
+      },
+      "Crowdsourcing": {
+        "Bedeutung": "(hohes_Maß) bezeichnet in Bildungen mit Substantiven eine Person, die etwas in hohem Maße hat (z.B. Intelligenzbolzen)"
       }
     }
   },
   "Dreck": {
     "0": {
+      "ID": "Schmutz",
       "GermaNet": {
         "Bedeutung": "Schmutz, unerwünschte Substanz",
         "Beispiel": ""
@@ -72,9 +89,13 @@
       "Duden": {
         "Bedeutung": "Schmutz",
         "Beispiel": "den Dreck aufkehren; im Dreck (Morast, Schlamm) stecken bleiben; in den Dreck (auf den Erdboden) fallen; er starrt vor Dreck (er ist über und über voll Schmutz)"
+      },
+      "Crowdsourcing": {
+        "Bedeutung": "(Schmutz) unerwünschte Substanz (z.B. Küchendreck); (Kot) Ausscheidungen des Verdauungssystems (z.B. Hundedreck)"
       }
     },
     "1": {
+      "ID": "Qualität, minderwertig",
       "GermaNet": {
         "Bedeutung": "etwas, was als minderwertig, wertlos angesehen wird",
         "Beispiel": ""
@@ -86,11 +107,15 @@
       "Duden": {
         "Bedeutung": "minderwertiges oder wertloses Zeug",
         "Beispiel": "das ist doch alles Dreck; das ist ein Dreck dagegen (das liegt in der Qualität weit darunter); du kaufst auch jeden Dreck"
+      },
+      "Crowdsourcing": {
+        "Bedeutung": "(niedrige_Qualität) etwas, das als minderwertig oder wertlos angesehen wird (z.B. Werbedreck)"
       }
     }
   },
   "Gott": {
     "0": {
+      "ID": "Religion",
       "GermaNet": {
         "Bedeutung": "allgemein: übermenschliche bis übernatürliche Persönlichkeit (in Geist oder Wesen), die postuliert wird, um unerklärliche Naturphänomene zu begründen",
         "Beispiel": ""
@@ -102,9 +127,13 @@
       "Duden": {
         "Bedeutung": "(im Monotheismus, besonders im Christentum) höchstes übernatürliches Wesen, das als Schöpfer Ursache allen Geschehens in der Natur ist, das Schicksal der Menschen lenkt, Richter über ihr sittliches Verhalten und ihr Heilsbringer ist; (im Polytheismus) kultisch verehrtes übermenschliches Wesen als personal gedachte Naturkraft, sittliche Macht",
         "Beispiel": "der allmächtige, dreieinige, gütige, gerechte Gott; Gott Vater, Sohn und Heiliger Geist; Gott, der Allmächtige; der liebe Gott; heidnische Götter; die griechischen, germanischen Götter; der Gott des Krieges"
+      },
+      "Crowdsourcing": {
+        "Bedeutung": "(Religion) (im Monotheismus, besonders im Christentum) höchstes übernatürliches Wesen; (im Polytheismus) kultisch verehrtes übermenschliches Wesen als personal gedachte Naturkraft, sittliche Macht (z.B. Sonnengott, Christengott)"
       }
     },
     "1": {
+      "ID": "Experte",
       "GermaNet": {
         "Bedeutung": "",
         "Beispiel": ""
@@ -116,11 +145,15 @@
       "Duden": {
         "Bedeutung": "",
         "Beispiel": ""
+      },
+      "Crowdsourcing": {
+        "Bedeutung": "(Experte) ein in seinem Fach besonders talentierter Mensch (z.B. Fußballgott)"
       }
     }
   },
   "Guru": {
     "0": {
+      "ID": "Religion",
       "GermaNet": {
         "Bedeutung": "",
         "Beispiel": ""
@@ -132,9 +165,13 @@
       "Duden": {
         "Bedeutung": "[als Verkörperung eines göttlichen Wesens verehrter] religiöser Lehrer im Hinduismus",
         "Beispiel": "einem Guru folgen"
+      },
+      "Crowdsourcing": {
+        "Bedeutung": "(Religion) [als Verkörperung eines göttlichen Wesens verehrter] religiöser Lehrer im Hinduismus (z.B. Sektenguru)"
       }
     },
     "1": {
+      "ID": "Experte",
       "GermaNet": {
         "Bedeutung": "",
         "Beispiel": ""
@@ -146,11 +183,15 @@
       "Duden": {
         "Bedeutung": "",
         "Beispiel": ""
+      },
+      "Crowdsourcing": {
+        "Bedeutung": "(Experte) Person, die auf einem bestimmten (Fach-)Gebiet ein Fachmann oder Vorbild ist und bisweilen die Leitfunktion hat (z.B. Heizungsguru)"
       }
     }
   },
   "Hengst": {
     "0": {
+      "ID": "Tier",
       "GermaNet": {
         "Bedeutung": "Zoologie: nicht kastriertes männliches Tier bei Pferd, Esel, Dromedar, Kamel und Zebra; auch in Bezug auf Giraffen kommt der Begriff „Hengst“ (Giraffenhengst) gelegentlich vor (anstatt Giraffenbulle)",
         "Beispiel": ""
@@ -162,9 +203,13 @@
       "Duden": {
         "Bedeutung": "männliches Pferd; (von Eseln, Kamelen, Zebras) männliches Tier",
         "Beispiel": ""
+      },
+      "Crowdsourcing": {
+        "Bedeutung": "(Tier) (von Pferden, Eseln, Kamelen, Zebras) männliches Tier (z.B. Zuchthengst)"
       }
     },
     "1": {
+      "ID": "Mann",
       "GermaNet": {
         "Bedeutung": "",
         "Beispiel": ""
@@ -176,11 +221,15 @@
       "Duden": {
         "Bedeutung": "",
         "Beispiel": ""
+      },
+      "Crowdsourcing": {
+        "Bedeutung": "(Mann)  attraktiver, muskulöser Mann (z.B. Bürohengst)"
       }
     }
   },
   "Ikone": {
     "0": {
+      "ID": "Religion",
       "GermaNet": {
         "Bedeutung": "Religion: Kultbild der orthodoxen Kirchen des byzantinischen Ritus",
         "Beispiel": ""
@@ -192,9 +241,13 @@
       "Duden": {
         "Bedeutung": "[russisch ikona < mittelgriechisch eikóna, zu griechisch eikṓn = Bild] Kultbild der orthodoxen Kirche mit der Darstellung heiliger Personen oder ihrer Geschichte",
         "Beispiel": ""
+      },
+      "Crowdsourcing": {
+        "Bedeutung": "(Religion) Kultbild der orthodoxen Kirche mit der Darstellung heiliger Personen oder ihrer Geschichte (z.B. Marienikone)"
       }
     },
     "1": {
+      "ID": "Verkörperung",
       "GermaNet": {
         "Bedeutung": "Eine berühmte Person in den Massenmedien",
         "Beispiel": ""
@@ -206,10 +259,14 @@
       "Duden": {
         "Bedeutung": "[englisch icon < mittelgriechisch eikóna, Ikone (1)] Person oder Sache als Verkörperung bestimmter Werte, Vorstellungen, eines bestimmten Lebensgefühls o. Ä.",
         "Beispiel": ""
+      },
+      "Crowdsourcing": {
+        "Bedeutung": "(Verkörperung) Person oder Sache als Verkörperung bestimmter Werte, Vorstellungen, eines bestimmten Lebensgefühls (z.B. Stilikone)"
       }
     }
   },
   "König": {
+    "ID": "Monarch, Spiel",
     "0": {
       "GermaNet": {
         "Bedeutung": "höchster oder historisch hoher (nach dem Kaiser) monarchischer Würdenträger eines Staates, eines Königreiches",
@@ -222,9 +279,13 @@
       "Duden": {
         "Bedeutung": "Titel des [nach dem Kaiser] höchsten weltlichen Herrschers oder Repräsentanten in bestimmten Monarchien",
         "Beispiel": "die preußischen Könige; der König regiert sein Land, dankte ab; das Erbe König Ludwigs des Heiligen/des Königs Ludwig des Heiligen"
+      },
+      "Crowdsourcing": {
+        "Bedeutung": "(Monarch) höchster oder historisch hoher (nach dem Kaiser) monarchischer Würdenträger eines Staates, eines Königreiches; Namensbestandteil von Titelbezeichnungen (z.B. Britenkönig); (Spiel) wichtigste Figur im Schachspiel; Spielkarte in verschiedenen Kartenspielen (z.B. Schellenkönig, Pik-König)"
       }
     },
     "1": {
+      "ID": "Wichtigkeit",
       "GermaNet": {
         "Bedeutung": "",
         "Beispiel": ""
@@ -236,11 +297,15 @@
       "Duden": {
         "Bedeutung": "",
         "Beispiel": ""
+      },
+      "Crowdsourcing": {
+        "Bedeutung": "(Wichtigkeit) wichtigste, erfolgreichste, mächtigste oder bekannteste Person aus einer Gruppe (z.B. Brauereikönig)"
       }
     }
   },
   "Papst": {
     "0": {
+      "ID": "Kirche",
       "GermaNet": {
         "Bedeutung": "Oberhaupt der Römisch-Katholischen Kirche, Nachfolger des Apostels Petrus",
         "Beispiel": ""
@@ -252,9 +317,13 @@
       "Duden": {
         "Bedeutung": "Oberhaupt der katholischen Kirche (und Bischof von Rom)",
         "Beispiel": "eine Audienz beim Papst; das Dogma von der Unfehlbarkeit des Papstes; die Ansprache Papst Johannes Pauls II. [des Zweiten]/des Papstes Johannes Paul II. [des Zweiten]; Papst Benedikt XVI. trat am 28. Februar 2013 überraschend von seinem Amt zurück."
+      },
+      "Crowdsourcing": {
+        "Bedeutung": "(Kirche) Oberhaupt der katholischen Kirche (und Bischof von Rom) (z.B. Katholikenpapst)"
       }
     },
     "1": {
+      "ID": "Autorität",
       "GermaNet": {
         "Bedeutung": "",
         "Beispiel": ""
@@ -266,11 +335,15 @@
       "Duden": {
         "Bedeutung": "kennzeichnet in Bildungen mit Substantiven– seltener mit Verben– jemanden als führend, richtungweisend, als höchste Autorität auf einem bestimmten Gebiet",
         "Beispiel": "Kritiker-, Literatur-, Modepapst"
+      },
+      "Crowdsourcing": {
+        "Bedeutung": "(Autorität) weist jemanden als führend, richtungweisend auf einem bestimmten Gebiet aus (z.B. Modepapst)"
       }
     }
   },
   "Schwein": {
     "0": {
+      "ID": "Tier, Glück",
       "GermaNet": {
         "Bedeutung": "ein Säugetier mit kurzen Beinen, verlängerter rüsselartiger Schnauze, Borsten; kurz und synonym für: Schweinefleisch, Schweinernes",
         "Beispiel": ""
@@ -282,9 +355,13 @@
       "Duden": {
         "Bedeutung": "kurzbeiniges Säugetier mit gedrungenem Körper, länglichem Kopf, rüsselartig verlängerter Schnauze, rosafarbener bis schwarzer, mit Borsten bedeckter Haut und meist geringeltem Schwanz; Hausschwein; Kurzform für: Schweinefleisch",
         "Beispiel": "das Schwein grunzt, quiekt; ein Schwein schlachten; Schweine mästen"
+      },
+      "Crowdsourcing": {
+        "Bedeutung": "(Tier) Säugetier und Paarhufer mit kurzen Beinen, verlängerter rüsselartiger Schnauze, Borsten; Wildschwein oder Hausschwein (z.B. Hausschwein); Fleisch eines solchen Tieres; Figuren oder Artefakte, die wie ein Schwein aussehen (z.B. Sparschwein); (Glück) positiver Situationszufall (z.B. Riesenschwein [haben])"
       }
     },
     "1": {
+      "ID": "Schimpfwort",
       "GermaNet": {
         "Bedeutung": "Schimpfwort für einen [a] gemeinen Menschen [b] schmutzigen oder obszönen Menschen",
         "Beispiel": ""
@@ -296,6 +373,9 @@
       "Duden": {
         "Bedeutung": "drückt in Bildungen mit Substantiven aus, dass eine Person etwas Bestimmtes ist",
         "Beispiel": "Chauvi-, Kapitalistenschwein"
+      },
+      "Crowdsourcing": {
+        "Bedeutung": "(Schimpfwort) jemand, der gemein, schmutzig oder obszön ist (z.B. Kameradenschwein)"
       }
     }
   }

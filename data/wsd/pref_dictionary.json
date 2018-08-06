@@ -1,6 +1,7 @@
 {
   "Bilderbuch": {
     "0": {
+      "ID": "Buch",
       "GermaNet": {
         "Bedeutung": "ein eher für Kinder bestimmtes Buch mit vielen Bilden und wenig Text",
         "Beispiel": ""
@@ -12,9 +13,13 @@
       "Duden": {
         "Bedeutung": "[Kinder]buch, das hauptsächlich Bilder enthält",
         "Beispiel": ""
+      },
+      "Crowdsourcing": {
+        "Bedeutung": "(Buch) bezeichnet in Bildungen mit Substantiven ein illustriertes Buch / Bilderbuch (z.B. Bilderbuchillustrator, Bilderbuchsammler)"
       }
     },
     "1": {
+      "ID": "Ideal",
       "GermaNet": {
         "Bedeutung": "",
         "Beispiel": ""
@@ -26,11 +31,15 @@
       "Duden": {
         "Bedeutung": "drückt in Bildungen mit Substantiven aus, dass jemand oder etwas als ideal angesehen wird; drückt in Bildungen mit Substantiven aus, dass jemand oder etwas nur im Bilderbuch, aber nicht in der Realität existiert",
         "Beispiel": "Bilderbuchehe, Bilderbuchfamilie, Bilderbuchkarriere, Bilderbuchlandschaft, Bilderbuchlandung, Bilderbuchwetter; Bilderbuchethik, -kapitalist"
+      },
+      "Crowdsourcing": {
+        "Bedeutung": "(Ideal) jemand oder etwas, das als ideal angesehen wird (z.B. Bilderbuchehe, Bilderbuchkarriere)"
       }
     }
   },
   "Blitz": {
     "0": {
+      "ID": "Physik",
       "GermaNet": {
         "Bedeutung": "Physik/Meteorologie: sichtbare Lichterscheinung bei einer elektrischen Entladung",
         "Beispiel": ""
@@ -42,9 +51,13 @@
       "Duden": {
         "Bedeutung": "grelle, meist schnell vorübergehende Lichterscheinung, die bei Gewitter durch elektrische Entladung in der Atmosphäre entsteht",
         "Beispiel": "grelle Blitze; ein kalter Blitz (ein Blitz, der beim Einschlag nicht gezündet hat); der Blitz hat in den Baum eingeschlagen"
+      },
+      "Crowdsourcing": {
+        "Bedeutung": "(Physik) sichtbare Lichterscheinung bei einer elektrischen Entladung (z.B. Blitzableiter, Blitzeinschlag); (Fotographie) Blitzlichtgerät, Blitzlicht (z.B. Blitzgerät)"
       }
     },
     "1": {
+      "ID": "Geschwindigkeit",
       "GermaNet": {
         "Bedeutung": "",
         "Beispiel": ""
@@ -56,11 +69,15 @@
       "Duden": {
         "Bedeutung": "drückt in Bildungen mit Adjektiven eine Verstärkung aus; sehr; drückt in Bildungen mit Substantiven aus, dass etwas überaus schnell, überraschend [und unerwartet] erfolgt",
         "Beispiel": ""
+      },
+      "Crowdsourcing": {
+        "Bedeutung": "(Geschwindigkeit) drückt in Bildungen mit Substantiven aus, dass sich ein Ereignis oder eine Handlung sehr schnell vollzieht (z.B. Blitzbesuch, Blitzumfrage)"
       }
     }
   },
   "Bombe": {
     "0": {
+      "ID": "Sprengkörper",
       "GermaNet": {
         "Bedeutung": "Kampfmittel, das eine Explosion verursacht (selbst explodiert)",
         "Beispiel": ""
@@ -72,9 +89,13 @@
       "Duden": {
         "Bedeutung": "mit Sprengstoff gefüllter und mit einem Zünder versehener länglicher Hohlkörper aus Metall, der als Sprengkörper (von Flugzeugen abgeworfen bzw. an oder in bestimmten Objekten versteckt) bei der Explosion schwere Zerstörungen hervorruft",
         "Beispiel": "schwere Bomben; es waren Bomben gefallen; eine Bombe explodiert, schlägt ein"
+      },
+      "Crowdsourcing": {
+        "Bedeutung": "(Sprengkörper) mit Sprengstoff gefüllter und mit einem Zünder versehener länglicher Hohlkörper aus Metall, der als Sprengkörper bei der Explosion schwere Zerstörungen hervorruft (z.B. Bombenangriff, Bombenentschärfung)"
       }
     },
     "1": {
+      "ID": "Hervorragendes",
       "GermaNet": {
         "Bedeutung": "",
         "Beispiel": ""
@@ -84,13 +105,17 @@
         "Beispiel": ""
       },
       "Duden": {
-        "Bedeutung": "etwas ganz Hervorragendes; wuchtiger, sehr harter Schuss oder Wurf auf das Tor",
+        "Bedeutung": "etwas ganz Hervorragendes",
         "Beispiel": "der Auftritt war Bombe"
+      },
+      "Crowdsourcing": {
+        "Bedeutung": "(Hervorragendes) eine Sache oder ein Ereignis ist sehr gut und/oder sehr groß/intensiv (z.B. Bombenergebnis, Bombenerfolg, Bombenstimmung)"
       }
     }
   },
   "Glanz": {
     "0": {
+      "ID": "Leuchten",
       "GermaNet": {
         "Bedeutung": "Schein oder Widerschein, besonders auf glatten Materialien; das Leuchten von etwas",
         "Beispiel": ""
@@ -102,9 +127,13 @@
       "Duden": {
         "Bedeutung": "das Glänzen; glänzende Beschaffenheit von etwas",
         "Beispiel": "heller, strahlender Glanz; der fiebrige Glanz der Augen; der seidige Glanz ihrer Haare"
+      },
+      "Crowdsourcing": {
+        "Bedeutung": "(Leuchten) Schein oder Widerschein, besonders auf glatten Materialien; glänzende Beschaffenheit von etwas (z.B. Glanzleder, Glanzlack)"
       }
     },
     "1": {
+      "ID": "Auffälligkeit",
       "GermaNet": {
         "Bedeutung": "übertragen: besonderer, auffälliger Zustand",
         "Beispiel": ""
@@ -116,11 +145,15 @@
       "Duden": {
         "Bedeutung": "einer Sache innewohnender bewunderter Vorzug, der in entsprechender Weise nach außen hin in Erscheinung tritt",
         "Beispiel": "ein trügerischer Glanz; seine Stimme hat an Glanz verloren; ein Fest mit großem Glanz (Aufwand, Pomp) feiern"
+      },
+      "Crowdsourcing": {
+        "Bedeutung": "(Auffälligkeit) ein besondere, auffällige oder exzellente Qualität von Dingen oder Ereignissen (z.B. Glanzparade, Glanznummer)"
       }
     }
   },
   "Heide": {
     "0": {
+      "ID": "Glaube",
       "GermaNet": {
         "Bedeutung": "Botanik: Vertreter der Pflanzengattung Heidekräuter (Erica) aus der Familie der Heidekrautgewächse; Ungläubiger; weiträumige Landschaft der gemäßigten Zone mit wenig Baumwuchs, aber mit vielen Zwergsträuchern, Flechten und Moosen",
         "Beispiel": ""
@@ -132,9 +165,13 @@
       "Duden": {
         "Bedeutung": "jemand, der nicht der christlichen, jüdischen oder muslimischen Religion angehört; jemand, der nicht an Gott glaubt [und noch bekehrt werden muss]; weite, meist sandige und überwiegend baumlose Ebene, die besonders mit Heidekrautgewächsen und Wacholder bewachsen ist",
         "Beispiel": "den Heiden das Evangelium verkünden; eine blühende Heide; die grüne Heide; durch die Heide wandern"
+      },
+      "Crowdsourcing": {
+        "Bedeutung": "(Glaube) jemand, der nicht der christlichen, jüdischen oder muslimischen Religion angehört; jemand, der nicht an Gott glaubt [und noch bekehrt werden muss] (z.B. Heidenmissionierung, Heidenkind)"
       }
     },
     "1": {
+      "ID": "Intensität",
       "GermaNet": {
         "Bedeutung": "",
         "Beispiel": ""
@@ -146,11 +183,15 @@
       "Duden": {
         "Bedeutung": "",
         "Beispiel": ""
+      },
+      "Crowdsourcing": {
+        "Bedeutung": "(Intensität) etwas, das von großer Stärke oder Intensität ist (z.B. Heidenglück, Heidenangst); große Intensität, Quantität oder Menge"
       }
     }
   },
   "Jahrhundert": {
     "0": {
+      "ID": "Zeitraum",
       "GermaNet": {
         "Bedeutung": "der Zeitraum von hundert Jahren, vom 1. Januar des xxx1. Jahres bis zum 31. Dezember des x100. Jahres; Beginn der Zählung in die positive Richtung am 1. 1. des Jahres 1 (n. Chr. oder u. Z.); Beginn der Zählung in die negative Richtung am 31. 12. des Jahres 1 (v. Chr. oder v. u. Z.) bzw. am 1. 1 des Jahres x100 bis zum 31. 12. des Jahres xxx1.",
         "Beispiel": ""
@@ -162,9 +203,13 @@
       "Duden": {
         "Bedeutung": "Zeitraum von hundert Jahren, besonders als Einheit der Zeitrechnung; Abkürzung: Jh.",
         "Beispiel": "das 3. Jahrhundert vor, nach Christus; ein Jahrhundert des Schreckens; das Jahrhundert der Aufklärung"
+      },
+      "Crowdsourcing": {
+        "Bedeutung": "(Zeitraum) ein Zeitraum von 100 Jahren (z.B. Jahrhundertmitte, Jahrhundertanfang)"
       }
     },
     "1": {
+      "ID": "Bemerkenswertes",
       "GermaNet": {
         "Bedeutung": "",
         "Beispiel": ""
@@ -176,11 +221,15 @@
       "Duden": {
         "Bedeutung": "drückt in Bildungen mit Substantiven aus, dass etwas– seltener jemand– als einmalig (in diesem Jahrhundert) angesehen wird, als besonders herausragend und alles andere übertreffend",
         "Beispiel": ""
+      },
+      "Crowdsourcing": {
+        "Bedeutung": "(Bemerkenswertes) eine Sache oder Ereignis, die sehr außergewöhnlich ist (z.B. Jahrhundertgenie, Jahrhunderttalent)"
       }
     }
   },
   "Qualität": {
     "0": {
+      "ID": "Gütegrad",
       "GermaNet": {
         "Bedeutung": "individuell und konkret definierte Eigenschaft einer Sache oder einer Dienstleistung",
         "Beispiel": ""
@@ -192,9 +241,13 @@
       "Duden": {
         "Bedeutung": "Gesamtheit der charakteristischen Eigenschaften (einer Sache, Person); Beschaffenheit; Material einer bestimmten Art, Beschaffenheit",
         "Beispiel": "der Skandal erreichte eine neue Qualität; "
+      },
+      "Crowdsourcing": {
+        "Bedeutung": "(Gütegrad) das Ausmaß oder der Grad an Qualität einer Sache (z.B. Qualitätsverbesserung, Qualitätsprüpfung)"
       }
     },
     "1": {
+      "ID": "Güte, Qualität",
       "GermaNet": {
         "Bedeutung": "positive Eigenschaft einer Person oder einer Sache",
         "Beispiel": ""
@@ -206,11 +259,15 @@
       "Duden": {
         "Bedeutung": "gute Eigenschaft (einer Sache, Person); Güte",
         "Beispiel": "die Qualität des Materials; Waren guter, schlechter, erster Qualität"
+      },
+      "Crowdsourcing": {
+        "Bedeutung": "(hohe Güte) etwas, das von hoher Güte ist (z.B. Qualitätshonig [ = Honig von hoher Qualität], Qualitätsware [ = Ware von hoher Qualität ])"
       }
     }
   },
   "Schwein": {
     "0": {
+      "ID": "Tier",
       "GermaNet": {
         "Bedeutung": "ein Säugetier mit kurzen Beinen, verlängerter rüsselartiger Schnauze, Borsten; kurz und synonym für: Schweinefleisch, Schweinernes",
         "Beispiel": ""
@@ -222,9 +279,13 @@
       "Duden": {
         "Bedeutung": "kurzbeiniges Säugetier mit gedrungenem Körper, länglichem Kopf, rüsselartig verlängerter Schnauze, rosafarbener bis schwarzer, mit Borsten bedeckter Haut und meist geringeltem Schwanz; Hausschwein; Kurzform für: Schweinefleisch",
         "Beispiel": "das Schwein grunzt, quiekt; ein Schwein schlachten; Schweine mästen"
+      },
+      "Crowdsourcing": {
+        "Bedeutung": "(Tier) Säugetier und Paarhufer mit kurzen Beinen, verlängerter rüsselartiger Schnauze, Borsten; Wildschein oder Hausschwein; Fleisch eines solchen Tieres (z.B. Schweinehaltung, Schweinefieber, Schweinesteak)"
       }
     },
     "1": {
+      "ID": "Steigerung, Obszönes",
       "GermaNet": {
         "Bedeutung": "Schimpfwort für einen [a] gemeinen Menschen [b] schmutzigen oder obszönen Menschen",
         "Beispiel": ""
@@ -236,11 +297,15 @@
       "Duden": {
         "Bedeutung": "drückt in Bildungen mit Substantiven aus, dass eine Person etwas Bestimmtes ist",
         "Beispiel": "Chauvi-, Kapitalistenschwein"
+      },
+      "Crowdsourcing": {
+        "Bedeutung": "(Steigerung) etwas, das sehr groß oder intensiv ist (oft auch negativ bewertet) (z.B. Schweineaufwand, Schweinegeld); (Obszönes) etwas, das schmutzig oder obszön ist (z.B. Schweinkram, Schweinepriester)"
       }
     }
   },
   "Spitze": {
     "0": {
+      "ID": "Formation, Gewebe",
       "GermaNet": {
         "Bedeutung": "der oberste, schmal zulaufende Teil eines Gegenstandes oder einer Formation; der höchste Punkt eines Berges",
         "Beispiel": ""
@@ -252,9 +317,13 @@
       "Duden": {
         "Bedeutung": "spitzes, scharfes Ende von etwas; Ende eines spitz zulaufenden Teils von etwas; Ende, vorderster Teil von etwas lang Gestrecktem oder Länglichem; oberes Ende von etwas hoch Aufgerichtetem",
         "Beispiel": "die Spitze einer Nadel; die Spitze war abgebrochen; die Spitzen der Finger; die Spitze des Kirchturms"
+      },
+      "Crowdsourcing": {
+        "Bedeutung": "(Formation) der oberste, schmal zulaufende Teil eines Gegenstandes oder einer Formation (z.B. Spitzbogen, Spitzbart); (Gewebe) aus Fäden hergestelltes Material mit dekorativen durchbrochenen Mustern (z.B. Spitzenklöppler, Spitzenkleid)"
       }
     },
     "1": {
+      "ID": "Führung, Qualität",
       "GermaNet": {
         "Bedeutung": "",
         "Beispiel": ""
@@ -266,11 +335,15 @@
       "Duden": {
         "Bedeutung": "Spitzengruppe (bezüglich Leistung, Erfolg, Qualität); führende, leitende Gruppe; führende, einflussreiche Persönlichkeiten; Höchstwert, Höchstmaß, Gipfel; höchste Güte, Qualität (in Bezug auf besonders hervorragende, Begeisterung oder Bewunderung hervorrufende Leistungen)",
         "Beispiel": "die Spitze bilden; die gesamte Spitze der Partei, des Konzerns ist zurückgetreten; die Verkaufszahlen erreichten im letzten Jahr die absolute Spitze; in der Spitze (Jargon; Zeit der höchsten Belastung) brach die Stromversorgung zusammen"
+      },
+      "Crowdsourcing": {
+        "Bedeutung": "(Führung) Führung, anführender Teil (z.B. Spitzenkandidat, Spitzengespräch [=Gespräch zwischen führenden Vertretern]); (Qualität) Dinge, Personen oder Gruppen, die über die beste Leistung oder Qualität verfügen (z.B. Spitzensänger, Spitzenhandy, Spitzenmannschaft); (Intensität) etwas, das eine extreme, nicht übertreffbare Ausprägung einer Eigenschaft hat (z.B. Spitzengeschwindigkeit, Spitzenwert, Spitzenbedarf)"
       }
     }
   },
   "Traum": {
     "0": {
+      "ID": "Schlaf",
       "GermaNet": {
         "Bedeutung": "Erlebnis beim Schlafen",
         "Beispiel": ""
@@ -282,9 +355,13 @@
       "Duden": {
         "Bedeutung": "im Schlaf auftretende Abfolge von Vorstellungen, Bildern, Ereignissen, Erlebnissen",
         "Beispiel": "ein schöner, seltsamer Traum; wilde, schreckliche Träume; wenn Träume in Erfüllung gingen!"
+      },
+      "Crowdsourcing": {
+        "Bedeutung": "(Schlaf) durch psychische Aktivität hervorgerufenes Erlebnis beim Schlafen (z.B. Traumdeuter, Traumforschung)"
       }
     },
     "1": {
+      "ID": "Wunsch",
       "GermaNet": {
         "Bedeutung": "sehr starker Wunsch",
         "Beispiel": ""
@@ -296,6 +373,9 @@
       "Duden": {
         "Bedeutung": "sehnlicher, unerfüllter Wunsch; etwas traumhaft Schönes; Person, Sache, die wie die Erfüllung geheimer Wünsche erscheint; drückt in Bildungen mit Substantiven aus, dass jemand oder etwas so ideal ist, wie man es sich immer erträumt [hat]",
         "Beispiel": "der Traum vom Glück; Fliegen war schon immer sein Traum"
+      },
+      "Crowdsourcing": {
+        "Bedeutung": "(Wunsch) starker Wunsch; etwas, das ideal/sehr wünschenswert ist (z.B. Traumwohnung, Traumberuf)"
       }
     }
   }
