@@ -95,7 +95,7 @@
       }
     },
     "1": {
-      "ID": "Hervorragendes",
+      "ID": "hervorragend",
       "GermaNet": {
         "Bedeutung": "",
         "Beispiel": ""
@@ -115,7 +115,7 @@
   },
   "Glanz": {
     "0": {
-      "ID": "Leuchten",
+      "ID": "leuchten",
       "GermaNet": {
         "Bedeutung": "Schein oder Widerschein, besonders auf glatten Materialien; das Leuchten von etwas",
         "Beispiel": ""
@@ -209,7 +209,7 @@
       }
     },
     "1": {
-      "ID": "Bemerkenswertes",
+      "ID": "bemerkenswert",
       "GermaNet": {
         "Bedeutung": "",
         "Beispiel": ""
@@ -229,7 +229,7 @@
   },
   "Qualität": {
     "0": {
-      "ID": "Gütegrad",
+      "ID": "Grad",
       "GermaNet": {
         "Bedeutung": "individuell und konkret definierte Eigenschaft einer Sache oder einer Dienstleistung",
         "Beispiel": ""
@@ -247,7 +247,7 @@
       }
     },
     "1": {
-      "ID": "Güte, Qualität",
+      "ID": "Güte",
       "GermaNet": {
         "Bedeutung": "positive Eigenschaft einer Person oder einer Sache",
         "Beispiel": ""
@@ -285,7 +285,7 @@
       }
     },
     "1": {
-      "ID": "Steigerung, Obszönes",
+      "ID": "obszön",
       "GermaNet": {
         "Bedeutung": "Schimpfwort für einen [a] gemeinen Menschen [b] schmutzigen oder obszönen Menschen",
         "Beispiel": ""
@@ -305,7 +305,7 @@
   },
   "Spitze": {
     "0": {
-      "ID": "Formation, Gewebe",
+      "ID": "Formation",
       "GermaNet": {
         "Bedeutung": "der oberste, schmal zulaufende Teil eines Gegenstandes oder einer Formation; der höchste Punkt eines Berges",
         "Beispiel": ""
@@ -323,7 +323,7 @@
       }
     },
     "1": {
-      "ID": "Führung, Qualität",
+      "ID": "Führung",
       "GermaNet": {
         "Bedeutung": "",
         "Beispiel": ""

@@ -39,7 +39,7 @@
   },
   "Bolzen": {
     "0": {
-      "ID": "Stift, Projektil",
+      "ID": "Stift",
       "GermaNet": {
         "Bedeutung": "",
         "Beispiel": ""
@@ -95,7 +95,7 @@
       }
     },
     "1": {
-      "ID": "Qualität, minderwertig",
+      "ID": "minderwertig",
       "GermaNet": {
         "Bedeutung": "etwas, was als minderwertig, wertlos angesehen wird",
         "Beispiel": ""
@@ -266,7 +266,7 @@
     }
   },
   "König": {
-    "ID": "Monarch, Spiel",
+    "ID": "Monarch",
     "0": {
       "GermaNet": {
         "Bedeutung": "höchster oder historisch hoher (nach dem Kaiser) monarchischer Würdenträger eines Staates, eines Königreiches",
@@ -343,7 +343,7 @@
   },
   "Schwein": {
     "0": {
-      "ID": "Tier, Glück",
+      "ID": "Tier",
       "GermaNet": {
         "Bedeutung": "ein Säugetier mit kurzen Beinen, verlängerter rüsselartiger Schnauze, Borsten; kurz und synonym für: Schweinefleisch, Schweinernes",
         "Beispiel": ""
