@@ -1,0 +1,64 @@
+# Bilderbuch, das
+
+Bilderbuch_1 (Buch)	bezeichnet in Bildungen mit Substantiven ein illustriertes Buch / Bilderbuch (z.B. Bilderbuchillustrator, Bilderbuchsammler)
+Bilderbuch_2 (Ideal)	jemand oder etwas, das als ideal angesehen wird (z.B. Bilderbuchehe, Bilderbuchkarriere)
+Bilderbuch_3 (Fehlt)	für Verwendungen, für die keine der anderen Bedeutungen passt
+
+# Blitz, der
+
+Blitz_1 (Physik)	sichtbare Lichterscheinung bei einer elektrischen Entladung (z.B. Blitzableiter, Blitzeinschlag)
+Blitz_2 (Fotographie)	Blitzlichtgerät, Blitzlicht (z.B. Blitzgerät)
+Blitz_3 (Geschwindigkeit)	drückt in Bildungen mit Substantiven aus, dass sich ein Ereignis oder eine Handlung sehr schnell vollzieht (z.B. Blitzbesuch, Blitzumfrage)
+Blitz_4 (Fehlt)	für Verwendungen, für die keine der anderen Bedeutungen passt
+
+# Bomben, die
+
+Bombe_1 (Sprengkörper) 	mit Sprengstoff gefüllter und mit einem Zünder versehener länglicher Hohlkörper aus Metall, der als Sprengkörper bei der Explosion schwere Zerstörungen hervorruft (z.B. Bombenangriff, Bombenentschärfung)
+Bombe_2 (Hervorragendes)	eine Sache oder ein Ereignis ist sehr gut und/oder sehr groß/intensiv (z.B. Bombenergebnis, Bombenerfolg, Bombenstimmung)
+Bombe_3 (Fehlt)	alle Verwendungen, für die die oben definierten Bedeutungen nicht passen
+
+# Glanz, der
+
+Glanz_1 (Leuchten)	Schein oder Widerschein, besonders auf glatten Materialien; glänzende Beschaffenheit von etwas (z.B. Glanzleder, Glanzlack)
+Glanz_2 (Auffälligkeit)	ein besondere, auffällige oder exzellente Qualität von Dingen oder Ereignissen (z.B. Glanzparade, Glanznummer)
+Glanz_3 (Fehlt)	für Verwendungen, für die keine der anderen Bedeutungen passt
+
+# Heiden, der
+
+Heide_1 (Glaube)	jemand, der nicht der christlichen, jüdischen oder muslimischen Religion angehört; jemand, der nicht an Gott glaubt [und noch bekehrt werden muss] (z.B. Heidenmissionierung, Heidenkind)
+Heide_2 (Intensität)	etwas, das von großer Stärke oder Intensität ist (z.B. Heidenglück, Heidenangst)
+Heide_3 (Fehlt)	für Verwendungen, für die keine der anderen Bedeutungen passt
+
+# Jahrhundert, das
+
+Jahrhundert_1 (Zeitraum)	ein Zeitraum von 100 Jahren (z.B. Jahrhundertmitte, Jahrhundertanfang)
+Jahrhundert_2 (Bemerkenswertes)	eine Sache oder Ereignis, die sehr außergewöhnlich ist (z.B. Jahrhundertgenie, Jahrhunderttalent)
+Jahrhundert_3 (Fehlt)	für Verwendungen, für die keine der anderen Bedeutungen passt
+
+# Qualitaets, die
+
+Qualität_1 (Gütegrad)	das Ausmaß oder der Grad an Qualität einer Sache (z.B. Qualitätsverbesserung, Qualitätsprüpfung)
+Qualität_2 (hohe Güte)	etwas, das von hoher Güte ist (z.B. Qualitätshonig [ = Honig von hoher Qualität], Qualitätsware [ = Ware von hoher Qualität ])
+Qualität_3 (Fehlt)	für Verwendungen, für die keine der anderen Bedeutungen passt
+
+# Schweine, das
+
+Schwein_1 (Tier)	Säugetier und Paarhufer mit kurzen Beinen, verlängerter rüsselartiger Schnauze, Borsten; Wildschein oder Hausschwein; Fleisch eines solchen Tieres (z.B. Schweinehaltung, Schweinefieber, Schweinesteak)
+Schwein_2 (Steigerung)	etwas, das sehr groß oder intensiv ist (oft auch negativ bewertet) (z.B. Schweineaufwand, Schweinegeld)
+Schwein_3 (Obszönes)	etwas, das schmutzig oder obszön ist (z.B. Schweinkram, Schweinepriester)
+Schwein_4 (Fehlt)	für alle Verwendungen, auf die die anderen Bedeutungen nicht passen
+
+# Spitzen, die
+
+Spitze_1 (Formation)	der oberste, schmal zulaufende Teil eines Gegenstandes oder einer Formation (z.B. Spitzbogen, Spitzbart)
+Spitze_2 (Führung)	Führung, anführender Teil (z.B. Spitzenkandidat, Spitzengespräch [=Gespräch zwischen führenden Vertretern])
+Spitze_3 (Qualität)	Dinge, Personen oder Gruppen, die über die beste Leistung oder Qualität verfügen (z.B. Spitzensänger, Spitzenhandy, Spitzenmannschaft)
+Spitze_4 (Intensität)	etwas, das eine extreme, nicht übertreffbare Ausprägung einer Eigenschaft hat (z.B. Spitzengeschwindigkeit, Spitzenwert, Spitzenbedarf)
+Spitze_5 (Gewebe)	aus Fäden hergestelltes Material mit dekorativen durchbrochenen Mustern (z.B. Spitzenklöppler, Spitzenkleid)
+Spitze_6 (Fehlt)	für Verwendungen, zu denen keine der anderen Bedeutungen passt
+
+# Traum, der
+
+Traum_1 (Schlaf)	durch psychische Aktivität hervorgerufenes Erlebnis beim Schlafen (z.B. Traumdeuter, Traumforschung)
+Traum_2 (Wunsch)	starker Wunsch; etwas, das ideal/sehr wünschenswert ist (z.B. Traumwohnung, Traumberuf)
+Traum_3 (Fehlt)	für Verwendungen, für die die anderen Bedeutungen nicht passen

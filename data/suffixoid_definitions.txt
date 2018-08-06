@@ -1,0 +1,72 @@
+# Schweine, das
+
+Schwein_1 (Tier)	Säugetier und Paarhufer mit kurzen Beinen, verlängerter rüsselartiger Schnauze, Borsten; Wildschwein oder Hausschwein (z.B. Hausschwein); Fleisch eines solchen Tieres; Figuren oder Artefakte, die wie ein Schwein aussehen (z.B. Sparschwein)
+Schwein_2 (Glück)	positiver Situationszufall (z.B. Riesenschwein [haben])
+Schwein_3 (Schimpfwort)	jemand, der gemein, schmutzig oder obszön ist (z.B. Kameradenschwein)
+Schwein_4 (Fehlt)	für alle Verwendungen, auf die die anderen Bedeutungen nicht passen
+
+# Papst, der
+
+Papst_1 (Kirche)	Oberhaupt der katholischen Kirche (und Bischof von Rom) (z.B. Katholikenpapst)
+Papst_2 (Autorität)	weist jemanden als führend, richtungweisend auf einem bestimmten Gebiet aus (z.B. Modepapst)
+Papst_3 (Fehlt)	für alle Verwendungen, auf die die anderen Bedeutungen nicht passen
+
+# Guru, der
+
+Guru_1 (Religion)	[als Verkörperung eines göttlichen Wesens verehrter] religiöser Lehrer im Hinduismus (z.B. Sektenguru)
+Guru_2 (Experte)	Person, die auf einem bestimmten (Fach-)Gebiet ein Fachmann oder Vorbild ist und bisweilen die Leitfunktion hat (z.B. Heizungsguru)
+Guru_3 (Fehlt)	für alle Verwendungen, auf die die anderen Bedeutungen nicht passen
+
+# König, der
+
+König_1 (Monarch)	höchster oder historisch hoher (nach dem Kaiser) monarchischer Würdenträger eines Staates, eines Königreiches; Namensbestandteil von Titelbezeichnungen (z.B. Britenkönig)
+König_2 (Spiel)	wichtigste Figur im Schachspiel; Spielkarte in verschiedenen Kartenspielen (z.B. Schellenkönig, Pik-König)
+König_3 (Wichtigkeit)	wichtigste, erfolgreichste, mächtigste oder bekannteste Person aus einer Gruppe (z.B. Brauereikönig)
+König_4 (Fehlt)	für alle Verwendungen, auf die die anderen Bedeutungen nicht passen
+
+# Gott, der
+
+Gott_1 (Religion)	(im Monotheismus, besonders im Christentum) höchstes übernatürliches Wesen; (im Polytheismus) kultisch verehrtes übermenschliches Wesen als personal gedachte Naturkraft, sittliche Macht (z.B. Sonnengott, Christengott)
+Gott_2 (Experte)	ein in seinem Fach besonders talentierter Mensch (z.B. Fußballgott)
+Gott_3 (Fehlt)	für alle Verwendungen, auf die die anderen Bedeutungen nicht passen
+
+# Dreck, der
+
+Dreck_1 (Schmutz)	unerwünschte Substanz (z.B. Küchendreck)
+Dreck_2 (niedrige_Qualität)	etwas, das als minderwertig oder wertlos angesehen wird (z.B. Werbedreck)
+Dreck_3 (Kot)	Ausscheidungen des Verdauungssystems (z.B. Hundedreck)
+Dreck_4 (Fehlt)	für alle Verwendungen, auf die die anderen Bedeutungen nicht passen
+
+# Bolzen, der
+
+
+Bolzen_1 (Stift)	dicker Metall- oder Holzstift besonders zum Verbinden von Metall- oder Holzteilen (z.B. Motorbefestigungsbolzen)
+Bolzen_2 (Projektil)	Geschoss für die Armbrust, bestehend aus einem kurzen Holzstab und aufsetzbarer Eisenspitze (z.B. Armbrustbolzen)
+Bolzen_3 (hohes_Maß)	bezeichnet in Bildungen mit Substantiven eine Person, die etwas in hohem Maße hat (z.B. Intelligenzbolzen)
+Bolzen_4 (Fehlt)	für alle Verwendungen, auf die die anderen Bedeutungen nicht passen
+
+
+# Apostel, der 
+
+Apostel_1 (Religion)	urchristlicher Missionar (z.B. Kirechenapostel, Römerapostel)
+Apostel_2 (Befürworter)	[allzu] eifriger Befürworter, Vertreter einer [neuen] Lehre (z.B. Moralapostel)
+Apostel_3 (Fehlt)	für alle Verwendungen, auf die die anderen Bedeutungen nicht passen
+
+# Ikone, die
+ 
+Ikone_1 (Religion)	Kultbild der orthodoxen Kirche mit der Darstellung heiliger Personen oder ihrer Geschichte (z.B. Marienikone)
+Ikone_2 (Verkörperung)	Person oder Sache als Verkörperung bestimmter Werte, Vorstellungen, eines bestimmten Lebensgefühls (z.B. Stilikone)
+Ikone_3 (Fehlt)	für alle Verwendungen, auf die die anderen Bedeutungen nicht passen
+
+# Hengst, der 
+
+
+Hengst_1 (Tier)	(von Pferden, Eseln, Kamelen, Zebras) männliches Tier (z.B. Zuchthengst)
+Hengst_2 (Mann)	 attraktiver, muskulöser Mann (z.B. Bürohengst)
+Hengst_3 (Fehlt)	für alle Verwendungen, auf die die anderen Bedeutungen nicht passen 
+
+# Hai, der 
+
+Hai_1 (Fisch)	großer Raubfisch mit großer Schwanzflosse und mit an der Unterseite weit zurückliegendem Maul, in dem mehrere Reihen spitzer Zähne stehen (z.B. Hammerhai)
+Hai_2 (Person)	kennzeichnet in Bildungen mit Substantiven eine Person, die sich rücksichtslos und skrupellos durch etwas oder auf einem bestimmten Gebiet bereichert (z.B. Finanzhai)
+Hai_3 (Fehlt)	für alle Verwendungen, auf die die anderen Bedeutungen nicht passen 
