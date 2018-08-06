@@ -271,6 +271,8 @@ if __name__ == "__main__":
     pref_WSD_labels_100 = CLSF.read_features_from_files(['f0_pref_wsd_100.txt'], path=DATA_WSD_PATH)
     pref_WSD_scores_100 = CLSF.read_features_from_files(['f1_pref_wsd_100.txt'], path=DATA_WSD_PATH)
 
+    suff_WSD_labels = CLSF.read_features_from_files(['f0_suff_wsd.txt'], path=DATA_WSD_PATH)
+    suff_WSD_scores = CLSF.read_features_from_files(['f1_suff_wsd.txt'], path=DATA_WSD_PATH)
     suff_WSD_labels_10 = CLSF.read_features_from_files(['f0_suff_wsd_10.txt'], path=DATA_WSD_PATH)
     suff_WSD_scores_10 = CLSF.read_features_from_files(['f1_suff_wsd_10.txt'], path=DATA_WSD_PATH)
 
@@ -292,8 +294,16 @@ if __name__ == "__main__":
     print('F-1 Score: ', f1_score(pref_WSD_labels, pref_WSD_scores, average='weighted'))
     print()
 
+    print('--------------')
+
     print(Style.BOLD + 'WSD SCORES Suffixoids 10%' + Style.END)
     print('Precision: ', precision_score(suff_WSD_labels_10, suff_WSD_scores_10))
     print('Recall: ', recall_score(suff_WSD_labels_10, suff_WSD_scores_10))
     print('F-1 Score: ', f1_score(suff_WSD_labels_10, suff_WSD_scores_10, average='weighted'))
+    print()
+
+    print(Style.BOLD + 'WSD SCORES Suffixoids skip sentences' + Style.END)
+    print('Precision: ', precision_score(suff_WSD_labels, suff_WSD_scores))
+    print('Recall: ', recall_score(suff_WSD_labels, suff_WSD_scores))
+    print('F-1 Score: ', f1_score(suff_WSD_labels, suff_WSD_scores, average='weighted'))
     print()
