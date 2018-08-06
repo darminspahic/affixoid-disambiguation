@@ -1,9 +1,9 @@
 lxml
 matplotlib
+nltk
 numpy
+pygermanet
+requests
 scipy
 scikit-learn
-beautifulsoup4
-requests
 # duden
-# pygermanet
