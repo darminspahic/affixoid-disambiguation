@@ -19,7 +19,7 @@
       }
     },
     "1": {
-      "ID": "Befürworter",
+      "ID": "Befürworter; Vertreter",
       "GermaNet": {
         "Bedeutung": "",
         "Beispiel": ""
@@ -39,7 +39,7 @@
   },
   "Bolzen": {
     "0": {
-      "ID": "Stift",
+      "ID": "Stift; Bauwerkzeug",
       "GermaNet": {
         "Bedeutung": "",
         "Beispiel": ""
@@ -77,7 +77,7 @@
   },
   "Dreck": {
     "0": {
-      "ID": "Schmutz",
+      "ID": "Schmutz; Kot",
       "GermaNet": {
         "Bedeutung": "Schmutz, unerwünschte Substanz",
         "Beispiel": ""
@@ -95,14 +95,14 @@
       }
     },
     "1": {
-      "ID": "minderwertig",
+      "ID": "minderwertig; wertlos",
       "GermaNet": {
         "Bedeutung": "etwas, was als minderwertig, wertlos angesehen wird",
         "Beispiel": ""
       },
       "Wiktionary": {
         "Bedeutung": "etwas, was als minderwertig, wertlos angesehen wird",
-        "Beispiel": "In der Werbung wird aber für jeden Dreck komponiert.; Warum muss man sich jeden Dreck von Regisseuren wie Neuenfels, für die Provokationen anscheinend Selbstzweck sind und die damit von ihrer Ideenlosigkeit ablenken wollen, gefallen lassen?"
+        "Beispiel": "In der Werbung wird aber für jeden Dreck komponiert.;"
       },
       "Duden": {
         "Bedeutung": "minderwertiges oder wertloses Zeug",
@@ -115,7 +115,7 @@
   },
   "Gott": {
     "0": {
-      "ID": "Religion",
+      "ID": "Religion; Mythologie",
       "GermaNet": {
         "Bedeutung": "allgemein: übermenschliche bis übernatürliche Persönlichkeit (in Geist oder Wesen), die postuliert wird, um unerklärliche Naturphänomene zu begründen",
         "Beispiel": ""
@@ -133,7 +133,7 @@
       }
     },
     "1": {
-      "ID": "Experte",
+      "ID": "Experte; talentiert",
       "GermaNet": {
         "Bedeutung": "",
         "Beispiel": ""
@@ -178,7 +178,7 @@
       },
       "Wiktionary": {
         "Bedeutung": "umgangssprachlich: Person, die auf einem bestimmten (Fach-)Gebiet ein Fachmann oder Vorbild ist und bisweilen die Leitfunktion hat",
-        "Beispiel": "Jetzt gibt es ein amüsantes Buch mit Worterfindungen, das dem Sprach-Guru aktuell nacheifern will: Wortschatz: 698 neue Worte für alle Lebenslagen. [Es] begann es für den Apple-Guru nicht einmal so schlecht: Jobs´ Krebserkrankung wurde mehr oder minder zufällig entdeckt, aber dennoch in einem frühen Stadium."
+        "Beispiel": "[Es] begann es für den Apple-Guru nicht einmal so schlecht: Jobs´ Krebserkrankung wurde mehr oder minder zufällig entdeckt, aber dennoch in einem frühen Stadium."
       },
       "Duden": {
         "Bedeutung": "",
@@ -191,7 +191,7 @@
   },
   "Hengst": {
     "0": {
-      "ID": "Tier",
+      "ID": "Tier; Pferd",
       "GermaNet": {
         "Bedeutung": "Zoologie: nicht kastriertes männliches Tier bei Pferd, Esel, Dromedar, Kamel und Zebra; auch in Bezug auf Giraffen kommt der Begriff „Hengst“ (Giraffenhengst) gelegentlich vor (anstatt Giraffenbulle)",
         "Beispiel": ""
@@ -312,11 +312,11 @@
       },
       "Wiktionary": {
         "Bedeutung": "Oberhaupt der Römisch-Katholischen Kirche und Bischof von Rom; Oberhaupt der Koptischen Kirche und Patriarch von Alexandrien",
-        "Beispiel": "Joseph Ratzinger wurde am 19. April 2005 zum Papst gewählt."
+        "Beispiel": "Joseph Ratzinger wurde zum Papst gewählt."
       },
       "Duden": {
         "Bedeutung": "Oberhaupt der katholischen Kirche (und Bischof von Rom)",
-        "Beispiel": "eine Audienz beim Papst; das Dogma von der Unfehlbarkeit des Papstes; die Ansprache Papst Johannes Pauls II. [des Zweiten]/des Papstes Johannes Paul II. [des Zweiten]; Papst Benedikt XVI. trat am 28. Februar 2013 überraschend von seinem Amt zurück."
+        "Beispiel": "eine Audienz beim Papst; das Dogma von der Unfehlbarkeit des Papstes; die Ansprache Papst Johannes Pauls II. [des Zweiten]/des Papstes Johannes Paul II. [des Zweiten]; Papst Benedikt XVI. trat überraschend von seinem Amt zurück."
       },
       "Crowdsourcing": {
         "Bedeutung": "(Kirche) Oberhaupt der katholischen Kirche (und Bischof von Rom) (z.B. Katholikenpapst)"
@@ -330,7 +330,7 @@
       },
       "Wiktionary": {
         "Bedeutung": "scherzhaft; zumeist in Bildungen mit Substantiven, seltener mit Verben: führender, richtungsweisender Experte, der als höchste Autorität auf einem bestimmten Fachgebiet gilt",
-        "Beispiel": "In die Reihe dieser Männer gehört auch Johann Christoph Gottsched (1700-1766), der etwa in den Jahren 1730-1750 als Leipziger Professor der Papst der deutschen Literatur war, aber noch vor seinem Tode in die tiefste Verachtung gestürzt wurde. Schon 1944 hatte der Papst des modernen Neoliberalismus, F. A. von Hayek, in seinem Buch Weg in die Knechtschaft empfohlen, liberale Reformen vertraglich und verfassungsmäßig festzuschreiben, um jeden Staatseingriff in den Markt zu verhindern."
+        "Beispiel": ""
       },
       "Duden": {
         "Bedeutung": "kennzeichnet in Bildungen mit Substantiven– seltener mit Verben– jemanden als führend, richtungweisend, als höchste Autorität auf einem bestimmten Gebiet",
@@ -343,7 +343,7 @@
   },
   "Schwein": {
     "0": {
-      "ID": "Tier",
+      "ID": "Tier; Schweinefleisch",
       "GermaNet": {
         "Bedeutung": "ein Säugetier mit kurzen Beinen, verlängerter rüsselartiger Schnauze, Borsten; kurz und synonym für: Schweinefleisch, Schweinernes",
         "Beispiel": ""
@@ -368,7 +368,7 @@
       },
       "Wiktionary": {
         "Bedeutung": "Schimpfwort für einen [a] gemeinen Menschen [b] schmutzigen oder obszönen Menschen; meist negativ: Schimpfwort",
-        "Beispiel": "Das Wetter ist heute mal wieder schweinegeil. Da hast du aber Schwein gehabt."
+        "Beispiel": "Da hast du aber Schwein gehabt."
       },
       "Duden": {
         "Bedeutung": "drückt in Bildungen mit Substantiven aus, dass eine Person etwas Bestimmtes ist",

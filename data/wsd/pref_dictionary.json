@@ -3,7 +3,7 @@
     "0": {
       "ID": "Buch",
       "GermaNet": {
-        "Bedeutung": "ein eher für Kinder bestimmtes Buch mit vielen Bilden und wenig Text",
+        "Bedeutung": "ein eher für Kinder bestimmtes Buch mit vielen Bildern und wenig Text",
         "Beispiel": ""
       },
       "Wiktionary": {
@@ -19,7 +19,7 @@
       }
     },
     "1": {
-      "ID": "Ideal",
+      "ID": "Ideal; schön",
       "GermaNet": {
         "Bedeutung": "",
         "Beispiel": ""
@@ -39,7 +39,7 @@
   },
   "Blitz": {
     "0": {
-      "ID": "Physik",
+      "ID": "Blitz",
       "GermaNet": {
         "Bedeutung": "Physik/Meteorologie: sichtbare Lichterscheinung bei einer elektrischen Entladung",
         "Beispiel": ""
@@ -57,7 +57,7 @@
       }
     },
     "1": {
-      "ID": "Geschwindigkeit",
+      "ID": "Geschwindigkeit; schnell",
       "GermaNet": {
         "Bedeutung": "",
         "Beispiel": ""
@@ -95,7 +95,7 @@
       }
     },
     "1": {
-      "ID": "hervorragend",
+      "ID": "hervorragend; intensiv",
       "GermaNet": {
         "Bedeutung": "",
         "Beispiel": ""
@@ -115,7 +115,7 @@
   },
   "Glanz": {
     "0": {
-      "ID": "leuchten",
+      "ID": "leuchten; Oberflächenbeschaffenheit",
       "GermaNet": {
         "Bedeutung": "Schein oder Widerschein, besonders auf glatten Materialien; das Leuchten von etwas",
         "Beispiel": ""
@@ -133,7 +133,7 @@
       }
     },
     "1": {
-      "ID": "Auffälligkeit",
+      "ID": "Auffälligkeit; Glamour",
       "GermaNet": {
         "Bedeutung": "übertragen: besonderer, auffälliger Zustand",
         "Beispiel": ""
@@ -153,7 +153,7 @@
   },
   "Heide": {
     "0": {
-      "ID": "Glaube",
+      "ID": "Glaube; Botanik",
       "GermaNet": {
         "Bedeutung": "Botanik: Vertreter der Pflanzengattung Heidekräuter (Erica) aus der Familie der Heidekrautgewächse; Ungläubiger; weiträumige Landschaft der gemäßigten Zone mit wenig Baumwuchs, aber mit vielen Zwergsträuchern, Flechten und Moosen",
         "Beispiel": ""
@@ -171,7 +171,7 @@
       }
     },
     "1": {
-      "ID": "Intensität",
+      "ID": "Intensität; Quantität",
       "GermaNet": {
         "Bedeutung": "",
         "Beispiel": ""
@@ -209,7 +209,7 @@
       }
     },
     "1": {
-      "ID": "bemerkenswert",
+      "ID": "bemerkenswert; außergewöhnlich",
       "GermaNet": {
         "Bedeutung": "",
         "Beispiel": ""
@@ -229,7 +229,7 @@
   },
   "Qualität": {
     "0": {
-      "ID": "Grad",
+      "ID": "Grad; Ausmaß",
       "GermaNet": {
         "Bedeutung": "individuell und konkret definierte Eigenschaft einer Sache oder einer Dienstleistung",
         "Beispiel": ""
@@ -240,7 +240,7 @@
       },
       "Duden": {
         "Bedeutung": "Gesamtheit der charakteristischen Eigenschaften (einer Sache, Person); Beschaffenheit; Material einer bestimmten Art, Beschaffenheit",
-        "Beispiel": "der Skandal erreichte eine neue Qualität; "
+        "Beispiel": "der Skandal erreichte eine neue Qualität"
       },
       "Crowdsourcing": {
         "Bedeutung": "(Gütegrad) das Ausmaß oder der Grad an Qualität einer Sache (z.B. Qualitätsverbesserung, Qualitätsprüpfung)"
@@ -267,7 +267,7 @@
   },
   "Schwein": {
     "0": {
-      "ID": "Tier",
+      "ID": "Tier; Schweinefleisch",
       "GermaNet": {
         "Bedeutung": "ein Säugetier mit kurzen Beinen, verlängerter rüsselartiger Schnauze, Borsten; kurz und synonym für: Schweinefleisch, Schweinernes",
         "Beispiel": ""
@@ -285,7 +285,7 @@
       }
     },
     "1": {
-      "ID": "obszön",
+      "ID": "obszön; Steigerung",
       "GermaNet": {
         "Bedeutung": "Schimpfwort für einen [a] gemeinen Menschen [b] schmutzigen oder obszönen Menschen",
         "Beispiel": ""
@@ -305,7 +305,7 @@
   },
   "Spitze": {
     "0": {
-      "ID": "Formation",
+      "ID": "Formation; Gewebe",
       "GermaNet": {
         "Bedeutung": "der oberste, schmal zulaufende Teil eines Gegenstandes oder einer Formation; der höchste Punkt eines Berges",
         "Beispiel": ""
@@ -323,7 +323,7 @@
       }
     },
     "1": {
-      "ID": "Führung",
+      "ID": "Führung; Leitung",
       "GermaNet": {
         "Bedeutung": "",
         "Beispiel": ""
@@ -361,7 +361,7 @@
       }
     },
     "1": {
-      "ID": "Wunsch",
+      "ID": "Wunsch; ideal",
       "GermaNet": {
         "Bedeutung": "sehr starker Wunsch",
         "Beispiel": ""
