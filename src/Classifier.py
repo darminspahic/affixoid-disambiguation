@@ -219,8 +219,8 @@ if __name__ == "__main__":
         scores = cross_val_score(clf, instances, labels, cv=cv)
         print('Crossvalidation scores:', scores)
 
-    cross_validate(clf_pref, pref_X_scaled, pref_y)
-    cross_validate(clf_suff, suff_X_scaled, suff_y)
+    cross_validate(svm.SVC(kernel="rbf", gamma=0.01, C=100), pref_X_scaled, pref_y)
+    cross_validate(svm.SVC(kernel="rbf", gamma=0.1, C=10), suff_X_scaled, suff_y)
 
     print()
 
@@ -263,6 +263,9 @@ if __name__ == "__main__":
     """ 
         Scores for: Word Sense Disambiguation 
     """
+    print('=' * 40)
+    print(Style.BOLD + "Scores for Word Sense Disambiguation" + Style.END)
+    print('-' * 40)
 
     pref_WSD_labels = CLSF.read_features_from_files(['f0_pref_wsd.txt'], path=DATA_WSD_PATH)
     pref_WSD_scores = CLSF.read_features_from_files(['f1_pref_wsd.txt'], path=DATA_WSD_PATH)
