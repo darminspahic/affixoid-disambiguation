@@ -102,6 +102,40 @@ class Wsd:
         except FileNotFoundError:
             print('Please set correct paths for data.')
 
+    def create_affixoid_dictionary(self, affixoid_file, class_name):
+        """ This function creates a dictionary with class instances of affixoids
+
+            Args:
+                affixoid_file (file): File with affixoid instances
+                class_name (str): Class label (Y|N)
+
+            Returns:
+                Dictionary with class instances
+
+            Example:
+                >>> self.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE, 'Y')
+
+        """
+        dictionary = {}
+        counter = 0
+
+        with open(affixoid_file, 'r', encoding='utf-8') as f:
+            for line in f:
+                word = line.strip().split()
+                dict_key = word[-3]
+                dictionary.update({dict_key: counter})
+
+        for key in dictionary.keys():
+            with open(affixoid_file, 'r', encoding='utf-8') as f:
+                for line in f:
+                    word = line.strip().split()
+                    if key in word[-3] and class_name in word[-1]:
+                        counter += 1
+                        dictionary.update({key: counter})
+            counter = 0
+
+        return dictionary
+
     def read_file_to_list(self, affixoid_file):
         """ This function reads a tab-separated file with affixoids and returns a list of lines from file
 
@@ -241,24 +275,28 @@ class Wsd:
 
             if return_lemmas:
                 for l in syn.lemmas:
-                    lemmas.append(l.orthForm)
+                    lemmas.append(l.orthForm.split())
 
             if return_hypernyms:
                 for h in syn.hypernyms:
                     for l in h.lemmas:
-                        hypernyms.append(l.orthForm)
+                        hypernyms.append(l.orthForm.split())
 
             if return_hyponyms:
                 for h in syn.hyponyms:
                     for l in h.lemmas:
-                        hyponyms.append(l.orthForm)
+                        hyponyms.append(l.orthForm.split())
 
             if return_wiktionary_sense:
                 for l in syn.lemmas:
                     for x in l.paraphrases:
                         wiktionary_sense.append(x['wiktionarySense'])
 
-            features = [lemmas, hypernyms, hyponyms, wiktionary_sense]
+            lemmas_flat = [item for sublist in lemmas for item in sublist]
+            hypernyms_flat = [item for sublist in hypernyms for item in sublist]
+            hyponyms_flat = [item for sublist in hyponyms for item in sublist]
+            features = [lemmas_flat, hypernyms_flat, hyponyms_flat, wiktionary_sense]
+
             synset_dict.update({syn: [item for sublist in features for item in sublist]})
 
         return synset_dict
@@ -290,7 +328,7 @@ class Wsd:
                 print('Shortest path lenght:', p[0].shortest_path_length(p[1]))
                 print('===')
 
-    def lesk(self, ambigous_part_of_word, full_word, remove_stopwords=True, join_sense_and_example=True, use_synonyms=True):
+    def lesk(self, ambigous_part_of_word, full_word, n_dict, y_dict, remove_stopwords=True, join_sense_and_example=True, use_synonyms=True):
         """ TODO: optimize this function """
 
         score_sense_0 = 0
@@ -311,10 +349,10 @@ class Wsd:
             sense_0_beispiel = sense_0_germanet_example + ' ' + sense_0_wiktionary_example + ' ' + sense_0_duden_example
 
             sense_0_bedeutung_words = word_tok.tokenize(sense_0_bedeutung)
-            sense_0_bedeutung_words_clean = [w for w in sense_0_bedeutung_words if w not in stop_words]
+            sense_0_bedeutung_words_clean = [w for w in sense_0_bedeutung_words if w.lower() not in stop_words]
 
             sense_0_beispiel_words = word_tok.tokenize(sense_0_beispiel)
-            sense_0_beispiel_words_clean = [w for w in sense_0_beispiel_words if w not in stop_words]
+            sense_0_beispiel_words_clean = [w for w in sense_0_beispiel_words if w.lower() not in stop_words]
 
             # Sense 1 ambigous_word
             sense_1 = self.definition_dict[ambigous_part_of_word]['1']
@@ -330,26 +368,31 @@ class Wsd:
             sense_1_beispiel = sense_1_germanet_example + ' ' + sense_1_wiktionary_example + ' ' + sense_1_duden_example
 
             sense_1_bedeutung_words = word_tok.tokenize(sense_1_bedeutung)
-            sense_1_bedeutung_words_clean = [w for w in sense_1_bedeutung_words if w not in stop_words]
+            sense_1_bedeutung_words_clean = [w for w in sense_1_bedeutung_words if w.lower() not in stop_words]
 
             sense_1_beispiel_words = word_tok.tokenize(sense_1_beispiel)
-            sense_1_beispiel_words_clean = [w for w in sense_1_beispiel_words if w not in stop_words]
+            sense_1_beispiel_words_clean = [w for w in sense_1_beispiel_words if w.lower() not in stop_words]
 
             # synonyms
-            id_0_synonyms = [value for sublist in
-                             self.create_synsets_dictionary(self.definition_dict[ambigous_part_of_word]['0']['ID'],
-                                                            return_wiktionary_sense=False).values() for value in
-                             sublist]
-            id_1_synonyms = [value for sublist in
-                             self.create_synsets_dictionary(self.definition_dict[ambigous_part_of_word]['1']['ID'],
-                                                            return_wiktionary_sense=False).values() for value in
-                             sublist]
+            id_0 = self.definition_dict[ambigous_part_of_word]['0']['ID'].split('; ')
+            id_1 = self.definition_dict[ambigous_part_of_word]['1']['ID'].split('; ')
+
+            id_0_lists = []
+            for i in id_0:
+                id_0_lists.append([value for sublist in self.create_synsets_dictionary(i, return_wiktionary_sense=False).values() for value in sublist])
+            id_0_synonyms = [value for sublist in id_0_lists for value in sublist]
+
+            id_1_lists = []
+            for i in id_1:
+                id_1_lists.append([value for sublist in self.create_synsets_dictionary(i, return_wiktionary_sense=False).values() for value in sublist])
+            id_1_synonyms = [value for sublist in id_1_lists for value in sublist]
 
             # Other Word
             if self.get_sentence_for_word(full_word):
                 full_word_context = self.get_sentence_for_word(full_word)
+                print('"', full_word_context, '"')
                 other_word_bedeutung_words = word_tok.tokenize(full_word_context)
-                other_word_bedeutung_words_clean = [w for w in other_word_bedeutung_words if w not in stop_words]
+                other_word_bedeutung_words_clean = [w for w in other_word_bedeutung_words if w.lower() not in stop_words]
             else:
                 return -1
 
@@ -388,24 +431,33 @@ class Wsd:
                 score_sense_0 += len(overlap_synonyms_0)
                 score_sense_1 += len(overlap_synonyms_1)
 
-            print('Overlap in sense_0', len(overlap_sense_0), overlap_sense_0)
-            print('Overlap in sense_1', len(overlap_sense_1), overlap_sense_1)
-            print('Overlap in Beisp_0', len(overlap_sense_0_beispiel), overlap_sense_0_beispiel)
-            print('Overlap in Beisp_1', len(overlap_sense_1_beispiel), overlap_sense_1_beispiel)
-            print('Overlap in Synon_0', len(overlap_synonyms_0), overlap_synonyms_0)
-            print('Overlap in Synon_1', len(overlap_synonyms_1), overlap_synonyms_1)
+            print()
+            print('Synonyms_0:', id_0_synonyms)
+            print('Synonyms_1:', id_1_synonyms)
+            print()
+            print('Overlap in sense_0:', len(overlap_sense_0), overlap_sense_0)
+            print('Overlap in sense_1:', len(overlap_sense_1), overlap_sense_1)
+            print('Overlap in Beisp_0:', len(overlap_sense_0_beispiel), overlap_sense_0_beispiel)
+            print('Overlap in Beisp_1:', len(overlap_sense_1_beispiel), overlap_sense_1_beispiel)
+            print('Overlap in Synon_0:', len(overlap_synonyms_0), overlap_synonyms_0)
+            print('Overlap in Synon_1:', len(overlap_synonyms_1), overlap_synonyms_1)
 
         except KeyError:
             return -1
 
         if score_sense_0 > score_sense_1:
+            print('Assigning class: 0')
             return 0
         if score_sense_1 > score_sense_0:
+            print('Assigning class: 1')
             return 1
         if score_sense_0 == 0 and score_sense_1 == 0:
+            print('Assigning class: 1')
             return 1
         else:
-            return 0
+            assigned_class = self.return_most_frequent_sense(ambigous_part_of_word, n_dict, y_dict)
+            print('Assigning mfs:', assigned_class)
+            return assigned_class
 
     def get_sentence_for_word(self, word):
         """ TODO """
@@ -417,7 +469,7 @@ class Wsd:
         time.sleep(10)
 
         url = base_url + method
-        attrs = dict(corpname=corpname, q='', pagesize='200', format='json', username=username, api_key=api_key, viewmode='sentence', lpos='-n', kwicleftctx=20, kwicrightctx=20, async=0)
+        attrs = dict(corpname=corpname, q='', pagesize='200', format='json', username=username, api_key=api_key, viewmode='sentence', lpos='-n', async=0, gdex_enabled=1)
         attrs['q'] = 'q' + '[lemma="'+word+'"]'
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
         r = s.get(url, params=attrs, headers=headers)
@@ -460,6 +512,16 @@ class Wsd:
             else:
                 return False
 
+    def return_most_frequent_sense(self, word, n_dict, y_dict):
+        """ This function returns the most frequents sense for a word, given two dictionaries with instances. """
+        count_n = n_dict[word]
+        count_y = y_dict[word]
+
+        if count_y > count_n:
+            return 1
+        else:
+            return 0
+
 
 class Style:
     """ Helper class for nicer coloring """
@@ -477,91 +539,86 @@ if __name__ == "__main__":
     """
     PREF_WSD = Wsd('Prefixoids', DATA_PATH + 'wsd/' + PREF_JSON_DICT)
     pref_inventory_list = PREF_WSD.read_file_to_list(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE)
+    n_pref_dict = PREF_WSD.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE, 'N')
+    y_pref_dict = PREF_WSD.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE, 'Y')
     f0_pref_wsd_labels = []  # wsd labels
     f1_pref_wsd_list = []  # wsd predicitons
 
-    # def write_pref():
+    def write_pref():
+        print('Writing files...')
+        PREF_WSD.write_list_to_file(f0_pref_wsd_labels, DATA_PATH + 'wsd/' + 'f0_pref_wsd_final.txt')
+        PREF_WSD.write_list_to_file(f1_pref_wsd_list, DATA_PATH + 'wsd/' + 'f1_pref_wsd_final.txt')
+        sys.exit('Exit')
+
+    """ Loop """
+    counter = 0
+    for i in pref_inventory_list:
+        counter += 1
+        # started from 0 - 07.08. 12:25
+        if counter == 400:
+            break
+        # elif counter < 1000:
+        #     pass
+        # elif counter % 10 == 0:
+        # #     pass
+        # #
+        else:
+            print('Line:', str(counter) + ' ===============================', i[0], i[-1])
+            f0 = PREF_WSD.transform_class_name_to_binary(i[-1])
+            f1 = PREF_WSD.lesk(i[2], i[0], n_pref_dict, y_pref_dict)
+            if f1 == -1:
+                pass
+            else:
+                f0_pref_wsd_labels.append(f0)
+                f1_pref_wsd_list.append(f1)
+
+    write_pref()
+
+    # """
+    #     SUFFIXOIDS WSD
+    # """
+    # SUFF_WSD = Wsd('Suffixoids', DATA_PATH + 'wsd/' + SUFF_JSON_DICT)
+    # suff_inventory_list = SUFF_WSD.read_file_to_list(DATA_FINAL_PATH + FINAL_SUFFIXOID_FILE)
+    # f0_suff_wsd_labels = []  # wsd labels
+    # f1_suff_wsd_list = []  # wsd predicitons
+    #
+    # def write_suff():
     #     print('Writing files...')
-    #     PREF_WSD.write_list_to_file(f0_pref_wsd_labels, DATA_PATH + 'wsd/' + 'f0_pref_wsd.txt')
-    #     PREF_WSD.write_list_to_file(f1_pref_wsd_list, DATA_PATH + 'wsd/' + 'f1_pref_wsd.txt')
+    #     SUFF_WSD.write_list_to_file(f0_suff_wsd_labels, DATA_PATH + 'wsd/' + 'f0_suff_wsd.txt')
+    #     SUFF_WSD.write_list_to_file(f1_suff_wsd_list, DATA_PATH + 'wsd/' + 'f1_suff_wsd.txt')
     #     sys.exit('Exit')
 
     """ Loop """
     # counter = 0
-    # for i in pref_inventory_list:
+    # for i in suff_inventory_list:
     #     counter += 1
-    #     # continue from 1000
-    #     if counter == 1500:
+    #     # continue from 800
+    #     if counter == 1000:
     #         break
-    #     elif counter < 1000:
+    #     elif counter < 800:
     #         pass
     #     # if counter % 10 == 0:
     #     #     pass
     #
     #     else:
     #         print('Line:', str(counter) + ' ===============================', i[0], i[-1])
-    #         f0 = PREF_WSD.transform_class_name_to_binary(i[-1])
-    #         f1 = PREF_WSD.lesk(i[2], i[0])
+    #         f0 = SUFF_WSD.transform_class_name_to_binary(i[-1])
+    #         f1 = SUFF_WSD.lesk(i[2], i[0])
     #         if f1 == -1:
     #             pass
     #         else:
-    #             f0_pref_wsd_labels.append(f0)
-    #             f1_pref_wsd_list.append(f1)
+    #             f0_suff_wsd_labels.append(f0)
+    #             f1_suff_wsd_list.append(f1)
     #
-    # write_pref()
-
-    """
-        SUFFIXOIDS WSD
-    """
-    SUFF_WSD = Wsd('Suffixoids', DATA_PATH + 'wsd/' + SUFF_JSON_DICT)
-    suff_inventory_list = SUFF_WSD.read_file_to_list(DATA_FINAL_PATH + FINAL_SUFFIXOID_FILE)
-    f0_suff_wsd_labels = []  # wsd labels
-    f1_suff_wsd_list = []  # wsd predicitons
-
-    def write_suff():
-        print('Writing files...')
-        SUFF_WSD.write_list_to_file(f0_suff_wsd_labels, DATA_PATH + 'wsd/' + 'f0_suff_wsd.txt')
-        SUFF_WSD.write_list_to_file(f1_suff_wsd_list, DATA_PATH + 'wsd/' + 'f1_suff_wsd.txt')
-        sys.exit('Exit')
-
-    """ Loop """
-    counter = 0
-    for i in suff_inventory_list:
-        counter += 1
-        # continue from 200
-        if counter == 400:
-            break
-        elif counter < 200:
-            pass
-        # if counter % 10 == 0:
-        #     pass
-
-        else:
-            print('Line:', str(counter) + ' ===============================', i[0], i[-1])
-            f0 = SUFF_WSD.transform_class_name_to_binary(i[-1])
-            f1 = SUFF_WSD.lesk(i[2], i[0])
-            if f1 == -1:
-                pass
-            else:
-                f0_suff_wsd_labels.append(f0)
-                f1_suff_wsd_list.append(f1)
-
-    write_suff()
+    # write_suff()
 
     """ Tests """
     # print(PREF_WSD.is_in_germanet('Test'))
     # print(PREF_WSD.search_germanet_synsets('Bilderbuch'))
-    # print(PREF_WSD.create_synsets_dictionary('Bilderbuch'))
+    # print(PREF_WSD.create_synsets_dictionary('Schwein', return_wiktionary_sense=False))
     # print(PREF_WSD.calculate_similarity_scores('Bilderbuch', 'Auflage'))
-    # print(PREF_WSD.get_sentence_for_word('Traumstrand'))
-    # print(PREF_WSD.get_sentence_for_word('Heidenbammel'))
     # print(PREF_WSD.get_sentence_for_word('Bombenspezialist'))
-
-    # print(PREF_WSD.lesk('Heide', 'Heidenaufstand'))
-    # print(PREF_WSD.lesk('Traum', 'Traumstrand'))
-    # print(SUFF_WSD.lesk('Bolzen', 'Bronzebolzen'))
-    # print(SUFF_WSD.lesk('Gott', 'Botengott'))
-    # print(SUFF_WSD.lesk('Guru', 'Bühnenguru'))
+    # print(PREF_WSD.lesk('Bilderbuch', 'Bilderbuchabsturz', n_pref_dict, y_pref_dict))
 
     inventory = ['Bilderbuch',
                  'Blitz',
@@ -572,17 +629,7 @@ if __name__ == "__main__":
                  'Qualität',
                  'Schwein',
                  'Spitze',
-                 'Traum',
-                 'Apostel',
-                 'Bolzen',
-                 'Dreck',
-                 'Gott',
-                 'Guru',
-                 'Hengst',
-                 'Ikone',
-                 'König',
-                 'Papst',
-                 'Schwein']
+                 'Traum']
 
     # for i in inventory:
-    #     print(PREF_WSD.create_synsets_dictionary(i))
+    #     print(i, PREF_WSD.return_most_frequent_sense(i, n_pref_dict, y_pref_dict))
