@@ -1,0 +1,1 @@
+{"request": {"username": "spahic", "gdex_enabled": "1", "pagesize": "200", "format": "json", "lpos": "-n", "q": "q[lemma=\"Traumreiseland\"]", "viewmode": "sentence", "async": "0", "corpname": "sdewac2", "api_key": "159b841f61a64092bc630d20b0f56c93"}, "api_version": "3.112.9", "error": "Empty result"}
