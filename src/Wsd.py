@@ -91,8 +91,8 @@ settings = {
     "join_sense_and_example": True,
     "use_synonyms": True,
     "lemmatize": False,
-    "open_locally": False,
-    "write_to_file": True,
+    "open_locally": True,
+    "write_to_file": False,
     "return_keyword": True,
     "return_single_sentence": False,
 }
@@ -153,6 +153,30 @@ class Wsd:
 
         return dictionary
 
+    def create_empty_dictionary(self, affixoid_file):
+        """ This function creates a dictionary with class instances of affixoids
+
+            Args:
+                affixoid_file (file): File with affixoid instances
+                class_name (str): Class label (Y|N)
+
+            Returns:
+                Dictionary with class instances
+
+            Example:
+                >>> self.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE, 'Y')
+
+        """
+        dictionary = {}
+
+        with open(affixoid_file, 'r', encoding='utf-8') as f:
+            for line in f:
+                word = line.strip().split()
+                dict_key = word[-3]
+                dictionary.update({dict_key: []})
+
+        return dictionary
+
     def read_file_to_list(self, affixoid_file):
         """ This function reads a tab-separated file with affixoids and returns a list of lines from file
 
@@ -195,7 +219,7 @@ class Wsd:
 
         """
 
-        f = open(output_file, 'a', encoding='utf-8')
+        f = open(output_file, 'w', encoding='utf-8')
 
         for item in input_list:
             if split_second_word:
@@ -468,10 +492,10 @@ class Wsd:
                 score_sense_1 += len(overlap_synonyms_1)
 
             print('----')
-            print(Style.BOLD + 'Sense_0 Bedeutung:' + Style.END, set(sense_0_bedeutung))
-            print(Style.BOLD + 'Sense_0 Beispiel:' + Style.END, set(sense_0_beispiel))
-            print(Style.BOLD + 'Sense_1 Bedeutung:' + Style.END, set(sense_1_bedeutung))
-            print(Style.BOLD + 'Sense_1 Beispiel:' + Style.END, set(sense_1_beispiel))
+            print(Style.BOLD + 'Sense_0 Bedeutung:' + Style.END, sense_0_bedeutung)
+            print(Style.BOLD + 'Sense_0 Beispiel:' + Style.END, sense_0_beispiel)
+            print(Style.BOLD + 'Sense_1 Bedeutung:' + Style.END, sense_1_bedeutung)
+            print(Style.BOLD + 'Sense_1 Beispiel:' + Style.END, sense_1_beispiel)
             print(Style.BOLD + 'Example sentence words:' + Style.END, set(other_word_bedeutung_words_clean))
             print('----')
             print(Style.BOLD + 'Synonyms_0:' + Style.END, id_0_synonyms)
@@ -630,6 +654,11 @@ if __name__ == "__main__":
     f0_pref_wsd_labels = []  # wsd labels
     f1_pref_wsd_list = []  # wsd predicitons
 
+    n_text = ''
+    y_text = ''
+
+    dictionary_n = PREF_WSD.create_empty_dictionary(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE)
+    dictionary_y = PREF_WSD.create_empty_dictionary(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE)
     """ Loop """
     counter = 0
     for i in pref_inventory_list:
@@ -647,22 +676,39 @@ if __name__ == "__main__":
         # BEGIN stopped at 40 - 08.08. 18:51
         # stopped at 370 - 08.08. 20:35
 
-        if counter == 1000:
-            break
-        elif counter < 370:
+        if counter < 1000:
             pass
+        # elif counter < 370:
+        #     pass
         else:
             print('Line:', str(counter) + ' ===============================', i[0], i[-1])
             f0 = PREF_WSD.transform_class_name_to_binary(i[-1])
             f1 = PREF_WSD.lesk(i[2], i[0], n_pref_dict, y_pref_dict)
+
             if f1 == -1:
                 pass
+
             else:
+                if i[-1] == 'N':
+                    dictionary_n[i[2]].append(PREF_WSD.get_sentence_for_word(i[0]))
+
+                if i[-1] == 'Y':
+                    dictionary_y[i[2]].append(PREF_WSD.get_sentence_for_word(i[0]))
+
                 f0_pref_wsd_labels.append(f0)
                 f1_pref_wsd_list.append(f1)
 
     # PREF_WSD.write_list_to_file(f0_pref_wsd_labels, DATA_WSD_PATH + 'f0_pref_wsd_final.txt')
     # PREF_WSD.write_list_to_file(f1_pref_wsd_list, DATA_WSD_PATH + 'f1_pref_wsd_final.txt')
+
+    print(dictionary_n.keys())
+    print('===')
+    print(dictionary_y.keys())
+
+    f_y = open('yes.txt', 'w', encoding='utf-8')
+    f_n = open('no.txt', 'w', encoding='utf-8')
+    f_y.write(str(dictionary_y))
+    f_n.write(str(dictionary_n))
 
     # """
     #     SUFFIXOIDS WSD
