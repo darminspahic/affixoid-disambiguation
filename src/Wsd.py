@@ -38,6 +38,8 @@ DATA_PATH = '../data/'
 DATA_FINAL_PATH = '../data/final/'
 DATA_FEATURES_PATH = '../data/features/'
 DATA_RESSOURCES_PATH = '../res/'
+DATA_WSD_PATH = '../data/wsd/'
+DATA_WSD_SENTENCES_PATH = '../data/wsd/sentences/'
 
 ################
 # FILE SETTINGS
@@ -54,7 +56,9 @@ ger = load_germanet()
 sent_tok = load('tokenizers/punkt/german.pickle')
 
 # Filter stopwords
-stop_words = set(stopwords.words('german'))
+german_stopwords = stopwords.words('german')
+german_stopwords.extend(('dass', 'bzw'))
+stop_words = set(german_stopwords)
 
 # Word Tokenizer
 # word_tok = TreebankWordTokenizer()
@@ -79,6 +83,22 @@ api_key: YNSC0B9OXN57XB48T9HWUFFLPY4TZ6OE
 """ WSD Dictionaries """
 PREF_JSON_DICT = 'pref_dictionary.json'
 SUFF_JSON_DICT = 'suff_dictionary.json'
+
+# TODO: add global settings
+settings = {
+    "return_lemmas": True,
+    "return_hypernyms": True,
+    "return_hyponyms": True,
+    "return_wiktionary_sense": False,
+    "remove_stopwords": True,
+    "join_sense_and_example": True,
+    "use_synonyms": True,
+    "lemmatize": False,
+    "open_locally": False,
+    "write_to_file": True,
+    "return_keyword": True,
+    "return_single_sentence": False,
+}
 
 
 class Wsd:
@@ -261,7 +281,11 @@ class Wsd:
         """ Helper function which returns a list of Synsets for a given word """
         return ger.synsets(word)
 
-    def create_synsets_dictionary(self, word, return_lemmas=True, return_hypernyms=True, return_hyponyms=True, return_wiktionary_sense=True):
+    def create_synsets_dictionary(self, word,
+                                  return_lemmas=settings["return_lemmas"],
+                                  return_hypernyms=settings["return_hypernyms"],
+                                  return_hyponyms=settings["return_hyponyms"],
+                                  return_wiktionary_sense=settings["return_wiktionary_sense"]):
         """ TODO """
 
         synsets = ger.synsets(word)
@@ -328,7 +352,12 @@ class Wsd:
                 print('Shortest path lenght:', p[0].shortest_path_length(p[1]))
                 print('===')
 
-    def lesk(self, ambigous_part_of_word, full_word, n_dict, y_dict, remove_stopwords=True, join_sense_and_example=True, use_synonyms=True):
+    def lesk(self, ambigous_part_of_word, full_word, n_dict, y_dict,
+             remove_stopwords=settings["remove_stopwords"],
+             join_sense_and_example=settings["join_sense_and_example"],
+             use_synonyms=settings["use_synonyms"],
+             lemmatize=settings["lemmatize"]):
+
         """ TODO: optimize this function """
 
         score_sense_0 = 0
@@ -340,38 +369,43 @@ class Wsd:
             sense_0_germanet = sense_0['GermaNet']['Bedeutung']
             sense_0_wiktionary = sense_0['Wiktionary']['Bedeutung']
             sense_0_duden = sense_0['Duden']['Bedeutung']
+            sense_0_crowdsourcing = sense_0['Crowdsourcing']['Bedeutung']
 
             sense_0_germanet_example = sense_0['GermaNet']['Beispiel']
             sense_0_wiktionary_example = sense_0['Wiktionary']['Beispiel']
             sense_0_duden_example = sense_0['Duden']['Beispiel']
 
-            sense_0_bedeutung = sense_0_germanet + ' ' + sense_0_wiktionary + ' ' + sense_0_duden
+            sense_0_bedeutung = sense_0_germanet + ' ' + sense_0_wiktionary + ' ' + sense_0_duden + ' ' + sense_0_crowdsourcing
             sense_0_beispiel = sense_0_germanet_example + ' ' + sense_0_wiktionary_example + ' ' + sense_0_duden_example
 
-            sense_0_bedeutung_words = word_tok.tokenize(sense_0_bedeutung)
-            sense_0_bedeutung_words_clean = [w for w in sense_0_bedeutung_words if w.lower() not in stop_words]
-
-            sense_0_beispiel_words = word_tok.tokenize(sense_0_beispiel)
-            sense_0_beispiel_words_clean = [w for w in sense_0_beispiel_words if w.lower() not in stop_words]
+            if remove_stopwords:
+                sense_0_bedeutung_words_clean = [w for w in word_tok.tokenize(sense_0_bedeutung) if w.lower() not in stop_words and len(w) > 1]
+                sense_0_beispiel_words_clean = [w for w in word_tok.tokenize(sense_0_beispiel) if w.lower() not in stop_words and len(w) > 1]
+            else:
+                sense_0_bedeutung_words_clean = [w for w in word_tok.tokenize(sense_0_bedeutung)]
+                sense_0_beispiel_words_clean = [w for w in word_tok.tokenize(sense_0_beispiel)]
 
             # Sense 1 ambigous_word
             sense_1 = self.definition_dict[ambigous_part_of_word]['1']
             sense_1_germanet = sense_1['GermaNet']['Bedeutung']
             sense_1_wiktionary = sense_1['Wiktionary']['Bedeutung']
             sense_1_duden = sense_1['Duden']['Bedeutung']
+            sense_1_crowdsourcing = sense_1['Crowdsourcing']['Bedeutung']
 
             sense_1_germanet_example = sense_1['GermaNet']['Beispiel']
             sense_1_wiktionary_example = sense_1['Wiktionary']['Beispiel']
             sense_1_duden_example = sense_1['Duden']['Beispiel']
 
-            sense_1_bedeutung = sense_1_germanet + ' ' + sense_1_wiktionary + ' ' + sense_1_duden
+            sense_1_bedeutung = sense_1_germanet + ' ' + sense_1_wiktionary + ' ' + sense_1_duden + ' ' + sense_1_crowdsourcing
             sense_1_beispiel = sense_1_germanet_example + ' ' + sense_1_wiktionary_example + ' ' + sense_1_duden_example
 
-            sense_1_bedeutung_words = word_tok.tokenize(sense_1_bedeutung)
-            sense_1_bedeutung_words_clean = [w for w in sense_1_bedeutung_words if w.lower() not in stop_words]
+            if remove_stopwords:
+                sense_1_bedeutung_words_clean = [w for w in word_tok.tokenize(sense_1_bedeutung) if w.lower() not in stop_words and len(w) > 1]
+                sense_1_beispiel_words_clean = [w for w in word_tok.tokenize(sense_1_beispiel) if w.lower() not in stop_words and len(w) > 1]
 
-            sense_1_beispiel_words = word_tok.tokenize(sense_1_beispiel)
-            sense_1_beispiel_words_clean = [w for w in sense_1_beispiel_words if w.lower() not in stop_words]
+            else:
+                sense_1_bedeutung_words_clean = [w for w in word_tok.tokenize(sense_1_bedeutung)]
+                sense_1_beispiel_words_clean = [w for w in word_tok.tokenize(sense_1_beispiel)]
 
             # synonyms
             id_0 = self.definition_dict[ambigous_part_of_word]['0']['ID'].split('; ')
@@ -379,44 +413,49 @@ class Wsd:
 
             id_0_lists = []
             for i in id_0:
-                id_0_lists.append([value for sublist in self.create_synsets_dictionary(i, return_wiktionary_sense=False).values() for value in sublist])
+                id_0_lists.append([value for sublist in self.create_synsets_dictionary(i).values() for value in sublist])
             id_0_synonyms = [value for sublist in id_0_lists for value in sublist]
 
             id_1_lists = []
             for i in id_1:
-                id_1_lists.append([value for sublist in self.create_synsets_dictionary(i, return_wiktionary_sense=False).values() for value in sublist])
+                id_1_lists.append([value for sublist in self.create_synsets_dictionary(i).values() for value in sublist])
             id_1_synonyms = [value for sublist in id_1_lists for value in sublist]
 
             # Other Word
             if self.get_sentence_for_word(full_word):
                 full_word_context = self.get_sentence_for_word(full_word)
                 print('"', full_word_context, '"')
-                other_word_bedeutung_words = word_tok.tokenize(full_word_context)
-                other_word_bedeutung_words_clean = [w for w in other_word_bedeutung_words if w.lower() not in stop_words]
+                other_word_bedeutung_words_clean = [w for w in word_tok.tokenize(full_word_context) if w.lower() not in stop_words and len(w) > 1]
             else:
                 return -1
 
-            if remove_stopwords:
-                sense_0_bedeutung_words_distinct = set(sense_0_bedeutung_words_clean)
-                sense_1_bedeutung_words_distinct = set(sense_1_bedeutung_words_clean)
-                sense_0_beispiel_words_distinct = set(sense_0_beispiel_words_clean)
-                sense_1_beispiel_words_distinct = set(sense_1_beispiel_words_clean)
-                other_word_bedeutung_words_distinct = set(other_word_bedeutung_words_clean)
-            else:
-                sense_0_bedeutung_words_distinct = set(sense_0_bedeutung_words)
-                sense_1_bedeutung_words_distinct = set(sense_1_bedeutung_words)
-                sense_0_beispiel_words_distinct = set(sense_0_beispiel_words)
-                sense_1_beispiel_words_distinct = set(sense_1_beispiel_words)
-                other_word_bedeutung_words_distinct = set(other_word_bedeutung_words)
+            if lemmatize:
+                sense_0_bedeutung_words_lemmatized = [ger.lemmatise(w) for w in sense_0_bedeutung_words_clean]
+                sense_0_beispiel_words_lemmatized = [ger.lemmatise(w) for w in sense_0_beispiel_words_clean]
 
-            overlap_sense_0 = sense_0_bedeutung_words_distinct.intersection(other_word_bedeutung_words_distinct)
-            overlap_sense_1 = sense_1_bedeutung_words_distinct.intersection(other_word_bedeutung_words_distinct)
+                sense_1_bedeutung_words_lemmatized = [ger.lemmatise(w) for w in sense_1_bedeutung_words_clean]
+                sense_1_beispiel_words_lemmatized = [ger.lemmatise(w) for w in sense_1_beispiel_words_clean]
 
-            overlap_sense_0_beispiel = sense_0_beispiel_words_distinct.intersection(other_word_bedeutung_words_distinct)
-            overlap_sense_1_beispiel = sense_1_beispiel_words_distinct.intersection(other_word_bedeutung_words_distinct)
+                other_word_bedeutung_words_lemmatized = [ger.lemmatise(w) for w in other_word_bedeutung_words_clean]
 
-            overlap_synonyms_0 = set(id_0_synonyms).intersection(other_word_bedeutung_words_distinct)  # sense_0_bedeutung_words_distinct ?
-            overlap_synonyms_1 = set(id_1_synonyms).intersection(other_word_bedeutung_words_distinct)  # sense_1_bedeutung_words_distinct ?
+                sense_0_bedeutung_words_clean = [value for sublist in sense_0_bedeutung_words_lemmatized for value in sublist]
+                sense_0_beispiel_words_clean = [value for sublist in sense_0_beispiel_words_lemmatized for value in sublist]
+
+                sense_1_bedeutung_words_clean = [value for sublist in sense_1_bedeutung_words_lemmatized for value in sublist]
+                sense_1_beispiel_words_clean = [value for sublist in sense_1_beispiel_words_lemmatized for value in sublist]
+
+                other_word_bedeutung_words_clean = [value for sublist in other_word_bedeutung_words_lemmatized for value in sublist]
+
+
+            # Calculate overlaps
+            overlap_sense_0 = set(other_word_bedeutung_words_clean).intersection(sense_0_bedeutung_words_clean)
+            overlap_sense_1 = set(other_word_bedeutung_words_clean).intersection(sense_1_bedeutung_words_clean)
+
+            overlap_sense_0_beispiel = set(other_word_bedeutung_words_clean).intersection(sense_0_beispiel_words_clean)
+            overlap_sense_1_beispiel = set(other_word_bedeutung_words_clean).intersection(sense_1_beispiel_words_clean)
+
+            overlap_synonyms_0 = set(other_word_bedeutung_words_clean).intersection(id_0_synonyms)
+            overlap_synonyms_1 = set(other_word_bedeutung_words_clean).intersection(id_1_synonyms)
 
             if join_sense_and_example:
                 score_sense_0 += len(overlap_sense_0)
@@ -431,9 +470,15 @@ class Wsd:
                 score_sense_0 += len(overlap_synonyms_0)
                 score_sense_1 += len(overlap_synonyms_1)
 
-            print()
-            print('Synonyms_0:', id_0_synonyms)
-            print('Synonyms_1:', id_1_synonyms)
+            print('----')
+            print(Style.BOLD + 'Sense_0 Bedeutung:' + Style.END, set(sense_0_bedeutung))
+            print(Style.BOLD + 'Sense_0 Beispiel:' + Style.END, set(sense_0_beispiel))
+            print(Style.BOLD + 'Sense_1 Bedeutung:' + Style.END, set(sense_1_bedeutung))
+            print(Style.BOLD + 'Sense_1 Beispiel:' + Style.END, set(sense_1_beispiel))
+            print(Style.BOLD + 'Example sentence words:' + Style.END, set(other_word_bedeutung_words_clean))
+            print('----')
+            print(Style.BOLD + 'Synonyms_0:' + Style.END, id_0_synonyms)
+            print(Style.BOLD + 'Synonyms_1:' + Style.END, id_1_synonyms)
             print()
             print('Overlap in sense_0:', len(overlap_sense_0), overlap_sense_0)
             print('Overlap in sense_1:', len(overlap_sense_1), overlap_sense_1)
@@ -441,53 +486,94 @@ class Wsd:
             print('Overlap in Beisp_1:', len(overlap_sense_1_beispiel), overlap_sense_1_beispiel)
             print('Overlap in Synon_0:', len(overlap_synonyms_0), overlap_synonyms_0)
             print('Overlap in Synon_1:', len(overlap_synonyms_1), overlap_synonyms_1)
+            print()
 
         except KeyError:
             return -1
 
         if score_sense_0 > score_sense_1:
-            print('Assigning class: 0')
+            print(Style.BOLD + 'Assigning class: 0' + Style.END)
             return 0
         if score_sense_1 > score_sense_0:
-            print('Assigning class: 1')
+            print(Style.BOLD + 'Assigning class: 1' + Style.END)
             return 1
         if score_sense_0 == 0 and score_sense_1 == 0:
-            print('Assigning class: 1')
+            print(Style.BOLD + 'Assigning class: 1' + Style.END)
             return 1
         else:
             assigned_class = self.return_most_frequent_sense(ambigous_part_of_word, n_dict, y_dict)
-            print('Assigning mfs:', assigned_class)
+            print(Style.BOLD + 'Assigning mfs:' + Style.END, assigned_class)
             return assigned_class
 
-    def get_sentence_for_word(self, word):
+    def get_sentence_for_word(self, word, open_locally=settings["open_locally"], write_to_file=settings["write_to_file"]):
         """ TODO """
         """
             if you want to do fewer than 50 requests, you don’t need to use any waiting,
             if you want to do up to 900 requests, you need to use the interval of 4 seconds per query,
             if you want to do more than 2000 requests, you need to use interval ca 44 seconds.
         """
-        time.sleep(10)
 
-        url = base_url + method
-        attrs = dict(corpname=corpname, q='', pagesize='200', format='json', username=username, api_key=api_key, viewmode='sentence', lpos='-n', async=0, gdex_enabled=1)
-        attrs['q'] = 'q' + '[lemma="'+word+'"]'
-        headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-        r = s.get(url, params=attrs, headers=headers)
-
-        if r.status_code == 429:
-            print('Error: 429')
-            return False
+        if open_locally:
+            with open(DATA_WSD_SENTENCES_PATH + word + '.json', 'r') as f:
+                data = json.load(f)
+                return self.parse_result(data)
 
         else:
-            json_obj = r.json()
-            result_count = int(json_obj.get('concsize', '0'))
-            text = ''
-            if result_count > 0:
-                response = json.dumps(json_obj["Lines"], sort_keys=True, indent=4, ensure_ascii=False)
-                item_dict = json.loads(response)
-                sentences_count = len(item_dict)
-                if sentences_count > 0:
-                    counter = 0
+
+            time.sleep(10)
+
+            url = base_url + method
+            attrs = dict(corpname=corpname, q='', pagesize='200', format='json', username=username, api_key=api_key, viewmode='sentence', lpos='-n', async=0, gdex_enabled=1)
+            attrs['q'] = 'q' + '[lemma="'+word+'"]'
+            headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+            r = s.get(url, params=attrs, headers=headers)
+
+            if r.status_code == 429:
+                print('Error: 429')
+                return False
+
+            else:
+                json_response = r.json()
+
+                if write_to_file:
+                    with open(DATA_WSD_SENTENCES_PATH + word + '.json', 'w') as outfile:
+                        json.dump(json_response, outfile)
+
+                return self.parse_result(json_response)
+
+    def parse_result(self, json_obj,
+                     return_keyword=settings["return_keyword"],
+                     return_single_sentence=settings["return_single_sentence"]):
+
+        result_count = int(json_obj.get('concsize', '0'))
+        text = ''
+        if result_count > 0:
+            response = json.dumps(json_obj["Lines"], sort_keys=True, indent=4, ensure_ascii=False)
+            item_dict = json.loads(response)
+            sentences_count = len(item_dict)
+            if sentences_count > 0:
+                counter = 0
+                if return_single_sentence:
+                    left = ''
+                    kwic = item_dict[counter]['Kwic'][0]['str']
+                    right = ''
+
+                    try:
+                        left = item_dict[counter]['Left'][0]['str']
+                    except IndexError:
+                        pass
+
+                    try:
+                        right = item_dict[counter]['Right'][0]['str']
+                    except IndexError:
+                        pass
+
+                    if return_keyword:
+                        text += left + kwic + right + ' '
+                    else:
+                        text += left + right + ' '
+
+                else:
                     while counter < sentences_count:
                         left = ''
                         kwic = item_dict[counter]['Kwic'][0]['str']
@@ -503,14 +589,17 @@ class Wsd:
                         except IndexError:
                             pass
 
-                        text += left + kwic + right + ' '
+                        if return_keyword:
+                            text += left + kwic + right + ' '
+                        else:
+                            text += left + right + ' '
 
                         counter += 1
 
-                return text
+            return text
 
-            else:
-                return False
+        else:
+            return False
 
     def return_most_frequent_sense(self, word, n_dict, y_dict):
         """ This function returns the most frequents sense for a word, given two dictionaries with instances. """
@@ -537,31 +626,33 @@ if __name__ == "__main__":
     """
         PREFIXOIDS WSD
     """
-    PREF_WSD = Wsd('Prefixoids', DATA_PATH + 'wsd/' + PREF_JSON_DICT)
+    PREF_WSD = Wsd('Prefixoids', DATA_WSD_PATH + PREF_JSON_DICT)
     pref_inventory_list = PREF_WSD.read_file_to_list(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE)
     n_pref_dict = PREF_WSD.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE, 'N')
     y_pref_dict = PREF_WSD.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE, 'Y')
     f0_pref_wsd_labels = []  # wsd labels
     f1_pref_wsd_list = []  # wsd predicitons
 
-    def write_pref():
-        print('Writing files...')
-        PREF_WSD.write_list_to_file(f0_pref_wsd_labels, DATA_PATH + 'wsd/' + 'f0_pref_wsd_final.txt')
-        PREF_WSD.write_list_to_file(f1_pref_wsd_list, DATA_PATH + 'wsd/' + 'f1_pref_wsd_final.txt')
-        sys.exit('Exit')
-
     """ Loop """
     counter = 0
     for i in pref_inventory_list:
         counter += 1
         # started from 0 - 07.08. 12:25
-        if counter == 400:
+        # stopped at 400 - 07.08. 16:57
+        # stopped at 600 - 07.08. 18:04
+        # stopped at 800 - 07.08. 19:06
+        # stopped at 1000 - 07.08. 22:33
+        # sentences start at 1000
+        # stopped at 1100 - 08.08. 01:08
+        # stopped at 1190 - 08.08. 12:03
+        # stopped at 1999 - 08.08. 18:27
+        # stopped at END 2009 - 08.08. 18:35
+        # BEGIN stopped at 40 - 08.08. 18:51
+
+        if counter == 1000:
             break
-        # elif counter < 1000:
-        #     pass
-        # elif counter % 10 == 0:
-        # #     pass
-        # #
+        elif counter < 40:
+            pass
         else:
             print('Line:', str(counter) + ' ===============================', i[0], i[-1])
             f0 = PREF_WSD.transform_class_name_to_binary(i[-1])
@@ -572,53 +663,24 @@ if __name__ == "__main__":
                 f0_pref_wsd_labels.append(f0)
                 f1_pref_wsd_list.append(f1)
 
-    write_pref()
+    # PREF_WSD.write_list_to_file(f0_pref_wsd_labels, DATA_WSD_PATH + 'f0_pref_wsd_final.txt')
+    # PREF_WSD.write_list_to_file(f1_pref_wsd_list, DATA_WSD_PATH + 'f1_pref_wsd_final.txt')
 
     # """
     #     SUFFIXOIDS WSD
     # """
-    # SUFF_WSD = Wsd('Suffixoids', DATA_PATH + 'wsd/' + SUFF_JSON_DICT)
+    # SUFF_WSD = Wsd('Suffixoids', DATA_WSD_PATH + SUFF_JSON_DICT)
     # suff_inventory_list = SUFF_WSD.read_file_to_list(DATA_FINAL_PATH + FINAL_SUFFIXOID_FILE)
     # f0_suff_wsd_labels = []  # wsd labels
     # f1_suff_wsd_list = []  # wsd predicitons
-    #
-    # def write_suff():
-    #     print('Writing files...')
-    #     SUFF_WSD.write_list_to_file(f0_suff_wsd_labels, DATA_PATH + 'wsd/' + 'f0_suff_wsd.txt')
-    #     SUFF_WSD.write_list_to_file(f1_suff_wsd_list, DATA_PATH + 'wsd/' + 'f1_suff_wsd.txt')
-    #     sys.exit('Exit')
-
-    """ Loop """
-    # counter = 0
-    # for i in suff_inventory_list:
-    #     counter += 1
-    #     # continue from 800
-    #     if counter == 1000:
-    #         break
-    #     elif counter < 800:
-    #         pass
-    #     # if counter % 10 == 0:
-    #     #     pass
-    #
-    #     else:
-    #         print('Line:', str(counter) + ' ===============================', i[0], i[-1])
-    #         f0 = SUFF_WSD.transform_class_name_to_binary(i[-1])
-    #         f1 = SUFF_WSD.lesk(i[2], i[0])
-    #         if f1 == -1:
-    #             pass
-    #         else:
-    #             f0_suff_wsd_labels.append(f0)
-    #             f1_suff_wsd_list.append(f1)
-    #
-    # write_suff()
 
     """ Tests """
     # print(PREF_WSD.is_in_germanet('Test'))
     # print(PREF_WSD.search_germanet_synsets('Bilderbuch'))
     # print(PREF_WSD.create_synsets_dictionary('Schwein', return_wiktionary_sense=False))
     # print(PREF_WSD.calculate_similarity_scores('Bilderbuch', 'Auflage'))
-    # print(PREF_WSD.get_sentence_for_word('Bombenspezialist'))
-    # print(PREF_WSD.lesk('Bilderbuch', 'Bilderbuchabsturz', n_pref_dict, y_pref_dict))
+    # print(PREF_WSD.get_sentence_for_word('Bilderbuchabsturz', open_locally=True))
+    # print(PREF_WSD.lesk('Jahrhundert', 'Jahrhunderthälfte', n_pref_dict, y_pref_dict, lemmatize=True))
 
     inventory = ['Bilderbuch',
                  'Blitz',
