@@ -34,10 +34,7 @@ from nltk.tokenize import RegexpTokenizer
 ################
 # PATH SETTINGS
 ################
-DATA_PATH = '../data/'
 DATA_FINAL_PATH = '../data/final/'
-DATA_FEATURES_PATH = '../data/features/'
-DATA_RESSOURCES_PATH = '../res/'
 DATA_WSD_PATH = '../data/wsd/'
 DATA_WSD_SENTENCES_PATH = '../data/wsd/sentences/'
 
@@ -648,10 +645,11 @@ if __name__ == "__main__":
         # stopped at 1999 - 08.08. 18:27
         # stopped at END 2009 - 08.08. 18:35
         # BEGIN stopped at 40 - 08.08. 18:51
+        # stopped at 370 - 08.08. 20:35
 
         if counter == 1000:
             break
-        elif counter < 40:
+        elif counter < 370:
             pass
         else:
             print('Line:', str(counter) + ' ===============================', i[0], i[-1])
