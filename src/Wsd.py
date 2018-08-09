@@ -683,8 +683,8 @@ if __name__ == "__main__":
                 print(name)
     print(DATA_WSD_PATH+'sentences/')
 
-    for i in pref_inventory_list:
-        counter += 1
+    # for i in pref_inventory_list:
+    #     counter += 1
         # started from 0 - 07.08. 12:25
         # stopped at 400 - 07.08. 16:57
         # stopped at 600 - 07.08. 18:04
@@ -706,7 +706,7 @@ if __name__ == "__main__":
         # else:
 
         # print('Line:', str(counter) + ' ===============================', i[0], i[-1])
-        find(i[0]+'.json', DATA_WSD_PATH+'sentences/')
+        # find(i[0]+'.json', DATA_WSD_PATH+'sentences/')
 
         # f0 = PREF_WSD.transform_class_name_to_binary(i[-1])
         # f1 = PREF_WSD.lesk(i[2], i[0], n_pref_dict, y_pref_dict)
@@ -767,4 +767,4 @@ if __name__ == "__main__":
     # for i in inventory:
     #     print(i, PREF_WSD.return_most_frequent_sense(i, n_pref_dict, y_pref_dict))
 
-    # print(PREF_WSD.get_sentence_for_word('Spitzen-Know-How', open_locally=False, write_to_file=True))
+    print(PREF_WSD.get_sentence_for_word('Spitzen-Know-How', open_locally=False, write_to_file=True))
