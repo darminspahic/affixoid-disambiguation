@@ -23,13 +23,15 @@ import requests
 import sys
 import time
 import urllib.parse
+import nltk
 
 from pygermanet import load_germanet
 from nltk.corpus import stopwords
+from nltk import FreqDist
 from nltk.tokenize import load
 from nltk.tokenize import RegexpTokenizer
-# nltk.download('punkt')
-# nltk.download('stopwords')
+nltk.download('punkt', quiet=True)
+nltk.download('stopwords', quiet=True)
 
 ################
 # PATH SETTINGS
@@ -95,10 +97,10 @@ settings = {
     "join_sense_and_example": True,
     "use_synonyms": True,
     "lemmatize": False,
-    "open_locally": False,
-    "write_to_file": True,
+    "open_locally": True,
+    "write_to_file": False,
     "return_keyword": True,
-    "return_single_sentence": False,
+    "return_single_sentence": False
 }
 
 
@@ -449,8 +451,10 @@ class Wsd:
             # Other Word
             if self.get_sentence_for_word(full_word):
                 full_word_context = self.get_sentence_for_word(full_word)
+                print(Style.BOLD + 'Context:' + Style.END)
                 print('"', full_word_context, '"')
                 other_word_bedeutung_words_clean = [w for w in word_tok.tokenize(full_word_context) if w.lower() not in stop_words and len(w) > 1]
+                freq_dist = FreqDist(other_word_bedeutung_words_clean)
             else:
                 return -1
 
@@ -498,9 +502,13 @@ class Wsd:
             print('----')
             print(Style.BOLD + 'Sense_0 Bedeutung:' + Style.END, sense_0_bedeutung)
             print(Style.BOLD + 'Sense_0 Beispiel:' + Style.END, sense_0_beispiel)
+            print('-')
             print(Style.BOLD + 'Sense_1 Bedeutung:' + Style.END, sense_1_bedeutung)
             print(Style.BOLD + 'Sense_1 Beispiel:' + Style.END, sense_1_beispiel)
+            print('-')
             print(Style.BOLD + 'Example sentence words:' + Style.END, set(other_word_bedeutung_words_clean))
+            print(Style.BOLD + '10 most frequent words:' + Style.END, freq_dist.most_common(10))
+            print(Style.BOLD + 'Frequency ambigous word:' + Style.END, freq_dist[ambigous_part_of_word])
             print('----')
             print(Style.BOLD + 'Synonyms_0:' + Style.END, id_0_synonyms)
             print(Style.BOLD + 'Synonyms_1:' + Style.END, id_1_synonyms)
@@ -665,6 +673,16 @@ if __name__ == "__main__":
     dictionary_y = PREF_WSD.create_empty_dictionary(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE)
     """ Loop """
     counter = 0
+    import os
+
+    def find(name, path):
+        for root, dirs, files in os.walk(path):
+            if name in files:
+                pass
+            else:
+                print(name)
+    print(DATA_WSD_PATH+'sentences/')
+
     for i in pref_inventory_list:
         counter += 1
         # started from 0 - 07.08. 12:25
@@ -679,28 +697,33 @@ if __name__ == "__main__":
         # stopped at END 2009 - 08.08. 18:35
         # BEGIN stopped at 40 - 08.08. 18:51
         # stopped at 370 - 08.08. 20:35
+        # END 09.08. 17:18
 
-        if counter == 1000:
-            break
-        elif counter < 370:
-            pass
-        else:
-            print('Line:', str(counter) + ' ===============================', i[0], i[-1])
-            f0 = PREF_WSD.transform_class_name_to_binary(i[-1])
-            f1 = PREF_WSD.lesk(i[2], i[0], n_pref_dict, y_pref_dict)
+        # if counter == 1000:
+        #     break
+        # elif counter < 370:
+        #     pass
+        # else:
 
-            if f1 == -1:
-                pass
+        # print('Line:', str(counter) + ' ===============================', i[0], i[-1])
+        find(i[0]+'.json', DATA_WSD_PATH+'sentences/')
 
-            else:
-                # if i[-1] == 'N':
-                #     dictionary_n[i[2]].append(PREF_WSD.get_sentence_for_word(i[0]))
-                #
-                # if i[-1] == 'Y':
-                #     dictionary_y[i[2]].append(PREF_WSD.get_sentence_for_word(i[0]))
+        # f0 = PREF_WSD.transform_class_name_to_binary(i[-1])
+        # f1 = PREF_WSD.lesk(i[2], i[0], n_pref_dict, y_pref_dict)
+        #
+        # if f1 == -1:
+        #     pass
+        #
+        # else:
+        #     # if i[-1] == 'N':
+        #     #     dictionary_n[i[2]].append(PREF_WSD.get_sentence_for_word(i[0]))
+        #     #
+        #     # if i[-1] == 'Y':
+        #     #     dictionary_y[i[2]].append(PREF_WSD.get_sentence_for_word(i[0]))
+        #
+        #     f0_pref_wsd_labels.append(f0)
+        #     f1_pref_wsd_list.append(f1)
 
-                f0_pref_wsd_labels.append(f0)
-                f1_pref_wsd_list.append(f1)
 
     # PREF_WSD.write_list_to_file(f0_pref_wsd_labels, DATA_WSD_PATH + 'f0_pref_wsd_final.txt')
     # PREF_WSD.write_list_to_file(f1_pref_wsd_list, DATA_WSD_PATH + 'f1_pref_wsd_final.txt')
@@ -743,3 +766,5 @@ if __name__ == "__main__":
 
     # for i in inventory:
     #     print(i, PREF_WSD.return_most_frequent_sense(i, n_pref_dict, y_pref_dict))
+
+    # print(PREF_WSD.get_sentence_for_word('Spitzen-Know-How', open_locally=False, write_to_file=True))
