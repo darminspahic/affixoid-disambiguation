@@ -47,7 +47,11 @@ FINAL_SUFFIXOID_FILE = 'binary_unique_instance_suffixoid_segmentations.txt'
 ################
 # GermaNet & WordNet
 ################
-ger = load_germanet()
+try:
+    ger = load_germanet()
+except:
+    print('Error. Please start mongo on GermaNet xml files: mongod --dbpath ./mongodb')
+    sys.exit()
 
 # Sentence tokenizer
 sent_tok = load('tokenizers/punkt/german.pickle')
@@ -91,8 +95,8 @@ settings = {
     "join_sense_and_example": True,
     "use_synonyms": True,
     "lemmatize": False,
-    "open_locally": True,
-    "write_to_file": False,
+    "open_locally": False,
+    "write_to_file": True,
     "return_keyword": True,
     "return_single_sentence": False,
 }
@@ -676,10 +680,10 @@ if __name__ == "__main__":
         # BEGIN stopped at 40 - 08.08. 18:51
         # stopped at 370 - 08.08. 20:35
 
-        if counter < 1000:
+        if counter == 1000:
+            break
+        elif counter < 370:
             pass
-        # elif counter < 370:
-        #     pass
         else:
             print('Line:', str(counter) + ' ===============================', i[0], i[-1])
             f0 = PREF_WSD.transform_class_name_to_binary(i[-1])
@@ -689,11 +693,11 @@ if __name__ == "__main__":
                 pass
 
             else:
-                if i[-1] == 'N':
-                    dictionary_n[i[2]].append(PREF_WSD.get_sentence_for_word(i[0]))
-
-                if i[-1] == 'Y':
-                    dictionary_y[i[2]].append(PREF_WSD.get_sentence_for_word(i[0]))
+                # if i[-1] == 'N':
+                #     dictionary_n[i[2]].append(PREF_WSD.get_sentence_for_word(i[0]))
+                #
+                # if i[-1] == 'Y':
+                #     dictionary_y[i[2]].append(PREF_WSD.get_sentence_for_word(i[0]))
 
                 f0_pref_wsd_labels.append(f0)
                 f1_pref_wsd_list.append(f1)
@@ -701,14 +705,14 @@ if __name__ == "__main__":
     # PREF_WSD.write_list_to_file(f0_pref_wsd_labels, DATA_WSD_PATH + 'f0_pref_wsd_final.txt')
     # PREF_WSD.write_list_to_file(f1_pref_wsd_list, DATA_WSD_PATH + 'f1_pref_wsd_final.txt')
 
-    print(dictionary_n.keys())
-    print('===')
-    print(dictionary_y.keys())
-
-    f_y = open('yes.txt', 'w', encoding='utf-8')
-    f_n = open('no.txt', 'w', encoding='utf-8')
-    f_y.write(str(dictionary_y))
-    f_n.write(str(dictionary_n))
+    # print(dictionary_n.keys())
+    # print('===')
+    # print(dictionary_y.keys())
+    #
+    # f_y = open('yes.txt', 'w', encoding='utf-8')
+    # f_n = open('no.txt', 'w', encoding='utf-8')
+    # f_y.write(str(dictionary_y))
+    # f_n.write(str(dictionary_n))
 
     # """
     #     SUFFIXOIDS WSD
