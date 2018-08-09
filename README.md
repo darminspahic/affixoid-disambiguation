@@ -2,6 +2,41 @@
 Todo
 
 ## Installation
+Requirements
+- python3
+- lxml
+- matplotlib
+- nltk
+- numpy
+- pygermanet
+- requests
+- scipy
+- sklearn
+
+Clone the repository
+```bash
+$ git clone https://gitlab.cl.uni-heidelberg.de/spahic/ba-ss18.git
+```
+
+Install requirements
+```bash
+$ pip install -r src/requirements.txt
+```
+
+## Feature Extraction for word embeddings
+```bash
+$ python src/FeatureExtractor.py
+```
+
+## Word Sense Disambiguation
+```bash
+$ python src/Wsd.py
+```
+
+## Classification and results
+```bash
+$ python src/Classifier.py
+```
 
 ## Contributors
 [Darmin Spahic](https://github.com/darminspahic)
