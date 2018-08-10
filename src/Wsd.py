@@ -24,6 +24,7 @@ import sys
 import time
 import urllib.parse
 import nltk
+import warnings
 
 from pygermanet import load_germanet
 from nltk.corpus import stopwords
@@ -42,7 +43,7 @@ from sklearn.metrics import recall_score
 ################
 DATA_FINAL_PATH = '../data/final/'
 DATA_WSD_PATH = '../data/wsd/'
-DATA_WSD_SENTENCES_PATH = '../data/wsd/sentences/'
+DATA_WSD_SENTENCES_PATH = '../data/wsd/pref/'
 
 ################
 # FILE SETTINGS
@@ -103,7 +104,7 @@ settings = {
     "lemmatize": True,
     "open_locally": True,
     "write_to_file": False,
-    "return_keyword": True,
+    "return_keyword": False,
     "return_single_sentence": False
 }
 
@@ -123,7 +124,7 @@ class Wsd:
         print('-' * 40)
 
         try:
-            print('Initializing dictionary...')
+            print('Running...')
             self.definition_dict = self.read_json_from_file(json_dict)
 
         except FileNotFoundError:
@@ -387,7 +388,8 @@ class Wsd:
              remove_stopwords=settings["remove_stopwords"],
              join_sense_and_example=settings["join_sense_and_example"],
              use_synonyms=settings["use_synonyms"],
-             lemmatize=settings["lemmatize"]):
+             lemmatize=settings["lemmatize"],
+             silent=True):
 
         """ TODO: optimize this function """
 
@@ -455,8 +457,6 @@ class Wsd:
             # Other Word
             if self.get_sentence_for_word(full_word):
                 full_word_context = self.get_sentence_for_word(full_word)
-                print(Style.BOLD + 'Context:' + Style.END)
-                print('"', full_word_context, '"')
                 other_word_bedeutung_words_clean = [w for w in word_tok.tokenize(full_word_context) if w.lower() not in stop_words and len(w) > 1]
                 freq_dist = FreqDist(other_word_bedeutung_words_clean)
             else:
@@ -503,44 +503,51 @@ class Wsd:
                 score_sense_0 += len(overlap_synonyms_0)
                 score_sense_1 += len(overlap_synonyms_1)
 
-            print('----')
-            print(Style.BOLD + 'Sense_0 Bedeutung:' + Style.END, sense_0_bedeutung)
-            print(Style.BOLD + 'Sense_0 Beispiel:' + Style.END, sense_0_beispiel)
-            print('-')
-            print(Style.BOLD + 'Sense_1 Bedeutung:' + Style.END, sense_1_bedeutung)
-            print(Style.BOLD + 'Sense_1 Beispiel:' + Style.END, sense_1_beispiel)
-            print('-')
-            print(Style.BOLD + 'Example sentence words:' + Style.END, set(other_word_bedeutung_words_clean))
-            print(Style.BOLD + '10 most frequent words:' + Style.END, freq_dist.most_common(10))
-            print(Style.BOLD + 'Frequency ambigous word:' + Style.END, freq_dist[ambigous_part_of_word])
-            print('----')
-            print(Style.BOLD + 'Synonyms_0:' + Style.END, id_0_synonyms)
-            print(Style.BOLD + 'Synonyms_1:' + Style.END, id_1_synonyms)
-            print()
-            print('Overlap in sense_0:', len(overlap_sense_0), overlap_sense_0)
-            print('Overlap in sense_1:', len(overlap_sense_1), overlap_sense_1)
-            print('Overlap in Beisp_0:', len(overlap_sense_0_beispiel), overlap_sense_0_beispiel)
-            print('Overlap in Beisp_1:', len(overlap_sense_1_beispiel), overlap_sense_1_beispiel)
-            print('Overlap in Synon_0:', len(overlap_synonyms_0), overlap_synonyms_0)
-            print('Overlap in Synon_1:', len(overlap_synonyms_1), overlap_synonyms_1)
-            print()
+            if not silent:
+                print(Style.BOLD + 'Context:' + Style.END)
+                print('"', full_word_context, '"')
+                print('----')
+                print(Style.BOLD + 'Sense_0 Bedeutung:' + Style.END, sense_0_bedeutung)
+                print(Style.BOLD + 'Sense_0 Beispiel:' + Style.END, sense_0_beispiel)
+                print('-')
+                print(Style.BOLD + 'Sense_1 Bedeutung:' + Style.END, sense_1_bedeutung)
+                print(Style.BOLD + 'Sense_1 Beispiel:' + Style.END, sense_1_beispiel)
+                print('-')
+                print(Style.BOLD + 'Example sentence words:' + Style.END, set(other_word_bedeutung_words_clean))
+                print(Style.BOLD + '10 most frequent words:' + Style.END, freq_dist.most_common(10))
+                print(Style.BOLD + 'Frequency ambigous word:' + Style.END, freq_dist[ambigous_part_of_word])
+                print('----')
+                print(Style.BOLD + 'Synonyms_0:' + Style.END, set(id_0_synonyms))
+                print(Style.BOLD + 'Synonyms_1:' + Style.END, set(id_1_synonyms))
+                print()
+                print('Overlap in sense_0:', len(overlap_sense_0), overlap_sense_0)
+                print('Overlap in sense_1:', len(overlap_sense_1), overlap_sense_1)
+                print('Overlap in Beisp_0:', len(overlap_sense_0_beispiel), overlap_sense_0_beispiel)
+                print('Overlap in Beisp_1:', len(overlap_sense_1_beispiel), overlap_sense_1_beispiel)
+                print('Overlap in Synon_0:', len(overlap_synonyms_0), overlap_synonyms_0)
+                print('Overlap in Synon_1:', len(overlap_synonyms_1), overlap_synonyms_1)
+                print()
 
         except KeyError:
             return -1
 
         if score_sense_0 > score_sense_1:
-            print(Style.BOLD + 'Assigning class: 0' + Style.END)
+            if not silent:
+                print(Style.BOLD + 'Assigning class: 0' + Style.END)
             return 0
         if score_sense_1 > score_sense_0:
-            print(Style.BOLD + 'Assigning class: 1' + Style.END)
+            if not silent:
+                print(Style.BOLD + 'Assigning class: 1' + Style.END)
             return 1
         if score_sense_0 == 0 and score_sense_1 == 0:
-            print(Style.BOLD + 'Assigning class: 1' + Style.END)
+            if not silent:
+                print(Style.BOLD + 'Assigning class: 1' + Style.END)
             return 1
         else:
-            assigned_class = self.return_most_frequent_sense(ambigous_part_of_word, n_dict, y_dict)
-            print(Style.BOLD + 'Assigning mfs:' + Style.END, assigned_class)
-            return assigned_class
+            most_frequent_sense = self.return_most_frequent_sense(ambigous_part_of_word, n_dict, y_dict)
+            if not silent:
+                print(Style.BOLD + 'Assigning mfs:' + Style.END, most_frequent_sense)
+            return most_frequent_sense
             # return 0
 
     def get_sentence_for_word(self, word, open_locally=settings["open_locally"], write_to_file=settings["write_to_file"]):
@@ -649,6 +656,68 @@ class Wsd:
         else:
             return 0
 
+    def single_word_loop(self, word, inventory_list, n_dict, y_dict):
+
+        counter_n = 0
+        counter_y = 0
+        wsd_labels = []  # wsd labels
+        wsd_scores = []  # wsd predicitons
+        mfs_scores = []  # most frequent scores
+
+        n_examples_dict = {}
+        y_examples_dict = {}
+
+        for i in inventory_list:
+            if i[2] == word:
+                # print('Line:', str(counter) + ' ===============================', i[0], i[-1])
+                f0 = self.transform_class_name_to_binary(i[-1])
+                f1 = self.lesk(i[2], i[0], n_dict, y_dict)
+                f2 = self.return_most_frequent_sense(i[2], n_dict, y_dict)
+                if f1 == -1:
+                    pass
+                else:
+
+                    if i[-1] == 'N':
+                        counter_n += 1
+                        n_examples_dict.update({word: counter_n})
+
+                    if i[-1] == 'Y':
+                        counter_y += 1
+                        y_examples_dict.update({word: counter_y})
+
+                    wsd_labels.append(f0)
+                    wsd_scores.append(f1)
+                    mfs_scores.append(f2)
+            else:
+                pass
+
+        self.print_scores(word, wsd_labels, wsd_scores, mfs_scores)
+
+        return n_examples_dict, y_examples_dict
+
+    def print_scores(self, word, labels, scores, mfs_scores):
+        warnings.filterwarnings("ignore")
+
+        # print(labels)
+        # print(len(labels))
+        # print(scores)
+        # print(len(scores))
+        # print(mfs_scores)
+        # print(len(mfs_scores))
+
+        print(Style.BOLD + 'Scores:' + Style.END)
+        print('Scores for:', word)
+        print('Precision: ', precision_score(labels, scores))
+        print('Recall: ', recall_score(labels, scores))
+        print('F-1 Score: ', f1_score(labels, scores, average='weighted'))
+        print()
+
+        print('Most frequent sense for:', word)
+        print('Precision: ', precision_score(labels, mfs_scores))
+        print('Recall: ', recall_score(labels, mfs_scores))
+        print('F-1 Score: ', f1_score(labels, mfs_scores, average='weighted'))
+        print()
+
 
 class Style:
     """ Helper class for nicer coloring """
@@ -668,110 +737,19 @@ if __name__ == "__main__":
     pref_inventory_list = PREF_WSD.read_file_to_list(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE)
     n_pref_dict = PREF_WSD.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE, 'N')
     y_pref_dict = PREF_WSD.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE, 'Y')
+    print('N:\t', n_pref_dict)
+    print('Y:\t', y_pref_dict)
     f0_pref_wsd_labels = []  # wsd labels
-    f1_pref_wsd_list = []  # wsd predicitons
+    f1_pref_wsd_scores = []  # wsd predicitons
+    f2_pref_mfs_scores = []  # most frequent scores
 
     n_text = ''
     y_text = ''
 
     dictionary_n = PREF_WSD.create_empty_dictionary(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE)
     dictionary_y = PREF_WSD.create_empty_dictionary(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE)
-    """ Loop """
-    counter = 0
-    import os
 
-    def find(name, path):
-        for root, dirs, files in os.walk(path):
-            if name in files:
-                pass
-            else:
-                print(name)
-    print(DATA_WSD_PATH+'sentences/')
-
-    for i in pref_inventory_list:
-        counter += 1
-        # started from 0 - 07.08. 12:25
-        # stopped at 400 - 07.08. 16:57
-        # stopped at 600 - 07.08. 18:04
-        # stopped at 800 - 07.08. 19:06
-        # stopped at 1000 - 07.08. 22:33
-        # sentences start at 1000
-        # stopped at 1100 - 08.08. 01:08
-        # stopped at 1190 - 08.08. 12:03
-        # stopped at 1999 - 08.08. 18:27
-        # stopped at END 2009 - 08.08. 18:35
-        # BEGIN stopped at 40 - 08.08. 18:51
-        # stopped at 370 - 08.08. 20:35
-        # END 09.08. 17:18
-
-        if counter == 200:
-            break
-        # elif counter < 370:
-        #     pass
-        else:
-
-            print('Line:', str(counter) + ' ===============================', i[0], i[-1])
-            # find(i[0]+'.json', DATA_WSD_PATH+'sentences/')
-
-            f0 = PREF_WSD.transform_class_name_to_binary(i[-1])
-            f1 = PREF_WSD.lesk(i[2], i[0], n_pref_dict, y_pref_dict)
-
-            if f1 == -1:
-                pass
-
-            else:
-                if i[-1] == 'N':
-                    dictionary_n[i[2]].append(PREF_WSD.get_sentence_for_word(i[0]))
-
-                if i[-1] == 'Y':
-                    dictionary_y[i[2]].append(PREF_WSD.get_sentence_for_word(i[0]))
-
-                f0_pref_wsd_labels.append(f0)
-                f1_pref_wsd_list.append(f1)
-
-    # PREF_WSD.write_list_to_file(f0_pref_wsd_labels, DATA_WSD_PATH + 'f0_pref_wsd_final.txt')
-    # PREF_WSD.write_list_to_file(f1_pref_wsd_list, DATA_WSD_PATH + 'f1_pref_wsd_final.txt')
-
-    print(dictionary_n.keys())
-    print(dictionary_y.keys())
-    print('===')
-
-    f_n = open('no.txt', 'w', encoding='utf-8')
-    f_y = open('yes.txt', 'w', encoding='utf-8')
-    f_n.write(str(dictionary_n))
-    f_y.write(str(dictionary_y))
-
-    print('-=Scores=-')
-    print('Precision: ', precision_score(f0_pref_wsd_labels, f1_pref_wsd_list))
-    print('Recall: ', recall_score(f0_pref_wsd_labels, f1_pref_wsd_list))
-    print('F-1 Score: ', f1_score(f0_pref_wsd_labels, f1_pref_wsd_list, average='weighted'))
-    print()
-
-    from sklearn.grid_search import ParameterGrid
-
-    param_grid = {'param1': [value1, value2, value3], 'paramN': [value1, value2, valueM]}
-
-    grid = ParameterGrid(param_grid)
-
-    for params in grid:
-        your_function(params['param1'], params['param2'])
-
-
-    # """
-    #     SUFFIXOIDS WSD
-    # """
-    # SUFF_WSD = Wsd('Suffixoids', DATA_WSD_PATH + SUFF_JSON_DICT)
-    # suff_inventory_list = SUFF_WSD.read_file_to_list(DATA_FINAL_PATH + FINAL_SUFFIXOID_FILE)
-    # f0_suff_wsd_labels = []  # wsd labels
-    # f1_suff_wsd_list = []  # wsd predicitons
-
-    """ Tests """
-    # print(PREF_WSD.is_in_germanet('Test'))
-    # print(PREF_WSD.search_germanet_synsets('Bilderbuch'))
-    # print(PREF_WSD.create_synsets_dictionary('Schwein', return_wiktionary_sense=False))
-    # print(PREF_WSD.calculate_similarity_scores('Bilderbuch', 'Auflage'))
-    # print(PREF_WSD.get_sentence_for_word('Bilderbuchabsturz', open_locally=True))
-    # print(PREF_WSD.lesk('Jahrhundert', 'Jahrhunderthälfte', n_pref_dict, y_pref_dict, lemmatize=True))
+    pref_stops = [201, 402, 603, 804, 1005, 1206, 1407, 1608, 1809, 2009]
 
     inventory = ['Bilderbuch',
                  'Blitz',
@@ -784,7 +762,106 @@ if __name__ == "__main__":
                  'Spitze',
                  'Traum']
 
-    # for i in inventory:
-    #     print(i, PREF_WSD.return_most_frequent_sense(i, n_pref_dict, y_pref_dict))
+    for i in n_pref_dict.keys():
+        print(PREF_WSD.single_word_loop(i, pref_inventory_list, n_pref_dict, y_pref_dict))
+
+
+    """ Loop """
+    # counter_n = 0
+    # counter_y = 0
+    # for i in pref_inventory_list:
+    #
+    #     # if counter == pref_stops[9]+1:
+    #     #     break
+    #     # elif counter <= pref_stops[8]:
+    #     #     pass
+    #     # else:
+    #
+    #     # print('Line:', str(counter) + ' ===============================', i[0], i[-1])
+    #     # find(i[0]+'.json', DATA_WSD_PATH+'sentences/')
+    #
+    #     f0 = PREF_WSD.transform_class_name_to_binary(i[-1])
+    #     f1 = PREF_WSD.lesk(i[2], i[0], n_pref_dict, y_pref_dict)
+    #
+    #     if f1 == -1:
+    #         pass
+    #
+    #     else:
+    #         if i[-1] == 'N':
+    #             counter_n += 1
+    #             dictionary_n[i[2]].append(PREF_WSD.get_sentence_for_word(i[0]))
+    #             n_pref_dict.update({i[2]: counter_n})
+    #
+    #         if i[-1] == 'Y':
+    #             counter_y += 1
+    #             dictionary_y[i[2]].append(PREF_WSD.get_sentence_for_word(i[0]))
+    #             y_pref_dict.update({i[2]: counter_y})
+    #
+    #         f0_pref_wsd_labels.append(f0)
+    #         f1_pref_wsd_scores.append(f1)
+    #
+    # print('N:\t', n_pref_dict)
+    # print('Y:\t', y_pref_dict)
+    #
+    # with open('modules/no.txt', 'w', encoding='utf-8') as f_n:
+    #     f_n.write(str(dictionary_n))
+    #
+    # with open('modules/yes.txt', 'w', encoding='utf-8') as f_y:
+    #     f_y.write(str(dictionary_y))
+    #
+    # import os
+    #
+    # def find(name, path):
+    #     for root, dirs, files in os.walk(path):
+    #         if name in files:
+    #             pass
+    #         else:
+    #             print(name)
+
+    # PREF_WSD.write_list_to_file(f0_pref_wsd_labels, DATA_WSD_PATH + 'f0_pref_wsd_final.txt')
+    # PREF_WSD.write_list_to_file(f1_pref_wsd_scores, DATA_WSD_PATH + 'f1_pref_wsd_final.txt')
+
+    """
+        SUFFIXOIDS WSD
+    """
+    # SUFF_WSD = Wsd('Suffixoids', DATA_WSD_PATH + SUFF_JSON_DICT)
+    # suff_inventory_list = SUFF_WSD.read_file_to_list(DATA_FINAL_PATH + FINAL_SUFFIXOID_FILE)
+    # n_suff_dict = SUFF_WSD.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_SUFFIXOID_FILE, 'N')
+    # y_suff_dict = SUFF_WSD.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_SUFFIXOID_FILE, 'Y')
+    # f0_suff_wsd_labels = []  # wsd labels
+    # f1_suff_wsd_list = []  # wsd predicitons
+    #
+    # for i in suff_inventory_list:
+    #     counter += 1
+    #     # started from 0 - 10.08. 09:30
+    #     # stopped at 682 - 10.08. 12:30
+    #     # stopped at 954 - 10.08. 17:30
+    #
+    #     if counter < 954:
+    #         pass
+    #     # elif counter < 370:
+    #     #     pass
+    #     else:
+    #
+    #         print('Line:', str(counter) + ' ===============================', i[0], i[-1])
+    #         # find(i[0]+'.json', DATA_WSD_PATH+'sentences/')
+    #
+    #         f0 = SUFF_WSD.transform_class_name_to_binary(i[-1])
+    #         f1 = SUFF_WSD.lesk(i[2], i[0], n_suff_dict, y_suff_dict)
+    #
+    #         if f1 == -1:
+    #             pass
+    #
+    #         else:
+    #             f0_suff_wsd_labels.append(f0)
+    #             f1_suff_wsd_list.append(f1)
+
+    """ Tests """
+    # print(PREF_WSD.is_in_germanet('Test'))
+    # print(PREF_WSD.search_germanet_synsets('Bilderbuch'))
+    # print(PREF_WSD.create_synsets_dictionary('Schwein', return_wiktionary_sense=False))
+    # print(PREF_WSD.calculate_similarity_scores('Bilderbuch', 'Auflage'))
+    # print(PREF_WSD.get_sentence_for_word('Bilderbuchabsturz', open_locally=True))
+    # print(PREF_WSD.lesk('Jahrhundert', 'Jahrhunderthälfte', n_pref_dict, y_pref_dict, lemmatize=True))
 
     # print(PREF_WSD.get_sentence_for_word('Spitzen-Know-How', open_locally=False, write_to_file=True))
