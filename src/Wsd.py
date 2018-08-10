@@ -33,6 +33,10 @@ from nltk.tokenize import RegexpTokenizer
 nltk.download('punkt', quiet=True)
 nltk.download('stopwords', quiet=True)
 
+from sklearn.metrics import f1_score
+from sklearn.metrics import precision_score
+from sklearn.metrics import recall_score
+
 ################
 # PATH SETTINGS
 ################
@@ -96,7 +100,7 @@ settings = {
     "remove_stopwords": True,
     "join_sense_and_example": True,
     "use_synonyms": True,
-    "lemmatize": False,
+    "lemmatize": True,
     "open_locally": True,
     "write_to_file": False,
     "return_keyword": True,
@@ -537,6 +541,7 @@ class Wsd:
             assigned_class = self.return_most_frequent_sense(ambigous_part_of_word, n_dict, y_dict)
             print(Style.BOLD + 'Assigning mfs:' + Style.END, assigned_class)
             return assigned_class
+            # return 0
 
     def get_sentence_for_word(self, word, open_locally=settings["open_locally"], write_to_file=settings["write_to_file"]):
         """ TODO """
@@ -683,8 +688,8 @@ if __name__ == "__main__":
                 print(name)
     print(DATA_WSD_PATH+'sentences/')
 
-    # for i in pref_inventory_list:
-    #     counter += 1
+    for i in pref_inventory_list:
+        counter += 1
         # started from 0 - 07.08. 12:25
         # stopped at 400 - 07.08. 16:57
         # stopped at 600 - 07.08. 18:04
@@ -699,43 +704,58 @@ if __name__ == "__main__":
         # stopped at 370 - 08.08. 20:35
         # END 09.08. 17:18
 
-        # if counter == 1000:
-        #     break
+        if counter == 200:
+            break
         # elif counter < 370:
         #     pass
-        # else:
+        else:
 
-        # print('Line:', str(counter) + ' ===============================', i[0], i[-1])
-        # find(i[0]+'.json', DATA_WSD_PATH+'sentences/')
+            print('Line:', str(counter) + ' ===============================', i[0], i[-1])
+            # find(i[0]+'.json', DATA_WSD_PATH+'sentences/')
 
-        # f0 = PREF_WSD.transform_class_name_to_binary(i[-1])
-        # f1 = PREF_WSD.lesk(i[2], i[0], n_pref_dict, y_pref_dict)
-        #
-        # if f1 == -1:
-        #     pass
-        #
-        # else:
-        #     # if i[-1] == 'N':
-        #     #     dictionary_n[i[2]].append(PREF_WSD.get_sentence_for_word(i[0]))
-        #     #
-        #     # if i[-1] == 'Y':
-        #     #     dictionary_y[i[2]].append(PREF_WSD.get_sentence_for_word(i[0]))
-        #
-        #     f0_pref_wsd_labels.append(f0)
-        #     f1_pref_wsd_list.append(f1)
+            f0 = PREF_WSD.transform_class_name_to_binary(i[-1])
+            f1 = PREF_WSD.lesk(i[2], i[0], n_pref_dict, y_pref_dict)
 
+            if f1 == -1:
+                pass
+
+            else:
+                if i[-1] == 'N':
+                    dictionary_n[i[2]].append(PREF_WSD.get_sentence_for_word(i[0]))
+
+                if i[-1] == 'Y':
+                    dictionary_y[i[2]].append(PREF_WSD.get_sentence_for_word(i[0]))
+
+                f0_pref_wsd_labels.append(f0)
+                f1_pref_wsd_list.append(f1)
 
     # PREF_WSD.write_list_to_file(f0_pref_wsd_labels, DATA_WSD_PATH + 'f0_pref_wsd_final.txt')
     # PREF_WSD.write_list_to_file(f1_pref_wsd_list, DATA_WSD_PATH + 'f1_pref_wsd_final.txt')
 
-    # print(dictionary_n.keys())
-    # print('===')
-    # print(dictionary_y.keys())
-    #
-    # f_y = open('yes.txt', 'w', encoding='utf-8')
-    # f_n = open('no.txt', 'w', encoding='utf-8')
-    # f_y.write(str(dictionary_y))
-    # f_n.write(str(dictionary_n))
+    print(dictionary_n.keys())
+    print(dictionary_y.keys())
+    print('===')
+
+    f_n = open('no.txt', 'w', encoding='utf-8')
+    f_y = open('yes.txt', 'w', encoding='utf-8')
+    f_n.write(str(dictionary_n))
+    f_y.write(str(dictionary_y))
+
+    print('-=Scores=-')
+    print('Precision: ', precision_score(f0_pref_wsd_labels, f1_pref_wsd_list))
+    print('Recall: ', recall_score(f0_pref_wsd_labels, f1_pref_wsd_list))
+    print('F-1 Score: ', f1_score(f0_pref_wsd_labels, f1_pref_wsd_list, average='weighted'))
+    print()
+
+    from sklearn.grid_search import ParameterGrid
+
+    param_grid = {'param1': [value1, value2, value3], 'paramN': [value1, value2, valueM]}
+
+    grid = ParameterGrid(param_grid)
+
+    for params in grid:
+        your_function(params['param1'], params['param2'])
+
 
     # """
     #     SUFFIXOIDS WSD
@@ -767,4 +787,4 @@ if __name__ == "__main__":
     # for i in inventory:
     #     print(i, PREF_WSD.return_most_frequent_sense(i, n_pref_dict, y_pref_dict))
 
-    print(PREF_WSD.get_sentence_for_word('Spitzen-Know-How', open_locally=False, write_to_file=True))
+    # print(PREF_WSD.get_sentence_for_word('Spitzen-Know-How', open_locally=False, write_to_file=True))
