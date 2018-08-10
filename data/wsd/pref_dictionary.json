@@ -1,7 +1,7 @@
 {
   "Bilderbuch": {
     "0": {
-      "ID": "Buch",
+      "ID": "Buch; Kind",
       "GermaNet": {
         "Bedeutung": "ein eher für Kinder bestimmtes Buch mit vielen Bildern und wenig Text",
         "Beispiel": ""
@@ -12,7 +12,7 @@
       },
       "Duden": {
         "Bedeutung": "[Kinder]buch, das hauptsächlich Bilder enthält",
-        "Beispiel": ""
+        "Beispiel": "Das Kind liest sein erstes Bilderbuch"
       },
       "Crowdsourcing": {
         "Bedeutung": "(Buch) bezeichnet in Bildungen mit Substantiven ein illustriertes Buch / Bilderbuch (z.B. Bilderbuchillustrator, Bilderbuchsammler)"
@@ -29,7 +29,7 @@
         "Beispiel": ""
       },
       "Duden": {
-        "Bedeutung": "drückt in Bildungen mit Substantiven aus, dass jemand oder etwas als ideal angesehen wird; drückt in Bildungen mit Substantiven aus, dass jemand oder etwas nur im Bilderbuch, aber nicht in der Realität existiert",
+        "Bedeutung": "drückt in Bildungen mit Substantiven aus, dass jemand oder etwas als ideal angesehen wird;",
         "Beispiel": "Bilderbuchehe, Bilderbuchfamilie, Bilderbuchkarriere, Bilderbuchlandschaft, Bilderbuchlandung, Bilderbuchwetter; Bilderbuchethik, -kapitalist"
       },
       "Crowdsourcing": {
@@ -39,7 +39,7 @@
   },
   "Blitz": {
     "0": {
-      "ID": "Blitz",
+      "ID": "Blitz; Kamera; Sturm; Feuer; Brand; Hagel; Explosion",
       "GermaNet": {
         "Bedeutung": "Physik/Meteorologie: sichtbare Lichterscheinung bei einer elektrischen Entladung",
         "Beispiel": ""
@@ -77,7 +77,7 @@
   },
   "Bombe": {
     "0": {
-      "ID": "Sprengkörper",
+      "ID": "Sprengkörper; Kampfmittel; explodieren; fallen",
       "GermaNet": {
         "Bedeutung": "Kampfmittel, das eine Explosion verursacht (selbst explodiert)",
         "Beispiel": ""
@@ -106,7 +106,7 @@
       },
       "Duden": {
         "Bedeutung": "etwas ganz Hervorragendes",
-        "Beispiel": "der Auftritt war Bombe"
+        "Beispiel": ""
       },
       "Crowdsourcing": {
         "Bedeutung": "(Hervorragendes) eine Sache oder ein Ereignis ist sehr gut und oder sehr groß oder intensiv (z.B. Bombenergebnis, Bombenerfolg, Bombenstimmung)"
@@ -118,7 +118,7 @@
       "ID": "leuchten; Oberflächenbeschaffenheit",
       "GermaNet": {
         "Bedeutung": "Schein oder Widerschein, besonders auf glatten Materialien; das Leuchten von etwas",
-        "Beispiel": ""
+        "Beispiel": "Glanzgrad"
       },
       "Wiktionary": {
         "Bedeutung": "Schein oder Widerschein, besonders auf glatten Materialien; das Leuchten von etwas",
@@ -140,11 +140,11 @@
       },
       "Wiktionary": {
         "Bedeutung": "übertragen: besonderer, auffälliger Zustand",
-        "Beispiel": "Er sonnte sich im Glanz seines Sieges."
+        "Beispiel": ""
       },
       "Duden": {
         "Bedeutung": "einer Sache innewohnender bewunderter Vorzug, der in entsprechender Weise nach außen hin in Erscheinung tritt",
-        "Beispiel": "ein trügerischer Glanz; seine Stimme hat an Glanz verloren; ein Fest mit großem Glanz (Aufwand, Pomp) feiern"
+        "Beispiel": ""
       },
       "Crowdsourcing": {
         "Bedeutung": "(Auffälligkeit) ein besondere, auffällige oder exzellente Qualität von Dingen oder Ereignissen (z.B. Glanzparade, Glanznummer)"
@@ -153,7 +153,7 @@
   },
   "Heide": {
     "0": {
-      "ID": "Glaube; Botanik",
+      "ID": "Glaube; Botanik; Kirche; Jude; Gott; Petrus",
       "GermaNet": {
         "Bedeutung": "Botanik: Vertreter der Pflanzengattung Heidekräuter (Erica) aus der Familie der Heidekrautgewächse; Ungläubiger; weiträumige Landschaft der gemäßigten Zone mit wenig Baumwuchs, aber mit vielen Zwergsträuchern, Flechten und Moosen",
         "Beispiel": ""
@@ -191,7 +191,7 @@
   },
   "Jahrhundert": {
     "0": {
-      "ID": "Zeitraum",
+      "ID": "Zeitraum; Zeit",
       "GermaNet": {
         "Bedeutung": "der Zeitraum von hundert Jahren, vom 1. Januar des xxx1. Jahres bis zum 31. Dezember des x100. Jahres; Beginn der Zählung in die positive Richtung am 1. 1. des Jahres 1 (n. Chr. oder u. Z.); Beginn der Zählung in die negative Richtung am 31. 12. des Jahres 1 (v. Chr. oder v. u. Z.) bzw. am 1. 1 des Jahres x100 bis zum 31. 12. des Jahres xxx1.",
         "Beispiel": ""
@@ -219,7 +219,7 @@
         "Beispiel": ""
       },
       "Duden": {
-        "Bedeutung": "drückt in Bildungen mit Substantiven aus, dass etwas– seltener jemand– als einmalig (in diesem Jahrhundert) angesehen wird, als besonders herausragend und alles andere übertreffend",
+        "Bedeutung": "drückt in Bildungen mit Substantiven aus, dass etwas– seltener jemand– als einmalig angesehen wird, als besonders herausragend und alles andere übertreffend",
         "Beispiel": ""
       },
       "Crowdsourcing": {
@@ -247,27 +247,27 @@
       }
     },
     "1": {
-      "ID": "Güte",
+      "ID": "Güte; positiv",
       "GermaNet": {
         "Bedeutung": "positive Eigenschaft einer Person oder einer Sache",
         "Beispiel": ""
       },
       "Wiktionary": {
         "Bedeutung": "positive Eigenschaft einer Person oder einer Sache",
-        "Beispiel": "Wenn Sie sich für diese Schrankwand entscheiden, werden Sie Qualität in Ihrem Wohnzimmer haben."
+        "Beispiel": ""
       },
       "Duden": {
         "Bedeutung": "gute Eigenschaft (einer Sache, Person); Güte",
-        "Beispiel": "die Qualität des Materials; Waren guter, schlechter, erster Qualität"
+        "Beispiel": ""
       },
       "Crowdsourcing": {
-        "Bedeutung": "(hohe Güte) etwas, das von hoher Güte ist (z.B. Qualitätshonig [ = Honig von hoher Qualität], Qualitätsware [ = Ware von hoher Qualität ])"
+        "Bedeutung": "(hohe Güte) etwas, das von hoher Güte ist (z.B. Qualitätshonig, Qualitätsware)"
       }
     }
   },
   "Schwein": {
     "0": {
-      "ID": "Tier; Schweinefleisch",
+      "ID": "Tier; Schweinefleisch; essen",
       "GermaNet": {
         "Bedeutung": "ein Säugetier mit kurzen Beinen, verlängerter rüsselartiger Schnauze, Borsten; kurz und synonym für: Schweinefleisch, Schweinernes",
         "Beispiel": ""
@@ -292,7 +292,7 @@
       },
       "Wiktionary": {
         "Bedeutung": "Schimpfwort für einen [a] gemeinen Menschen [b] schmutzigen oder obszönen Menschen; meist negativ: Schimpfwort",
-        "Beispiel": "Das Wetter ist heute mal wieder schweinegeil. Da hast du aber Schwein gehabt."
+        "Beispiel": "Das Wetter ist heute mal wieder schweinegeil."
       },
       "Duden": {
         "Bedeutung": "drückt in Bildungen mit Substantiven aus, dass eine Person etwas Bestimmtes ist",
@@ -323,18 +323,18 @@
       }
     },
     "1": {
-      "ID": "Führung; Leitung",
+      "ID": "Führung; Leitung; Intensität; Qualität",
       "GermaNet": {
         "Bedeutung": "",
         "Beispiel": ""
       },
       "Wiktionary": {
         "Bedeutung": "übertragen: extreme, nicht übertreffbare Ausprägung",
-        "Beispiel": "Sie trieb es mal wieder auf die Spitze.; Das war die Spitze dieser Posse."
+        "Beispiel": ""
       },
       "Duden": {
         "Bedeutung": "Spitzengruppe (bezüglich Leistung, Erfolg, Qualität); führende, leitende Gruppe; führende, einflussreiche Persönlichkeiten; Höchstwert, Höchstmaß, Gipfel; höchste Güte, Qualität (in Bezug auf besonders hervorragende, Begeisterung oder Bewunderung hervorrufende Leistungen)",
-        "Beispiel": "die Spitze bilden; die gesamte Spitze der Partei, des Konzerns ist zurückgetreten; die Verkaufszahlen erreichten im letzten Jahr die absolute Spitze; in der Spitze (Jargon; Zeit der höchsten Belastung) brach die Stromversorgung zusammen"
+        "Beispiel": ""
       },
       "Crowdsourcing": {
         "Bedeutung": "(Führung) Führung, anführender Teil (z.B. Spitzenkandidat, Spitzengespräch [=Gespräch zwischen führenden Vertretern]); (Qualität) Dinge, Personen oder Gruppen, die über die beste Leistung oder Qualität verfügen (z.B. Spitzensänger, Spitzenhandy, Spitzenmannschaft); (Intensität) etwas, das eine extreme, nicht übertreffbare Ausprägung einer Eigenschaft hat (z.B. Spitzengeschwindigkeit, Spitzenwert, Spitzenbedarf)"
@@ -368,11 +368,11 @@
       },
       "Wiktionary": {
         "Bedeutung": "sehr starker Wunsch; umgangssprachlich, übertragen: etwas, das besonders gut, angenehm und/oder schön ist.",
-        "Beispiel": "Es ist sein großer Traum, einmal Pilot zu werden."
+        "Beispiel": ""
       },
       "Duden": {
         "Bedeutung": "sehnlicher, unerfüllter Wunsch; etwas traumhaft Schönes; Person, Sache, die wie die Erfüllung geheimer Wünsche erscheint; drückt in Bildungen mit Substantiven aus, dass jemand oder etwas so ideal ist, wie man es sich immer erträumt [hat]",
-        "Beispiel": "der Traum vom Glück; Fliegen war schon immer sein Traum"
+        "Beispiel": ""
       },
       "Crowdsourcing": {
         "Bedeutung": "(Wunsch) starker Wunsch; etwas, das ideal/sehr wünschenswert ist (z.B. Traumwohnung, Traumberuf)"
