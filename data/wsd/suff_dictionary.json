@@ -266,8 +266,8 @@
     }
   },
   "König": {
-    "ID": "Monarch",
     "0": {
+      "ID": "Monarch",
       "GermaNet": {
         "Bedeutung": "höchster oder historisch hoher (nach dem Kaiser) monarchischer Würdenträger eines Staates, eines Königreiches",
         "Beispiel": ""
