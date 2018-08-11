@@ -31,6 +31,8 @@ from sklearn.metrics import recall_score
 from sklearn.metrics import precision_recall_curve
 from sklearn.metrics import average_precision_score
 from sklearn.metrics import classification_report
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import roc_auc_score
 
 ################
 # PATH SETTINGS
@@ -231,10 +233,14 @@ if __name__ == "__main__":
         # print(classifer_results)
         print()
         print(Style.BOLD + 'SCORES', score_title + Style.END)
-        print('Classifier score: ', classifier.score(test_instances, test_labels))
-        print('Precision: ', precision_score(test_labels, classifer_results))
-        print('Recall: ', recall_score(test_labels, classifer_results))
-        print('F-1 Score: ', f1_score(test_labels, classifer_results, average='weighted'))
+        # print('Classifier score: ', classifier.score(test_instances, test_labels))
+        # print('Precision: ', precision_score(test_labels, classifer_results))
+        # print('Recall: ', recall_score(test_labels, classifer_results))
+        # print('F-1 Score: ', f1_score(test_labels, classifer_results, average='weighted'))
+        target_names = ['affixoid', 'non-affixoid']
+        print(classification_report(test_labels, classifer_results, target_names=target_names))
+        print('\nConfusion matrix:')
+        print(confusion_matrix(test_labels, classifer_results))
         print()
 
     print_scores('Prefixoids', clf_pref, results_pref, X_test_pref, y_test_pref)
@@ -273,4 +279,7 @@ if __name__ == "__main__":
     print('Precision: ', precision_score(pref_WSD_labels, pref_WSD_scores))
     print('Recall: ', recall_score(pref_WSD_labels, pref_WSD_scores))
     print('F-1 Score: ', f1_score(pref_WSD_labels, pref_WSD_scores, average='weighted'))
+    print('ROC AUC Score: ', roc_auc_score(pref_WSD_labels, pref_WSD_scores))
+    print('\nConfusion matrix:')
+    print(confusion_matrix(pref_WSD_labels, pref_WSD_scores))
     print()
