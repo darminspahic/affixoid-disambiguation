@@ -275,11 +275,24 @@ if __name__ == "__main__":
 
     pref_WSD_labels = CLSF.read_features_from_files(['f0_pref_wsd_final.txt'], path=DATA_WSD_PATH)
     pref_WSD_scores = CLSF.read_features_from_files(['f1_pref_wsd_final.txt'], path=DATA_WSD_PATH)
-    print(Style.BOLD + 'WSD SCORES Prefixoids Final' + Style.END)
+
+    suff_WSD_labels = CLSF.read_features_from_files(['f0_suff_wsd_final.txt'], path=DATA_WSD_PATH)
+    suff_WSD_scores = CLSF.read_features_from_files(['f1_suff_wsd_final.txt'], path=DATA_WSD_PATH)
+
+    print(Style.BOLD + 'WSD SCORES Prefixoids' + Style.END)
     print('Precision: ', precision_score(pref_WSD_labels, pref_WSD_scores))
     print('Recall: ', recall_score(pref_WSD_labels, pref_WSD_scores))
     print('F-1 Score: ', f1_score(pref_WSD_labels, pref_WSD_scores, average='weighted'))
     print('ROC AUC Score: ', roc_auc_score(pref_WSD_labels, pref_WSD_scores))
     print('\nConfusion matrix:')
     print(confusion_matrix(pref_WSD_labels, pref_WSD_scores))
+    print()
+
+    print(Style.BOLD + 'WSD SCORES Suffixoids' + Style.END)
+    print('Precision: ', precision_score(suff_WSD_labels, suff_WSD_scores))
+    print('Recall: ', recall_score(suff_WSD_labels, suff_WSD_scores))
+    print('F-1 Score: ', f1_score(suff_WSD_labels, suff_WSD_scores, average='weighted'))
+    print('ROC AUC Score: ', roc_auc_score(suff_WSD_labels, suff_WSD_scores))
+    print('\nConfusion matrix:')
+    print(confusion_matrix(suff_WSD_labels, suff_WSD_scores))
     print()
