@@ -219,12 +219,7 @@ if __name__ == "__main__":
     def cross_validate(clf, instances, labels):
         cv = ShuffleSplit(n_splits=5, test_size=0.3, random_state=5)
         scores = cross_val_score(clf, instances, labels, cv=cv)
-        print('Crossvalidation scores:', scores)
-
-    cross_validate(svm.SVC(kernel="rbf", gamma=0.01, C=100), pref_X_scaled, pref_y)
-    cross_validate(svm.SVC(kernel="rbf", gamma=0.1, C=10), suff_X_scaled, suff_y)
-
-    print()
+        print('5-Fold crossvalidation:', scores)
 
     """ SCORES """
     def print_scores(score_title, classifier, classifer_results, test_instances, test_labels):
@@ -233,10 +228,11 @@ if __name__ == "__main__":
         # print(classifer_results)
         print()
         print(Style.BOLD + 'SCORES', score_title + Style.END)
-        # print('Classifier score: ', classifier.score(test_instances, test_labels))
+        print('Classifier score: ', classifier.score(test_instances, test_labels))
         # print('Precision: ', precision_score(test_labels, classifer_results))
         # print('Recall: ', recall_score(test_labels, classifer_results))
         # print('F-1 Score: ', f1_score(test_labels, classifer_results, average='weighted'))
+        print()
         target_names = ['affixoid', 'non-affixoid']
         print(classification_report(test_labels, classifer_results, target_names=target_names))
         print('\nConfusion matrix:')
@@ -244,7 +240,10 @@ if __name__ == "__main__":
         print()
 
     print_scores('Prefixoids', clf_pref, results_pref, X_test_pref, y_test_pref)
+    cross_validate(svm.SVC(kernel="rbf", gamma=0.01, C=100), pref_X_scaled, pref_y)
+
     print_scores('Suffixoids', clf_suff, results_suff, X_test_suff, y_test_suff)
+    cross_validate(svm.SVC(kernel="rbf", gamma=0.1, C=10), suff_X_scaled, suff_y)
 
     def plot(y_test, y_score):
         average_precision = average_precision_score(y_test, y_score)
@@ -269,6 +268,7 @@ if __name__ == "__main__":
     """ 
         Scores for: Word Sense Disambiguation 
     """
+    print()
     print('=' * 40)
     print(Style.BOLD + "Scores for Word Sense Disambiguation" + Style.END)
     print('-' * 40)
