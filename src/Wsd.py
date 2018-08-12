@@ -21,11 +21,19 @@ import itertools
 import json
 import requests
 import sys
+import io
 import time
 import urllib.parse
 import nltk
 import warnings
+import random
+import shutil
+import os.path
 
+from sklearn.metrics import f1_score
+from sklearn.metrics import precision_score
+from sklearn.metrics import recall_score
+from sklearn.metrics import roc_auc_score
 from pygermanet import load_germanet
 from nltk.corpus import stopwords
 from nltk import FreqDist
@@ -34,16 +42,13 @@ from nltk.tokenize import RegexpTokenizer
 nltk.download('punkt', quiet=True)
 nltk.download('stopwords', quiet=True)
 
-from sklearn.metrics import f1_score
-from sklearn.metrics import precision_score
-from sklearn.metrics import recall_score
-
 ################
 # PATH SETTINGS
 ################
 DATA_FINAL_PATH = '../data/final/'
 DATA_WSD_PATH = '../data/wsd/'
-DATA_WSD_SENTENCES_PATH = '../data/wsd/pref/'
+DATA_WSD_SENTENCES_PATH = '../data/wsd/sentences/'
+DATA_WSD_SENTENCES_FINAL = '../data/wsd/final/'
 
 ################
 # FILE SETTINGS
@@ -107,6 +112,9 @@ settings = {
     "return_keyword": False,
     "return_single_sentence": False
 }
+
+N = []
+Y = []
 
 
 class Wsd:
@@ -219,7 +227,6 @@ class Wsd:
             Args:
                 input_list (list): List with affixoid instances or features
                 output_file (file): Output file
-                item_range (int): indicator to which index the list returns a line
                 split_second_word (bool): Split second word in lists ['Abfalldreck', 'Abfall|Dreck', 'Dreck', 'Schmutz', 'N']
 
             Returns:
@@ -249,6 +256,14 @@ class Wsd:
         print(Style.BOLD + 'File written to:' + Style.END, output_file)
 
         f.close()
+
+    def write_dict_to_file(self, dictionary, output_file):
+        """ Helper function to write a dictionary as string to a file. Import via ast module """
+
+        with io.open(output_file, 'w', encoding='utf8') as data:
+            data.write(str(dictionary))
+
+        print(Style.BOLD + 'Dictionary written to:' + Style.END, output_file)
 
     def read_json_from_file(self, json_file):
         """ Helper function to read a json file. """
@@ -384,12 +399,12 @@ class Wsd:
                 print('Shortest path lenght:', p[0].shortest_path_length(p[1]))
                 print('===')
 
-    def lesk(self, ambigous_part_of_word, full_word, n_dict, y_dict,
+    def lesk(self, ambigous_part_of_word, full_word, n_dict, y_dict, class_name,
              remove_stopwords=settings["remove_stopwords"],
              join_sense_and_example=settings["join_sense_and_example"],
              use_synonyms=settings["use_synonyms"],
              lemmatize=settings["lemmatize"],
-             silent=True):
+             quiet=True, print_well_performing_items=True):
 
         """ TODO: optimize this function """
 
@@ -479,7 +494,6 @@ class Wsd:
 
                 other_word_bedeutung_words_clean = [value for sublist in other_word_bedeutung_words_lemmatized for value in sublist]
 
-
             # Calculate overlaps
             overlap_sense_0 = set(other_word_bedeutung_words_clean).intersection(sense_0_bedeutung_words_clean)
             overlap_sense_1 = set(other_word_bedeutung_words_clean).intersection(sense_1_bedeutung_words_clean)
@@ -503,7 +517,25 @@ class Wsd:
                 score_sense_0 += len(overlap_synonyms_0)
                 score_sense_1 += len(overlap_synonyms_1)
 
-            if not silent:
+            if print_well_performing_items:
+                if class_name == 'N':
+                    if len(overlap_sense_0) > 2:
+                        N.append(full_word)
+                    if len(overlap_sense_0_beispiel) > 2:
+                        N.append(full_word)
+                    if len(overlap_synonyms_0) > 2:
+                        N.append(full_word)
+
+                if class_name == 'Y':
+                    if len(overlap_sense_1) > 2:
+                        Y.append(full_word)
+                    if len(overlap_sense_1_beispiel) > 2:
+                        Y.append(full_word)
+                    if len(overlap_synonyms_1) > 2:
+                        Y.append(full_word)
+
+            if not quiet:
+                print(class_name)
                 print(Style.BOLD + 'Context:' + Style.END)
                 print('"', full_word_context, '"')
                 print('----')
@@ -532,25 +564,29 @@ class Wsd:
             return -1
 
         if score_sense_0 > score_sense_1:
-            if not silent:
+            if not quiet:
                 print(Style.BOLD + 'Assigning class: 0' + Style.END)
             return 0
         if score_sense_1 > score_sense_0:
-            if not silent:
+            if not quiet:
                 print(Style.BOLD + 'Assigning class: 1' + Style.END)
             return 1
         if score_sense_0 == 0 and score_sense_1 == 0:
-            if not silent:
+            if not quiet:
                 print(Style.BOLD + 'Assigning class: 1' + Style.END)
             return 1
         else:
             most_frequent_sense = self.return_most_frequent_sense(ambigous_part_of_word, n_dict, y_dict)
-            if not silent:
+            if not quiet:
                 print(Style.BOLD + 'Assigning mfs:' + Style.END, most_frequent_sense)
-            return most_frequent_sense
-            # return 0
+            # return most_frequent_sense
+            return 0
 
-    def get_sentence_for_word(self, word, open_locally=settings["open_locally"], write_to_file=settings["write_to_file"]):
+    def get_sentence_for_word(self, word,
+                              open_locally=settings["open_locally"],
+                              write_to_file=settings["write_to_file"],
+                              return_keyword=settings["return_keyword"],
+                              return_single_sentence=settings["return_single_sentence"]):
         """ TODO """
         """
             if you want to do fewer than 50 requests, you don’t need to use any waiting,
@@ -558,15 +594,70 @@ class Wsd:
             if you want to do more than 2000 requests, you need to use interval ca 44 seconds.
         """
 
+        def parse_result(json_obj):
+
+            result_count = int(json_obj.get('concsize', '0'))
+            text = ''
+            if result_count > 0:
+                response = json.dumps(json_obj["Lines"], sort_keys=True, indent=4, ensure_ascii=False)
+                item_dict = json.loads(response)
+                sentences_count = len(item_dict)
+                if sentences_count > 0:
+                    c = 0
+                    if return_single_sentence:
+                        left = ''
+                        kwic = item_dict[c]['Kwic'][0]['str']
+                        right = ''
+                        try:
+                            left = item_dict[c]['Left'][0]['str']
+                        except IndexError:
+                            pass
+                        try:
+                            right = item_dict[c]['Right'][0]['str']
+                        except IndexError:
+                            pass
+                        if return_keyword:
+                            text += left + kwic + right + ' '
+                        else:
+                            text += left + right + ' '
+
+                    else:
+                        while c < sentences_count:
+                            left = ''
+                            kwic = item_dict[c]['Kwic'][0]['str']
+                            right = ''
+                            try:
+                                left = item_dict[c]['Left'][0]['str']
+                            except IndexError:
+                                pass
+                            try:
+                                right = item_dict[c]['Right'][0]['str']
+                            except IndexError:
+                                pass
+                            if return_keyword:
+                                text += left + kwic + right + ' '
+                            else:
+                                text += left + right + ' '
+                            c += 1
+                return text
+
+            else:
+                return False
+
         if open_locally:
-            with open(DATA_WSD_SENTENCES_PATH + word + '.json', 'r') as f:
-                data = json.load(f)
-                return self.parse_result(data)
+            try:
+                with open(DATA_WSD_SENTENCES_PATH + word + '.json', 'r') as f:
+                    data = json.load(f)
+                    return parse_result(data)
+            except FileNotFoundError:
+                print('File not found. Trying to load from:', base_url)
+                self.get_sentence_for_word(word, open_locally=False, write_to_file=True)
+                with open(DATA_WSD_SENTENCES_PATH + word + '.json', 'r') as f:
+                    data = json.load(f)
+                    return parse_result(data)
 
         else:
-
             time.sleep(10)
-
             url = base_url + method
             attrs = dict(corpname=corpname, q='', pagesize='200', format='json', username=username, api_key=api_key, viewmode='sentence', lpos='-n', async=0, gdex_enabled=1)
             attrs['q'] = 'q' + '[lemma="'+word+'"]'
@@ -574,75 +665,37 @@ class Wsd:
             r = s.get(url, params=attrs, headers=headers)
 
             if r.status_code == 429:
-                print('Error: 429')
-                return False
+                sys.exit('Error: 429. API Limit reached.')
 
             else:
                 json_response = r.json()
-
                 if write_to_file:
                     with open(DATA_WSD_SENTENCES_PATH + word + '.json', 'w') as outfile:
                         json.dump(json_response, outfile)
+                return parse_result(json_response)
 
-                return self.parse_result(json_response)
+    def has_sentence(self, word):
+        """ TODO """
+        try:
+            with open(DATA_WSD_SENTENCES_PATH + word + '.json', 'r') as f:
+                data = json.load(f)
+                result_count = int(data.get('concsize', '0'))
+        except FileNotFoundError:
+            print('File not found. Trying to load from:', base_url)
+            self.get_sentence_for_word(word, open_locally=False, write_to_file=True)
+            with open(DATA_WSD_SENTENCES_PATH + word + '.json', 'r') as f:
+                data = json.load(f)
+                result_count = int(data.get('concsize', '0'))
 
-    def parse_result(self, json_obj,
-                     return_keyword=settings["return_keyword"],
-                     return_single_sentence=settings["return_single_sentence"]):
-
-        result_count = int(json_obj.get('concsize', '0'))
         text = ''
         if result_count > 0:
-            response = json.dumps(json_obj["Lines"], sort_keys=True, indent=4, ensure_ascii=False)
+            response = json.dumps(data["Lines"], sort_keys=True, indent=4, ensure_ascii=False)
             item_dict = json.loads(response)
             sentences_count = len(item_dict)
             if sentences_count > 0:
-                counter = 0
-                if return_single_sentence:
-                    left = ''
-                    kwic = item_dict[counter]['Kwic'][0]['str']
-                    right = ''
-
-                    try:
-                        left = item_dict[counter]['Left'][0]['str']
-                    except IndexError:
-                        pass
-
-                    try:
-                        right = item_dict[counter]['Right'][0]['str']
-                    except IndexError:
-                        pass
-
-                    if return_keyword:
-                        text += left + kwic + right + ' '
-                    else:
-                        text += left + right + ' '
-
-                else:
-                    while counter < sentences_count:
-                        left = ''
-                        kwic = item_dict[counter]['Kwic'][0]['str']
-                        right = ''
-
-                        try:
-                            left = item_dict[counter]['Left'][0]['str']
-                        except IndexError:
-                            pass
-
-                        try:
-                            right = item_dict[counter]['Right'][0]['str']
-                        except IndexError:
-                            pass
-
-                        if return_keyword:
-                            text += left + kwic + right + ' '
-                        else:
-                            text += left + right + ' '
-
-                        counter += 1
-
-            return text
-
+                return True
+            else:
+                return False
         else:
             return False
 
@@ -656,67 +709,155 @@ class Wsd:
         else:
             return 0
 
-    def single_word_loop(self, word, inventory_list, n_dict, y_dict):
+    def loop_over_key(self, word, inventory_list, n_dict, y_dict):
 
-        counter_n = 0
-        counter_y = 0
+        c_n = 0
+        c_y = 0
         wsd_labels = []  # wsd labels
         wsd_scores = []  # wsd predicitons
-        mfs_scores = []  # most frequent scores
+        random_scores = []  # random scores for baseline
+        majority_scores = []  # majority scores for baseline
+        random.seed(1)
 
         n_examples_dict = {}
         y_examples_dict = {}
 
         for i in inventory_list:
-            if i[2] == word:
+            if i[2] == word and self.has_sentence(i[0]):
                 # print('Line:', str(counter) + ' ===============================', i[0], i[-1])
-                f0 = self.transform_class_name_to_binary(i[-1])
-                f1 = self.lesk(i[2], i[0], n_dict, y_dict)
-                f2 = self.return_most_frequent_sense(i[2], n_dict, y_dict)
-                if f1 == -1:
-                    pass
-                else:
+                feat_0 = self.transform_class_name_to_binary(i[-1])
+                feat_1 = self.lesk(i[2], i[0], n_dict, y_dict, i[-1])
+                feat_2 = random.randint(0, 1)
+                feat_3 = self.return_most_frequent_sense(i[2], n_dict, y_dict)
 
-                    if i[-1] == 'N':
-                        counter_n += 1
-                        n_examples_dict.update({word: counter_n})
+                if i[-1] == 'N':
+                    c_n += 1
+                    n_examples_dict.update({word: c_n})
 
-                    if i[-1] == 'Y':
-                        counter_y += 1
-                        y_examples_dict.update({word: counter_y})
+                if i[-1] == 'Y':
+                    c_y += 1
+                    y_examples_dict.update({word: c_y})
 
-                    wsd_labels.append(f0)
-                    wsd_scores.append(f1)
-                    mfs_scores.append(f2)
+                wsd_labels.append(feat_0)
+                wsd_scores.append(feat_1)
+                random_scores.append(feat_2)
+                majority_scores.append(feat_3)
+
             else:
                 pass
 
-        self.print_scores(word, wsd_labels, wsd_scores, mfs_scores)
+        self.print_scores(word, wsd_labels, wsd_scores, random_scores, baseline_type='Random')
 
         return n_examples_dict, y_examples_dict
 
-    def print_scores(self, word, labels, scores, mfs_scores):
+    def print_scores(self, word, labels, scores, baseline, baseline_type):
+        """ TODO """
         warnings.filterwarnings("ignore")
-
-        # print(labels)
-        # print(len(labels))
-        # print(scores)
-        # print(len(scores))
-        # print(mfs_scores)
-        # print(len(mfs_scores))
+        print()
+        print(Style.BOLD + baseline_type + ' baseline:' + Style.END)
+        print('Scores for:', word)
+        print('Precision: ', precision_score(labels, baseline))
+        print('Recall: ', recall_score(labels, baseline))
+        print('F-1 Score: ', f1_score(labels, baseline, average='weighted'))
+        print('ROC AUC Score: ', roc_auc_score(labels, baseline))
+        print()
 
         print(Style.BOLD + 'Scores:' + Style.END)
         print('Scores for:', word)
         print('Precision: ', precision_score(labels, scores))
         print('Recall: ', recall_score(labels, scores))
         print('F-1 Score: ', f1_score(labels, scores, average='weighted'))
+        print('ROC AUC Score: ', roc_auc_score(labels, scores))
         print()
 
-        print('Most frequent sense for:', word)
-        print('Precision: ', precision_score(labels, mfs_scores))
-        print('Recall: ', recall_score(labels, mfs_scores))
-        print('F-1 Score: ', f1_score(labels, mfs_scores, average='weighted'))
-        print()
+    def split_files(self, word, n_count, y_count, inventory_list):
+        """ TODO """
+
+        n = n_count
+        y = y_count
+
+        smaller = min(n, y)
+        counter_n = 0
+        counter_nn = 0
+        counter_y = 0
+        counter_yy = 0
+        split_n = []
+        split_y = []
+
+        def copy_files(word):
+            if not os.path.isfile(DATA_WSD_SENTENCES_FINAL + word + '.json'):
+                shutil.copy2(DATA_WSD_SENTENCES_PATH + word + '.json', DATA_WSD_SENTENCES_FINAL)
+
+        for i in inventory_list:
+            if i[2] == word and self.has_sentence(i[0]):
+                if counter_n == counter_y == smaller == counter_nn == counter_yy:
+                    print('Counters match')
+                    break
+
+                if smaller == n:
+                    if i[-1] == 'N' and counter_n < smaller:
+                        copy_files(i[0])
+                        split_n.append(0)
+                        counter_n += 1
+                    if i[-1] == 'Y' and counter_nn < smaller:
+                        copy_files(i[0])
+                        split_y.append(1)
+                        counter_nn += 1
+
+                if smaller == y:
+                    if i[-1] == 'Y' and counter_y < smaller:
+                        copy_files(i[0])
+                        split_y.append(1)
+                        counter_y += 1
+                    if i[-1] == 'N' and counter_yy < smaller:
+                        copy_files(i[0])
+                        split_n.append(0)
+                        counter_yy += 1
+
+                """
+                if smaller == n:
+                    if i[-1] == 'N' and counter_n < smaller:
+                        if i[0] in N:
+                            for y in N:
+                                copy_files(i[0])
+                                counter_n += len(N)
+                        else:
+                            copy_files(i[0])
+                            counter_n += 1
+
+                    if i[-1] == 'Y' and counter_nn < smaller:
+                        if i[0] in Y:
+                            for y in Y:
+                                copy_files(i[0])
+                                counter_nn += len(Y)
+                        else:
+                            copy_files(i[0])
+                            counter_nn += 1
+
+                if smaller == y:
+                    if i[-1] == 'Y' and counter_y < smaller:
+                        if i[0] in Y:
+                            for y in Y:
+                                copy_files(i[0])
+                                counter_y += len(Y)
+                        else:
+                            copy_files(i[0])
+                            counter_y += 1
+
+                    if i[-1] == 'N' and counter_yy < smaller:
+                        if i[0] in N:
+                            for y in N:
+                                copy_files(i[0])
+                                counter_yy += len(N)
+                        else:
+                            copy_files(i[0])
+                            counter_yy += 1
+                """
+            else:
+                pass
+
+        print('N items in final split:', len(split_n))
+        print('Y items in final split:', len(split_y))
 
 
 class Style:
@@ -737,131 +878,190 @@ if __name__ == "__main__":
     pref_inventory_list = PREF_WSD.read_file_to_list(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE)
     n_pref_dict = PREF_WSD.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE, 'N')
     y_pref_dict = PREF_WSD.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE, 'Y')
+
+    print(Style.BOLD + 'Total:' + Style.END)
     print('N:\t', n_pref_dict)
     print('Y:\t', y_pref_dict)
+
+    # Randomize items so the smaller batch is mixed; keep seed
+    random.Random(5).shuffle(pref_inventory_list)
+
+    pref_dictionary_n_context = PREF_WSD.create_empty_dictionary(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE)
+    pref_dictionary_y_context = PREF_WSD.create_empty_dictionary(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE)
+
+    pref_split_dictionary_n = pref_dictionary_n_context.copy()
+    pref_split_dictionary_y = pref_dictionary_y_context.copy()
+
+    pref_temp_dictionary_n = pref_dictionary_n_context.copy()
+    pref_temp_dictionary_y = pref_dictionary_y_context.copy()
+
+    # for k in n_pref_dict.keys():
+    #     counts = PREF_WSD.loop_over_key(k, pref_inventory_list, n_pref_dict, y_pref_dict)
+    #     items_n = counts[0].get(k)
+    #     items_y = counts[1].get(k)
+    #     pref_split_dictionary_n.update({k: items_n})
+    #     pref_split_dictionary_y.update({k: items_y})
+    #     PREF_WSD.split_files(k, items_n, items_y, pref_inventory_list)
+    #     print('N:\t', pref_split_dictionary_n)
+    #     print('Y:\t', pref_split_dictionary_y)
+    #     print()
+    #     print(Style.BOLD + 'Best perfoming items according to dictionary' + Style.END)
+    #     print('N:', set(N))
+    #     print('Y:', set(Y))
+    #     Y = []
+    #     N = []
+    #
+    # print('N:\t', pref_split_dictionary_n)
+    # print('Y:\t', pref_split_dictionary_y)
+
     f0_pref_wsd_labels = []  # wsd labels
     f1_pref_wsd_scores = []  # wsd predicitons
-    f2_pref_mfs_scores = []  # most frequent scores
-
-    n_text = ''
-    y_text = ''
-
-    dictionary_n = PREF_WSD.create_empty_dictionary(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE)
-    dictionary_y = PREF_WSD.create_empty_dictionary(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE)
-
-    pref_stops = [201, 402, 603, 804, 1005, 1206, 1407, 1608, 1809, 2009]
-
-    inventory = ['Bilderbuch',
-                 'Blitz',
-                 'Bombe',
-                 'Glanz',
-                 'Heide',
-                 'Jahrhundert',
-                 'Qualität',
-                 'Schwein',
-                 'Spitze',
-                 'Traum']
-
-    for i in n_pref_dict.keys():
-        print(PREF_WSD.single_word_loop(i, pref_inventory_list, n_pref_dict, y_pref_dict))
-
+    f2_pref_random_scores = []  # random scores
 
     """ Loop """
-    # counter_n = 0
-    # counter_y = 0
-    # for i in pref_inventory_list:
+    # for k in n_pref_dict.keys():
     #
-    #     # if counter == pref_stops[9]+1:
-    #     #     break
-    #     # elif counter <= pref_stops[8]:
-    #     #     pass
-    #     # else:
+    #     counter = 0
+    #     counter_n = 0
+    #     counter_y = 0
+    #     random.seed(1)
     #
-    #     # print('Line:', str(counter) + ' ===============================', i[0], i[-1])
-    #     # find(i[0]+'.json', DATA_WSD_PATH+'sentences/')
+    #     f0_item_labels = []  # temp wsd labels
+    #     f1_item_scores = []  # temp wsd predicitons
+    #     f2_item_random_scores = []  # temp random scores
     #
-    #     f0 = PREF_WSD.transform_class_name_to_binary(i[-1])
-    #     f1 = PREF_WSD.lesk(i[2], i[0], n_pref_dict, y_pref_dict)
+    #     for p in pref_inventory_list:
     #
-    #     if f1 == -1:
-    #         pass
+    #         if os.path.isfile(DATA_WSD_SENTENCES_FINAL + p[0] + '.json') and k == p[2]:
+    #             counter += 1
+    #             # print('Line:', str(counter) + ' ===============================', p[0], p[-1])
+    #             f0 = PREF_WSD.transform_class_name_to_binary(p[-1])
+    #             f1 = PREF_WSD.lesk(p[2], p[0], n_pref_dict, y_pref_dict, class_name=False)
+    #             f0_pref_wsd_labels.append(f0)
+    #             f1_pref_wsd_scores.append(f1)
+    #             f2_pref_random_scores.append(random.randint(0, 1))
     #
-    #     else:
-    #         if i[-1] == 'N':
-    #             counter_n += 1
-    #             dictionary_n[i[2]].append(PREF_WSD.get_sentence_for_word(i[0]))
-    #             n_pref_dict.update({i[2]: counter_n})
+    #             f0_item_labels.append(f0)
+    #             f1_item_scores.append(f1)
+    #             f2_item_random_scores.append(random.randint(0, 1))
     #
-    #         if i[-1] == 'Y':
-    #             counter_y += 1
-    #             dictionary_y[i[2]].append(PREF_WSD.get_sentence_for_word(i[0]))
-    #             y_pref_dict.update({i[2]: counter_y})
+    #             if p[-1] == 'N':
+    #                 counter_n += 1
+    #                 pref_dictionary_n_context[p[2]].append(PREF_WSD.get_sentence_for_word(p[0]))
+    #                 pref_temp_dictionary_n.update({k: counter_n})
     #
-    #         f0_pref_wsd_labels.append(f0)
-    #         f1_pref_wsd_scores.append(f1)
-    #
-    # print('N:\t', n_pref_dict)
-    # print('Y:\t', y_pref_dict)
-    #
-    # with open('modules/no.txt', 'w', encoding='utf-8') as f_n:
-    #     f_n.write(str(dictionary_n))
-    #
-    # with open('modules/yes.txt', 'w', encoding='utf-8') as f_y:
-    #     f_y.write(str(dictionary_y))
-    #
-    # import os
-    #
-    # def find(name, path):
-    #     for root, dirs, files in os.walk(path):
-    #         if name in files:
-    #             pass
+    #             if p[-1] == 'Y':
+    #                 counter_y += 1
+    #                 pref_dictionary_y_context[p[2]].append(PREF_WSD.get_sentence_for_word(p[0]))
+    #                 pref_temp_dictionary_y.update({k: counter_y})
     #         else:
-    #             print(name)
+    #             pass
+    #
+    #     print('\nDictionary per item:')
+    #     print('N:\t', pref_temp_dictionary_n)
+    #     print('Y:\t', pref_temp_dictionary_y)
+    #     PREF_WSD.print_scores(k, f0_item_labels, f1_item_scores, f2_item_random_scores, baseline_type='Random')
 
+    # PREF_WSD.print_scores('Total', f0_pref_wsd_labels, f1_pref_wsd_scores, f2_pref_random_scores, baseline_type='Random')
+    # PREF_WSD.write_dict_to_file(pref_dictionary_n_context, 'modules/pref_n.txt')
+    # PREF_WSD.write_dict_to_file(pref_dictionary_y_context, 'modules/pref_y.txt')
     # PREF_WSD.write_list_to_file(f0_pref_wsd_labels, DATA_WSD_PATH + 'f0_pref_wsd_final.txt')
     # PREF_WSD.write_list_to_file(f1_pref_wsd_scores, DATA_WSD_PATH + 'f1_pref_wsd_final.txt')
+    # PREF_WSD.write_list_to_file(f2_pref_random_scores, DATA_WSD_PATH + 'f2_pref_wsd_final.txt')
 
     """
         SUFFIXOIDS WSD
     """
-    # SUFF_WSD = Wsd('Suffixoids', DATA_WSD_PATH + SUFF_JSON_DICT)
-    # suff_inventory_list = SUFF_WSD.read_file_to_list(DATA_FINAL_PATH + FINAL_SUFFIXOID_FILE)
-    # n_suff_dict = SUFF_WSD.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_SUFFIXOID_FILE, 'N')
-    # y_suff_dict = SUFF_WSD.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_SUFFIXOID_FILE, 'Y')
-    # f0_suff_wsd_labels = []  # wsd labels
-    # f1_suff_wsd_list = []  # wsd predicitons
+    SUFF_WSD = Wsd('Suffixoids', DATA_WSD_PATH + SUFF_JSON_DICT)
+    suff_inventory_list = SUFF_WSD.read_file_to_list(DATA_FINAL_PATH + FINAL_SUFFIXOID_FILE)
+    n_suff_dict = SUFF_WSD.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_SUFFIXOID_FILE, 'N')
+    y_suff_dict = SUFF_WSD.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_SUFFIXOID_FILE, 'Y')
+
+    print(Style.BOLD + 'Total:' + Style.END)
+    print('N:\t', n_suff_dict)
+    print('Y:\t', y_suff_dict)
+
+    random.Random(5).shuffle(suff_inventory_list)
+
+    suff_dictionary_n_context = SUFF_WSD.create_empty_dictionary(DATA_FINAL_PATH + FINAL_SUFFIXOID_FILE)
+    suff_dictionary_y_context = SUFF_WSD.create_empty_dictionary(DATA_FINAL_PATH + FINAL_SUFFIXOID_FILE)
+
+    suff_split_dictionary_n = suff_dictionary_n_context.copy()
+    suff_split_dictionary_y = suff_dictionary_y_context.copy()
+
+    suff_temp_dictionary_n = suff_dictionary_n_context.copy()
+    suff_temp_dictionary_y = suff_dictionary_y_context.copy()
+
+    # for k in n_suff_dict.keys():
+    #     counts = SUFF_WSD.loop_over_key(k, suff_inventory_list, n_suff_dict, y_suff_dict)
+    #     items_n = counts[0].get(k)
+    #     items_y = counts[1].get(k)
+    #     suff_split_dictionary_n.update({k: items_n})
+    #     suff_split_dictionary_y.update({k: items_y})
+    #     SUFF_WSD.split_files(k, items_n, items_y, suff_inventory_list)
+    #     print('N:\t', suff_split_dictionary_n)
+    #     print('Y:\t', suff_split_dictionary_y)
+    #     print()
+    #     print(Style.BOLD + 'Best perfoming items according to dictionary' + Style.END)
+    #     print('N:', set(N))
+    #     print('Y:', set(Y))
+    #     Y = []
+    #     N = []
     #
-    # for i in suff_inventory_list:
-    #     counter += 1
-    #     # started from 0 - 10.08. 09:30
-    #     # stopped at 682 - 10.08. 12:30
-    #     # stopped at 954 - 10.08. 17:30
+    # print('N:\t', suff_split_dictionary_n)
+    # print('Y:\t', suff_split_dictionary_y)
+
+    f0_suff_wsd_labels = []  # wsd labels
+    f1_suff_wsd_scores = []  # wsd predicitons
+    f2_suff_random_scores = []  # random scores
+
+    """ Loop """
+    # for k in n_suff_dict.keys():
     #
-    #     if counter < 954:
-    #         pass
-    #     # elif counter < 370:
-    #     #     pass
-    #     else:
+    #     counter = 0
+    #     counter_n = 0
+    #     counter_y = 0
+    #     random.seed(1)
     #
-    #         print('Line:', str(counter) + ' ===============================', i[0], i[-1])
-    #         # find(i[0]+'.json', DATA_WSD_PATH+'sentences/')
+    #     f0_item_labels = []  # temp wsd labels
+    #     f1_item_scores = []  # temp wsd predicitons
+    #     f2_item_random_scores = []  # temp random scores
     #
-    #         f0 = SUFF_WSD.transform_class_name_to_binary(i[-1])
-    #         f1 = SUFF_WSD.lesk(i[2], i[0], n_suff_dict, y_suff_dict)
+    #     for p in suff_inventory_list:
     #
-    #         if f1 == -1:
+    #         if os.path.isfile(DATA_WSD_SENTENCES_FINAL + p[0] + '.json') and k == p[2]:
+    #             counter += 1
+    #             # print('Line:', str(counter) + ' ===============================', p[0], p[-1])
+    #             f0 = SUFF_WSD.transform_class_name_to_binary(p[-1])
+    #             f1 = SUFF_WSD.lesk(p[2], p[0], n_suff_dict, y_suff_dict, class_name=False)
+    #             f0_suff_wsd_labels.append(f0)
+    #             f1_suff_wsd_scores.append(f1)
+    #             f2_suff_random_scores.append(random.randint(0, 1))
+    #
+    #             f0_item_labels.append(f0)
+    #             f1_item_scores.append(f1)
+    #             f2_item_random_scores.append(random.randint(0, 1))
+    #
+    #             if p[-1] == 'N':
+    #                 counter_n += 1
+    #                 suff_dictionary_n_context[p[2]].append(SUFF_WSD.get_sentence_for_word(p[0]))
+    #                 suff_temp_dictionary_n.update({k: counter_n})
+    #
+    #             if p[-1] == 'Y':
+    #                 counter_y += 1
+    #                 suff_dictionary_y_context[p[2]].append(SUFF_WSD.get_sentence_for_word(p[0]))
+    #                 suff_temp_dictionary_y.update({k: counter_y})
+    #         else:
     #             pass
     #
-    #         else:
-    #             f0_suff_wsd_labels.append(f0)
-    #             f1_suff_wsd_list.append(f1)
-
-    """ Tests """
-    # print(PREF_WSD.is_in_germanet('Test'))
-    # print(PREF_WSD.search_germanet_synsets('Bilderbuch'))
-    # print(PREF_WSD.create_synsets_dictionary('Schwein', return_wiktionary_sense=False))
-    # print(PREF_WSD.calculate_similarity_scores('Bilderbuch', 'Auflage'))
-    # print(PREF_WSD.get_sentence_for_word('Bilderbuchabsturz', open_locally=True))
-    # print(PREF_WSD.lesk('Jahrhundert', 'Jahrhunderthälfte', n_pref_dict, y_pref_dict, lemmatize=True))
-
-    # print(PREF_WSD.get_sentence_for_word('Spitzen-Know-How', open_locally=False, write_to_file=True))
+    #     print('\nDictionary per item:')
+    #     print('N:\t', suff_temp_dictionary_n)
+    #     print('Y:\t', suff_temp_dictionary_y)
+    #     SUFF_WSD.print_scores(k, f0_item_labels, f1_item_scores, f2_item_random_scores, baseline_type='Random')
+    #
+    # SUFF_WSD.print_scores('Total', f0_suff_wsd_labels, f1_suff_wsd_scores, f2_suff_random_scores, baseline_type='Random')
+    # SUFF_WSD.write_dict_to_file(suff_dictionary_n_context, 'modules/suff_n.txt')
+    # SUFF_WSD.write_dict_to_file(suff_dictionary_y_context, 'modules/suff_y.txt')
+    # SUFF_WSD.write_list_to_file(f0_suff_wsd_labels, DATA_WSD_PATH + 'f0_suff_wsd_final.txt')
+    # SUFF_WSD.write_list_to_file(f1_suff_wsd_scores, DATA_WSD_PATH + 'f1_suff_wsd_final.txt')
+    # SUFF_WSD.write_list_to_file(f2_suff_random_scores, DATA_WSD_PATH + 'f2_suff_wsd_final.txt')
