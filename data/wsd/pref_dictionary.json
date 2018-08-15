@@ -71,13 +71,13 @@
         "Beispiel": ""
       },
       "Crowdsourcing": {
-        "Bedeutung": "(Geschwindigkeit) drückt in Bildungen mit Substantiven aus, dass sich ein Ereignis oder eine Handlung sehr schnell vollzieht (z.B. Blitzbesuch, Blitzumfrage)"
+        "Bedeutung": "(Geschwindigkeit) drückt in Bildungen mit Substantiven aus, dass sich ein Ereignis oder eine Handlung schnell in Sekunden oder Minuten vollzieht (z.B. Blitzbesuch, Blitzumfrage)"
       }
     }
   },
   "Bombe": {
     "0": {
-      "ID": "Sprengkörper; Kampfmittel; explodieren; fallen",
+      "ID": "Sprengkörper; Kampfmittel; explodieren; Soldaten",
       "GermaNet": {
         "Bedeutung": "Kampfmittel, das eine Explosion verursacht (selbst explodiert)",
         "Beispiel": ""
@@ -126,7 +126,7 @@
       },
       "Duden": {
         "Bedeutung": "das Glänzen; glänzende Beschaffenheit von etwas",
-        "Beispiel": "heller, strahlender Glanz; der fiebrige Glanz der Augen; der seidige Glanz ihrer Haare"
+        "Beispiel": "heller, strahlender Glanz; der fiebrige Glanz der Augen; der seidige Glanz in ihrem Haar"
       },
       "Crowdsourcing": {
         "Bedeutung": "(Leuchten) Schein oder Widerschein, besonders auf glatten Materialien; glänzende Beschaffenheit von etwas (z.B. Glanzleder, Glanzlack)"
@@ -153,7 +153,7 @@
   },
   "Heide": {
     "0": {
-      "ID": "Glaube; Botanik; Kirche; Jude; Gott; Petrus",
+      "ID": "Glaube; Botanik; Kirche; Gottlose",
       "GermaNet": {
         "Bedeutung": "Botanik: Vertreter der Pflanzengattung Heidekräuter (Erica) aus der Familie der Heidekrautgewächse; Ungläubiger; weiträumige Landschaft der gemäßigten Zone mit wenig Baumwuchs, aber mit vielen Zwergsträuchern, Flechten und Moosen",
         "Beispiel": ""
@@ -198,7 +198,7 @@
       },
       "Wiktionary": {
         "Bedeutung": "der Zeitraum von hundert Jahren, zwischen dem 1. Januar xx01. und dem 31. Dezember xx00",
-        "Beispiel": "Das letzte Jahrhundert hat viele Kriege gesehen. Vor vielen Jahrhunderten, als das Leben noch Sinn hatte, da zog der junge Mann voller Energie und Testosteron in den Krieg und reagierte sich dort ab, während die Frauen daheim ihm drohten, er solle entweder siegreich oder tot nach Hause kommen."
+        "Beispiel": "Das letzte Jahrhundert hat viele Kriege gesehen."
       },
       "Duden": {
         "Bedeutung": "Zeitraum von hundert Jahren; Einheit der Zeitrechnung; Abkürzung: Jh.",
@@ -343,7 +343,7 @@
   },
   "Traum": {
     "0": {
-      "ID": "Schlaf",
+      "ID": "Schlaf; träumen; Nacht",
       "GermaNet": {
         "Bedeutung": "Erlebnis beim Schlafen",
         "Beispiel": ""
@@ -361,7 +361,7 @@
       }
     },
     "1": {
-      "ID": "Wunsch; ideal",
+      "ID": "Wunsch; ideal; Realisierung; Verwirklichung; Erfüllung",
       "GermaNet": {
         "Bedeutung": "sehr starker Wunsch",
         "Beispiel": ""
@@ -375,7 +375,7 @@
         "Beispiel": ""
       },
       "Crowdsourcing": {
-        "Bedeutung": "(Wunsch) starker Wunsch; etwas, das ideal/sehr wünschenswert ist (z.B. Traumwohnung, Traumberuf)"
+        "Bedeutung": "(Wunsch) starker Wunsch; etwas, das ideal oder sehr wünschenswert ist (z.B. Traumwohnung, Traumberuf)"
       }
     }
   }
