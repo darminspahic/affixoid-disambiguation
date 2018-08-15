@@ -34,6 +34,7 @@ from sklearn.metrics import f1_score
 from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
 from sklearn.metrics import roc_auc_score
+from sklearn.metrics import confusion_matrix
 from pygermanet import load_germanet
 from nltk.corpus import stopwords
 from nltk import FreqDist
@@ -43,26 +44,12 @@ nltk.download('punkt', quiet=True)
 nltk.download('stopwords', quiet=True)
 
 ################
-# PATH SETTINGS
-################
-DATA_FINAL_PATH = '../data/final/'
-DATA_WSD_PATH = '../data/wsd/'
-DATA_WSD_SENTENCES_PATH = '../data/wsd/sentences/'
-DATA_WSD_SENTENCES_FINAL = '../data/wsd/final/'
-
-################
-# FILE SETTINGS
-################
-FINAL_PREFIXOID_FILE = 'binary_unique_instance_prefixoid_segmentations.txt'
-FINAL_SUFFIXOID_FILE = 'binary_unique_instance_suffixoid_segmentations.txt'
-
-################
 # GermaNet & WordNet
 ################
 try:
     ger = load_germanet()
 except:
-    print('Error. Please start mongo on GermaNet xml files: mongod --dbpath ./mongodb')
+    print('Error. Please start mongo on GermaNet xml files: mongod --dbpath ./mongodb or refer to README.md')
     sys.exit()
 
 # Sentence tokenizer
@@ -81,6 +68,7 @@ word_tok = RegexpTokenizer(r'\w+')
 s = requests.Session()
 base_url = 'https://api.sketchengine.co.uk/bonito/run.cgi'
 corpname = 'sdewac2'
+corpname = 'detenten13_rft3'
 username = 'spahic'
 api_key = '159b841f61a64092bc630d20b0f56c93'
 # username = 'api_testing'
@@ -92,6 +80,20 @@ https://www.sketchengine.eu/documentation/methods-documentation/
 login: api_testing
 api_key: YNSC0B9OXN57XB48T9HWUFFLPY4TZ6OE
 """
+
+################
+# PATH SETTINGS
+################
+DATA_FINAL_PATH = '../data/final/'
+DATA_WSD_PATH = '../data/wsd/'
+DATA_WSD_CORP_SENTENCES_PATH = '../data/wsd/' + corpname + '/sentences/'
+DATA_WSD_CORP_SENTENCES_FINAL = '../data/wsd/' + corpname + '/final/'
+
+################
+# FILE SETTINGS
+################
+FINAL_PREFIXOID_FILE = 'binary_unique_instance_prefixoid_segmentations.txt'
+FINAL_SUFFIXOID_FILE = 'binary_unique_instance_suffixoid_segmentations.txt'
 
 """ WSD Dictionaries """
 PREF_JSON_DICT = 'pref_dictionary.json'
@@ -646,15 +648,17 @@ class Wsd:
 
         if open_locally:
             try:
-                with open(DATA_WSD_SENTENCES_PATH + word + '.json', 'r') as f:
+                with open(DATA_WSD_CORP_SENTENCES_PATH + word + '.json', 'r') as f:
                     data = json.load(f)
                     return parse_result(data)
             except FileNotFoundError:
-                print('File not found. Trying to load from:', base_url)
-                self.get_sentence_for_word(word, open_locally=False, write_to_file=True)
-                with open(DATA_WSD_SENTENCES_PATH + word + '.json', 'r') as f:
-                    data = json.load(f)
-                    return parse_result(data)
+                return False
+                # remove this
+                # print('File not found. Trying to load from:', base_url)
+                # self.get_sentence_for_word(word, open_locally=False, write_to_file=True)
+                # with open(DATA_WSD_CORP_SENTENCES_PATH + word + '.json', 'r') as f:
+                #     data = json.load(f)
+                #     return parse_result(data)
 
         else:
             time.sleep(10)
@@ -670,22 +674,24 @@ class Wsd:
             else:
                 json_response = r.json()
                 if write_to_file:
-                    with open(DATA_WSD_SENTENCES_PATH + word + '.json', 'w') as outfile:
+                    with open(DATA_WSD_CORP_SENTENCES_PATH + word + '.json', 'w') as outfile:
                         json.dump(json_response, outfile)
                 return parse_result(json_response)
 
     def has_sentence(self, word):
         """ TODO """
         try:
-            with open(DATA_WSD_SENTENCES_PATH + word + '.json', 'r') as f:
+            with open(DATA_WSD_CORP_SENTENCES_PATH + word + '.json', 'r') as f:
                 data = json.load(f)
                 result_count = int(data.get('concsize', '0'))
         except FileNotFoundError:
-            print('File not found. Trying to load from:', base_url)
-            self.get_sentence_for_word(word, open_locally=False, write_to_file=True)
-            with open(DATA_WSD_SENTENCES_PATH + word + '.json', 'r') as f:
-                data = json.load(f)
-                result_count = int(data.get('concsize', '0'))
+            return False
+            # remove this
+            # print('File not found. Trying to load from:', base_url)
+            # self.get_sentence_for_word(word, open_locally=False, write_to_file=True)
+            # with open(DATA_WSD_CORP_SENTENCES_PATH + word + '.json', 'r') as f:
+            #     data = json.load(f)
+            #     result_count = int(data.get('concsize', '0'))
 
         text = ''
         if result_count > 0:
@@ -706,8 +712,10 @@ class Wsd:
 
         if count_y > count_n:
             return 1
-        else:
+        if count_n > count_y:
             return 0
+        else:
+            return random.randint(0, 1)
 
     def loop_over_key(self, word, inventory_list, n_dict, y_dict):
 
@@ -746,12 +754,14 @@ class Wsd:
             else:
                 pass
 
-        self.print_scores(word, wsd_labels, wsd_scores, random_scores, baseline_type='Random')
+        self.print_scores(word, wsd_labels, wsd_scores, majority_scores, baseline_type='mfs')
 
         return n_examples_dict, y_examples_dict
 
     def print_scores(self, word, labels, scores, baseline, baseline_type):
         """ TODO """
+        # print(labels)
+        # print(baseline)
         warnings.filterwarnings("ignore")
         print()
         print(Style.BOLD + baseline_type + ' baseline:' + Style.END)
@@ -768,6 +778,8 @@ class Wsd:
         print('Recall: ', recall_score(labels, scores))
         print('F-1 Score: ', f1_score(labels, scores, average='weighted'))
         print('ROC AUC Score: ', roc_auc_score(labels, scores))
+        print('\nConfusion matrix:')
+        print(confusion_matrix(labels, scores))
         print()
 
     def split_files(self, word, n_count, y_count, inventory_list):
@@ -785,8 +797,8 @@ class Wsd:
         split_y = []
 
         def copy_files(word):
-            if not os.path.isfile(DATA_WSD_SENTENCES_FINAL + word + '.json'):
-                shutil.copy2(DATA_WSD_SENTENCES_PATH + word + '.json', DATA_WSD_SENTENCES_FINAL)
+            if not os.path.isfile(DATA_WSD_CORP_SENTENCES_FINAL + word + '.json'):
+                shutil.copy2(DATA_WSD_CORP_SENTENCES_PATH + word + '.json', DATA_WSD_CORP_SENTENCES_FINAL)
 
         for i in inventory_list:
             if i[2] == word and self.has_sentence(i[0]):
@@ -858,6 +870,7 @@ class Wsd:
 
         print('N items in final split:', len(split_n))
         print('Y items in final split:', len(split_y))
+        print()
 
 
 class Style:
@@ -883,7 +896,7 @@ if __name__ == "__main__":
     print('N:\t', n_pref_dict)
     print('Y:\t', y_pref_dict)
 
-    # Randomize items so the smaller batch is mixed; keep seed
+    # Randomize items so the smaller batch is mixed; keep seed 1395
     random.Random(5).shuffle(pref_inventory_list)
 
     pref_dictionary_n_context = PREF_WSD.create_empty_dictionary(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE)
@@ -895,79 +908,94 @@ if __name__ == "__main__":
     pref_temp_dictionary_n = pref_dictionary_n_context.copy()
     pref_temp_dictionary_y = pref_dictionary_y_context.copy()
 
-    # for k in n_pref_dict.keys():
-    #     counts = PREF_WSD.loop_over_key(k, pref_inventory_list, n_pref_dict, y_pref_dict)
-    #     items_n = counts[0].get(k)
-    #     items_y = counts[1].get(k)
-    #     pref_split_dictionary_n.update({k: items_n})
-    #     pref_split_dictionary_y.update({k: items_y})
-    #     PREF_WSD.split_files(k, items_n, items_y, pref_inventory_list)
-    #     print('N:\t', pref_split_dictionary_n)
-    #     print('Y:\t', pref_split_dictionary_y)
-    #     print()
-    #     print(Style.BOLD + 'Best perfoming items according to dictionary' + Style.END)
-    #     print('N:', set(N))
-    #     print('Y:', set(Y))
-    #     Y = []
-    #     N = []
-    #
-    # print('N:\t', pref_split_dictionary_n)
-    # print('Y:\t', pref_split_dictionary_y)
+    # print('Parsing', corpname)
+    # counter = 0
+    # for i in pref_inventory_list:
+    #     counter += 1
+    #     if counter < 2009:
+    #         pass
+    #     else:
+    #         print('Line:', str(counter) + ' ===============================', i[0], i[-1])
+    #         print(PREF_WSD.get_sentence_for_word(i[0], open_locally=False, write_to_file=True))
+
+    print('Parsing sentences for prefixoids')
+    for k in n_pref_dict.keys():
+        counts = PREF_WSD.loop_over_key(k, pref_inventory_list, n_pref_dict, y_pref_dict)
+        items_n = counts[0].get(k)
+        items_y = counts[1].get(k)
+        pref_split_dictionary_n.update({k: items_n})
+        pref_split_dictionary_y.update({k: items_y})
+        PREF_WSD.split_files(k, items_n, items_y, pref_inventory_list)
+        print(Style.BOLD + 'Best perfoming items according to dictionary' + Style.END)
+        print('N:', set(N))
+        print('Y:', set(Y))
+        Y = []
+        N = []
+
+    print('After parsing sentences:')
+    print('N:\t', pref_split_dictionary_n)
+    print('Y:\t', pref_split_dictionary_y)
+
+    # print(Y)
+    # for i in Y:
+    #     shutil.copy2(DATA_WSD_CORP_SENTENCES_PATH + i + '.json', DATA_WSD_CORP_SENTENCES_FINAL)  # target filename is /dst/dir/file.ext
 
     f0_pref_wsd_labels = []  # wsd labels
     f1_pref_wsd_scores = []  # wsd predicitons
     f2_pref_random_scores = []  # random scores
 
     """ Loop """
-    # for k in n_pref_dict.keys():
-    #
-    #     counter = 0
-    #     counter_n = 0
-    #     counter_y = 0
-    #     random.seed(1)
-    #
-    #     f0_item_labels = []  # temp wsd labels
-    #     f1_item_scores = []  # temp wsd predicitons
-    #     f2_item_random_scores = []  # temp random scores
-    #
-    #     for p in pref_inventory_list:
-    #
-    #         if os.path.isfile(DATA_WSD_SENTENCES_FINAL + p[0] + '.json') and k == p[2]:
-    #             counter += 1
-    #             # print('Line:', str(counter) + ' ===============================', p[0], p[-1])
-    #             f0 = PREF_WSD.transform_class_name_to_binary(p[-1])
-    #             f1 = PREF_WSD.lesk(p[2], p[0], n_pref_dict, y_pref_dict, class_name=False)
-    #             f0_pref_wsd_labels.append(f0)
-    #             f1_pref_wsd_scores.append(f1)
-    #             f2_pref_random_scores.append(random.randint(0, 1))
-    #
-    #             f0_item_labels.append(f0)
-    #             f1_item_scores.append(f1)
-    #             f2_item_random_scores.append(random.randint(0, 1))
-    #
-    #             if p[-1] == 'N':
-    #                 counter_n += 1
-    #                 pref_dictionary_n_context[p[2]].append(PREF_WSD.get_sentence_for_word(p[0]))
-    #                 pref_temp_dictionary_n.update({k: counter_n})
-    #
-    #             if p[-1] == 'Y':
-    #                 counter_y += 1
-    #                 pref_dictionary_y_context[p[2]].append(PREF_WSD.get_sentence_for_word(p[0]))
-    #                 pref_temp_dictionary_y.update({k: counter_y})
-    #         else:
-    #             pass
-    #
-    #     print('\nDictionary per item:')
-    #     print('N:\t', pref_temp_dictionary_n)
-    #     print('Y:\t', pref_temp_dictionary_y)
-    #     PREF_WSD.print_scores(k, f0_item_labels, f1_item_scores, f2_item_random_scores, baseline_type='Random')
+    print()
+    print(Style.BOLD + 'Running on balanced prefixoid data...' + Style.END)
+    for k in n_pref_dict.keys():
 
-    # PREF_WSD.print_scores('Total', f0_pref_wsd_labels, f1_pref_wsd_scores, f2_pref_random_scores, baseline_type='Random')
-    # PREF_WSD.write_dict_to_file(pref_dictionary_n_context, 'modules/pref_n.txt')
-    # PREF_WSD.write_dict_to_file(pref_dictionary_y_context, 'modules/pref_y.txt')
-    # PREF_WSD.write_list_to_file(f0_pref_wsd_labels, DATA_WSD_PATH + 'f0_pref_wsd_final.txt')
-    # PREF_WSD.write_list_to_file(f1_pref_wsd_scores, DATA_WSD_PATH + 'f1_pref_wsd_final.txt')
-    # PREF_WSD.write_list_to_file(f2_pref_random_scores, DATA_WSD_PATH + 'f2_pref_wsd_final.txt')
+        counter = 0
+        counter_n = 0
+        counter_y = 0
+        random.seed(1)
+
+        f0_item_labels = []  # temp wsd labels
+        f1_item_scores = []  # temp wsd predicitons
+        f2_item_random_scores = []  # temp random scores
+
+        for p in pref_inventory_list:
+
+            if os.path.isfile(DATA_WSD_CORP_SENTENCES_FINAL + p[0] + '.json') and k == p[2]:
+                counter += 1
+                # print('Line:', str(counter) + ' ===============================', p[0], p[-1])
+                f0 = PREF_WSD.transform_class_name_to_binary(p[-1])
+                f1 = PREF_WSD.lesk(p[2], p[0], n_pref_dict, y_pref_dict, class_name=False)
+                f0_pref_wsd_labels.append(f0)
+                f1_pref_wsd_scores.append(f1)
+                f2_pref_random_scores.append(random.randint(0, 1))
+
+                f0_item_labels.append(f0)
+                f1_item_scores.append(f1)
+                f2_item_random_scores.append(random.randint(0, 1))
+
+                if p[-1] == 'N':
+                    counter_n += 1
+                    pref_dictionary_n_context[p[2]].append(PREF_WSD.get_sentence_for_word(p[0]))
+                    pref_temp_dictionary_n.update({k: counter_n})
+
+                if p[-1] == 'Y':
+                    counter_y += 1
+                    pref_dictionary_y_context[p[2]].append(PREF_WSD.get_sentence_for_word(p[0]))
+                    pref_temp_dictionary_y.update({k: counter_y})
+            else:
+                pass
+
+        print('\nDictionary per item. Filling values on the go.')
+        print('N:\t', pref_temp_dictionary_n)
+        print('Y:\t', pref_temp_dictionary_y)
+        PREF_WSD.print_scores(k, f0_item_labels, f1_item_scores, f2_item_random_scores, baseline_type='Random')
+
+    PREF_WSD.print_scores('Total', f0_pref_wsd_labels, f1_pref_wsd_scores, f2_pref_random_scores, baseline_type='Random')
+    PREF_WSD.write_dict_to_file(pref_dictionary_n_context, 'modules/pref_n.txt')
+    PREF_WSD.write_dict_to_file(pref_dictionary_y_context, 'modules/pref_y.txt')
+    PREF_WSD.write_list_to_file(f0_pref_wsd_labels, DATA_WSD_PATH + 'f0_pref_wsd_final.txt')
+    PREF_WSD.write_list_to_file(f1_pref_wsd_scores, DATA_WSD_PATH + 'f1_pref_wsd_final.txt')
+    PREF_WSD.write_list_to_file(f2_pref_random_scores, DATA_WSD_PATH + 'f2_pref_wsd_final.txt')
 
     """
         SUFFIXOIDS WSD
@@ -992,76 +1020,96 @@ if __name__ == "__main__":
     suff_temp_dictionary_n = suff_dictionary_n_context.copy()
     suff_temp_dictionary_y = suff_dictionary_y_context.copy()
 
-    # for k in n_suff_dict.keys():
-    #     counts = SUFF_WSD.loop_over_key(k, suff_inventory_list, n_suff_dict, y_suff_dict)
-    #     items_n = counts[0].get(k)
-    #     items_y = counts[1].get(k)
-    #     suff_split_dictionary_n.update({k: items_n})
-    #     suff_split_dictionary_y.update({k: items_y})
-    #     SUFF_WSD.split_files(k, items_n, items_y, suff_inventory_list)
-    #     print('N:\t', suff_split_dictionary_n)
-    #     print('Y:\t', suff_split_dictionary_y)
-    #     print()
-    #     print(Style.BOLD + 'Best perfoming items according to dictionary' + Style.END)
-    #     print('N:', set(N))
-    #     print('Y:', set(Y))
-    #     Y = []
-    #     N = []
-    #
-    # print('N:\t', suff_split_dictionary_n)
-    # print('Y:\t', suff_split_dictionary_y)
+    # print('Parsing', corpname)
+    # counter = 0
+    # for i in suff_inventory_list:
+    #     counter += 1
+    #     if counter < 1873:
+    #         pass
+    #     else:
+    #         print('Line:', str(counter) + ' ===============================', i[0], i[-1])
+    #         print(SUFF_WSD.get_sentence_for_word(i[0], open_locally=False, write_to_file=True))
+
+    print('Parsing sentences for suffixoids')
+    for k in n_suff_dict.keys():
+        counts = SUFF_WSD.loop_over_key(k, suff_inventory_list, n_suff_dict, y_suff_dict)
+        items_n = counts[0].get(k)
+        items_y = counts[1].get(k)
+        suff_split_dictionary_n.update({k: items_n})
+        suff_split_dictionary_y.update({k: items_y})
+        SUFF_WSD.split_files(k, items_n, items_y, suff_inventory_list)
+        print(Style.BOLD + 'Best perfoming items according to dictionary' + Style.END)
+        print('N:', set(N))
+        print('Y:', set(Y))
+        Y = []
+        N = []
+
+    print('After parsing sentences:')
+    print('N:\t', suff_split_dictionary_n)
+    print('Y:\t', suff_split_dictionary_y)
 
     f0_suff_wsd_labels = []  # wsd labels
     f1_suff_wsd_scores = []  # wsd predicitons
     f2_suff_random_scores = []  # random scores
 
     """ Loop """
-    # for k in n_suff_dict.keys():
+    print()
+    print(Style.BOLD + 'Running on balanced suffixoid data...' + Style.END)
+    for k in n_suff_dict.keys():
+
+        counter = 0
+        counter_n = 0
+        counter_y = 0
+        random.seed(1)
+
+        f0_item_labels = []  # temp wsd labels
+        f1_item_scores = []  # temp wsd predicitons
+        f2_item_random_scores = []  # temp random scores
+
+        for p in suff_inventory_list:
+
+            if os.path.isfile(DATA_WSD_CORP_SENTENCES_FINAL + p[0] + '.json') and k == p[2]:
+                counter += 1
+                # print('Line:', str(counter) + ' ===============================', p[0], p[-1])
+                f0 = SUFF_WSD.transform_class_name_to_binary(p[-1])
+                f1 = SUFF_WSD.lesk(p[2], p[0], n_suff_dict, y_suff_dict, class_name=False)
+                f0_suff_wsd_labels.append(f0)
+                f1_suff_wsd_scores.append(f1)
+                f2_suff_random_scores.append(random.randint(0, 1))
+
+                f0_item_labels.append(f0)
+                f1_item_scores.append(f1)
+                f2_item_random_scores.append(random.randint(0, 1))
+
+                if p[-1] == 'N':
+                    counter_n += 1
+                    suff_dictionary_n_context[p[2]].append(SUFF_WSD.get_sentence_for_word(p[0]))
+                    suff_temp_dictionary_n.update({k: counter_n})
+
+                if p[-1] == 'Y':
+                    counter_y += 1
+                    suff_dictionary_y_context[p[2]].append(SUFF_WSD.get_sentence_for_word(p[0]))
+                    suff_temp_dictionary_y.update({k: counter_y})
+            else:
+                pass
+
+        print('\nDictionary per item:')
+        print('N:\t', suff_temp_dictionary_n)
+        print('Y:\t', suff_temp_dictionary_y)
+        SUFF_WSD.print_scores(k, f0_item_labels, f1_item_scores, f2_item_random_scores, baseline_type='Random')
+
+    SUFF_WSD.print_scores('Total', f0_suff_wsd_labels, f1_suff_wsd_scores, f2_suff_random_scores, baseline_type='Random')
+    SUFF_WSD.write_dict_to_file(suff_dictionary_n_context, 'modules/suff_n.txt')
+    SUFF_WSD.write_dict_to_file(suff_dictionary_y_context, 'modules/suff_y.txt')
+    SUFF_WSD.write_list_to_file(f0_suff_wsd_labels, DATA_WSD_PATH + 'f0_suff_wsd_final.txt')
+    SUFF_WSD.write_list_to_file(f1_suff_wsd_scores, DATA_WSD_PATH + 'f1_suff_wsd_final.txt')
+    SUFF_WSD.write_list_to_file(f2_suff_random_scores, DATA_WSD_PATH + 'f2_suff_wsd_final.txt')
+
+
+    """ NEW """
+    # for k in n_pref_dict.keys():
+    #     print(PREF_WSD.create_synsets_dictionary(k, return_hypernyms=False, return_hyponyms=False, return_lemmas=False, return_wiktionary_sense=True))
+    #     print('---')
     #
-    #     counter = 0
-    #     counter_n = 0
-    #     counter_y = 0
-    #     random.seed(1)
-    #
-    #     f0_item_labels = []  # temp wsd labels
-    #     f1_item_scores = []  # temp wsd predicitons
-    #     f2_item_random_scores = []  # temp random scores
-    #
-    #     for p in suff_inventory_list:
-    #
-    #         if os.path.isfile(DATA_WSD_SENTENCES_FINAL + p[0] + '.json') and k == p[2]:
-    #             counter += 1
-    #             # print('Line:', str(counter) + ' ===============================', p[0], p[-1])
-    #             f0 = SUFF_WSD.transform_class_name_to_binary(p[-1])
-    #             f1 = SUFF_WSD.lesk(p[2], p[0], n_suff_dict, y_suff_dict, class_name=False)
-    #             f0_suff_wsd_labels.append(f0)
-    #             f1_suff_wsd_scores.append(f1)
-    #             f2_suff_random_scores.append(random.randint(0, 1))
-    #
-    #             f0_item_labels.append(f0)
-    #             f1_item_scores.append(f1)
-    #             f2_item_random_scores.append(random.randint(0, 1))
-    #
-    #             if p[-1] == 'N':
-    #                 counter_n += 1
-    #                 suff_dictionary_n_context[p[2]].append(SUFF_WSD.get_sentence_for_word(p[0]))
-    #                 suff_temp_dictionary_n.update({k: counter_n})
-    #
-    #             if p[-1] == 'Y':
-    #                 counter_y += 1
-    #                 suff_dictionary_y_context[p[2]].append(SUFF_WSD.get_sentence_for_word(p[0]))
-    #                 suff_temp_dictionary_y.update({k: counter_y})
-    #         else:
-    #             pass
-    #
-    #     print('\nDictionary per item:')
-    #     print('N:\t', suff_temp_dictionary_n)
-    #     print('Y:\t', suff_temp_dictionary_y)
-    #     SUFF_WSD.print_scores(k, f0_item_labels, f1_item_scores, f2_item_random_scores, baseline_type='Random')
-    #
-    # SUFF_WSD.print_scores('Total', f0_suff_wsd_labels, f1_suff_wsd_scores, f2_suff_random_scores, baseline_type='Random')
-    # SUFF_WSD.write_dict_to_file(suff_dictionary_n_context, 'modules/suff_n.txt')
-    # SUFF_WSD.write_dict_to_file(suff_dictionary_y_context, 'modules/suff_y.txt')
-    # SUFF_WSD.write_list_to_file(f0_suff_wsd_labels, DATA_WSD_PATH + 'f0_suff_wsd_final.txt')
-    # SUFF_WSD.write_list_to_file(f1_suff_wsd_scores, DATA_WSD_PATH + 'f1_suff_wsd_final.txt')
-    # SUFF_WSD.write_list_to_file(f2_suff_random_scores, DATA_WSD_PATH + 'f2_suff_wsd_final.txt')
+    # print(PREF_WSD.create_synsets_dictionary('Traum', return_hypernyms=True, return_hyponyms=False, return_lemmas=True, return_wiktionary_sense=True))
+    # print(PREF_WSD.get_sentence_for_word('Traumhochzeit', open_locally=True, return_keyword=True))
