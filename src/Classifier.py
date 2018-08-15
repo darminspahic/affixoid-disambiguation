@@ -33,6 +33,7 @@ from sklearn.metrics import average_precision_score
 from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import roc_auc_score
+from sklearn.dummy import DummyClassifier
 
 ################
 # PATH SETTINGS
@@ -212,6 +213,9 @@ if __name__ == "__main__":
     clf_pref = svm.SVC(kernel="rbf", gamma=0.01, C=100).fit(X_train_pref, y_train_pref)  # gamma=0.01, C=100
     clf_suff = svm.SVC(kernel="rbf", gamma=0.1, C=10).fit(X_train_suff, y_train_suff)  # gamma=0.1, C=10
 
+    clf_dummy_pref = DummyClassifier(strategy='most_frequent', random_state=0).fit(X_train_pref, y_train_pref)
+    clf_dummy_suff = DummyClassifier(strategy='most_frequent', random_state=0).fit(X_train_suff, y_train_suff)
+
     results_pref = clf_pref.predict(X_test_pref)
     results_suff = clf_suff.predict(X_test_suff)
 
@@ -222,7 +226,7 @@ if __name__ == "__main__":
         print('5-Fold crossvalidation:', scores)
 
     """ SCORES """
-    def print_scores(score_title, classifier, classifer_results, test_instances, test_labels):
+    def print_scores(score_title, classifier, classifer_results, test_instances, test_labels, baseline_classifier):
         # print()
         # print(Style.BOLD + 'RESULTS' + Style.END)
         # print(classifer_results)
@@ -237,12 +241,14 @@ if __name__ == "__main__":
         print(classification_report(test_labels, classifer_results, target_names=target_names))
         print('\nConfusion matrix:')
         print(confusion_matrix(test_labels, classifer_results))
+        print('\nMost frequent sense baseline')
+        print(baseline_classifier.score(test_instances, test_labels))
         print()
 
-    print_scores('Prefixoids', clf_pref, results_pref, X_test_pref, y_test_pref)
+    print_scores('Prefixoids', clf_pref, results_pref, X_test_pref, y_test_pref, clf_dummy_pref)
     cross_validate(svm.SVC(kernel="rbf", gamma=0.01, C=100), pref_X_scaled, pref_y)
 
-    print_scores('Suffixoids', clf_suff, results_suff, X_test_suff, y_test_suff)
+    print_scores('Suffixoids', clf_suff, results_suff, X_test_suff, y_test_suff, clf_dummy_suff)
     cross_validate(svm.SVC(kernel="rbf", gamma=0.1, C=10), suff_X_scaled, suff_y)
 
     def plot(y_test, y_score):
