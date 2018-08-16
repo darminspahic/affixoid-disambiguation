@@ -16,6 +16,7 @@ License: MIT License
 Version: 1.0
 
 """
+
 import configparser
 import matplotlib.pyplot as plt
 
