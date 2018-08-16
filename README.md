@@ -1,5 +1,5 @@
 # Bachelorarbeit
-Todo
+Disambiguating nominal prefixoid and suffixoid formations from compounds
 
 ## Installation
 Requirements

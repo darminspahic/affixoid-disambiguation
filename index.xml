@@ -1,11 +1,11 @@
-<projekt> 
-	<titel>Bachelorarbeit</titel> 
+<projekt>
+	<titel>Disambiguating nominal prefixoid and suffixoid formations from compounds</titel>
 	<typ>Bachelorarbeit</typ>
-	<version>1.0</version> 
+	<version>1.0</version>
 	<autoren>Darmin Spahic</autoren>
-	<angefangen>x.xx.xxxx</angefangen>
-	<abgabe>x.xx.xxxx</abgabe> 
+	<angefangen>30.07.2018</angefangen>
+	<abgabe>31.08.2018</abgabe>
 	<veranstaltung>Abschlusskolloquium, SS 2018</veranstaltung>
 	<institution>Institut für Computerlinguistik, Ruprecht-Karls-Universität Heidelberg</institution>
-	<abstract>...</abstract> 
+	<abstract>...</abstract>
 </projekt>
