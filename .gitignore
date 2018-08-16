@@ -1,6 +1,6 @@
 .idea/
 bck/
-modules/__pycache__/
+src/modules/__pycache__/
 *.zip
 *.tar
 *.rar
