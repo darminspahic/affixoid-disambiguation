@@ -37,6 +37,9 @@ from sklearn.dummy import DummyClassifier
 
 from modules import file_reader as fr
 
+########################
+# GLOBAL FILE SETTINGS
+########################
 config = configparser.ConfigParser()
 config._interpolation = configparser.ExtendedInterpolation()
 config.read('config.ini')
