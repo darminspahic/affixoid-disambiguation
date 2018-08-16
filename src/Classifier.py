@@ -16,7 +16,7 @@ License: MIT License
 Version: 1.0
 
 """
-import ast
+import configparser
 import matplotlib.pyplot as plt
 
 from sklearn import svm
@@ -35,61 +35,11 @@ from sklearn.metrics import confusion_matrix
 from sklearn.metrics import roc_auc_score
 from sklearn.dummy import DummyClassifier
 
-################
-# PATH SETTINGS
-################
-DATA_FEATURES_PATH = '../data/features/'
-DATA_WSD_PATH = '../data/wsd/'
+from modules import file_reader as fr
 
-
-class Classifier:
-    """ TODO
-
-        Returns: Results
-
-        Example: CLSF = Classifier()
-
-    """
-
-    def __init__(self):
-        print('=' * 40)
-        print(Style.BOLD + "Running Classifier:" + Style.END)
-        print('-' * 40)
-
-    def read_features_from_files(self, feature_files_list, path=DATA_FEATURES_PATH):
-        """TODO"""
-
-        feature_instances = []
-        files = []
-
-        for file in feature_files_list:
-            f = open(path+file, 'r', encoding='utf-8')
-            files.append(f)
-
-        zipped_files = zip(*files)
-
-        for line in zipped_files:
-            feature_vector = []
-            for t in line:
-                vec = t.split()
-                for v in vec:
-                    item = ast.literal_eval(v)  # evaluate type
-                    feature_vector.append(item)
-            feature_instances.append(feature_vector)
-
-        return feature_instances
-
-    def read_labels_from_file(self, file, path=DATA_FEATURES_PATH):
-        """"""
-
-        labels = []
-
-        with open(path+file, 'r', encoding='utf-8') as feat_1:
-            for line in feat_1:
-                item = ast.literal_eval(line)
-                labels.append(item)
-
-        return labels
+config = configparser.ConfigParser()
+config._interpolation = configparser.ExtendedInterpolation()
+config.read('config.ini')
 
 
 class Style:
@@ -127,25 +77,23 @@ if __name__ == "__main__":
         'f18_' = PMI Scores for first and second part of word
     """
 
-    CLSF = Classifier()
-
-    pref_X = CLSF.read_features_from_files(['f2_pref.txt', 'f3_pref.txt', 'f4_pref.txt',
+    pref_X = fr.read_features_from_files(['f2_pref.txt', 'f3_pref.txt', 'f4_pref.txt',
                                             'f5_pref.txt',
                                             'f6_pref.txt', 'f7_pref.txt', 'f8_pref.txt',
                                             'f9_pref.txt', 'f10_pref.txt', 'f11_pref.txt',
                                             'f12_pref.txt', 'f13_pref.txt', 'f14_pref.txt',
                                             'f15_pref.txt', 'f16_pref.txt', 'f17_pref.txt',
                                             'f18_pref.txt'
-                                            ])
+                                            ], path=config.get('PathSettings', 'DataFeaturesPath'))
 
-    suff_X = CLSF.read_features_from_files(['f2_suff.txt', 'f3_suff.txt', 'f4_suff.txt',
+    suff_X = fr.read_features_from_files(['f2_suff.txt', 'f3_suff.txt', 'f4_suff.txt',
                                             'f5_suff.txt',
                                             'f6_suff.txt', 'f7_suff.txt', 'f8_suff.txt',
                                             'f9_suff.txt', 'f10_suff.txt', 'f11_suff.txt',
                                             'f12_suff.txt', 'f13_suff.txt', 'f14_suff.txt',
                                             'f15_suff.txt', 'f16_suff.txt', 'f17_suff.txt',
                                             'f18_suff.txt'
-                                            ])
+                                            ], path=config.get('PathSettings', 'DataFeaturesPath'))
 
     """ Scale data """
     scaler_s = preprocessing.StandardScaler()
@@ -161,8 +109,8 @@ if __name__ == "__main__":
     # print(suff_X_scaled[0])
 
     """ Labels """
-    pref_y = CLSF.read_labels_from_file('f1_pref.txt')
-    suff_y = CLSF.read_labels_from_file('f1_suff.txt')
+    pref_y = fr.read_labels_from_file('f1_pref.txt', path=config.get('PathSettings', 'DataFeaturesPath'))
+    suff_y = fr.read_labels_from_file('f1_suff.txt', path=config.get('PathSettings', 'DataFeaturesPath'))
 
     """ Split data """
     X_train_pref, X_test_pref, y_train_pref, y_test_pref = train_test_split(pref_X_scaled, pref_y, test_size=0.3, random_state=5, shuffle=True)
@@ -279,11 +227,11 @@ if __name__ == "__main__":
     print(Style.BOLD + "Scores for Word Sense Disambiguation" + Style.END)
     print('-' * 40)
 
-    pref_WSD_labels = CLSF.read_features_from_files(['f0_pref_wsd_final.txt'], path=DATA_WSD_PATH)
-    pref_WSD_scores = CLSF.read_features_from_files(['f1_pref_wsd_final.txt'], path=DATA_WSD_PATH)
+    pref_WSD_labels = fr.read_features_from_files(['f0_pref_wsd_final.txt'], path=config.get('PathSettings', 'DataWsdPath'))
+    pref_WSD_scores = fr.read_features_from_files(['f1_pref_wsd_final.txt'], path=config.get('PathSettings', 'DataWsdPath'))
 
-    suff_WSD_labels = CLSF.read_features_from_files(['f0_suff_wsd_final.txt'], path=DATA_WSD_PATH)
-    suff_WSD_scores = CLSF.read_features_from_files(['f1_suff_wsd_final.txt'], path=DATA_WSD_PATH)
+    suff_WSD_labels = fr.read_features_from_files(['f0_suff_wsd_final.txt'], path=config.get('PathSettings', 'DataWsdPath'))
+    suff_WSD_scores = fr.read_features_from_files(['f1_suff_wsd_final.txt'], path=config.get('PathSettings', 'DataWsdPath'))
 
     print(Style.BOLD + 'WSD SCORES Prefixoids' + Style.END)
     print('Precision: ', precision_score(pref_WSD_labels, pref_WSD_scores))
