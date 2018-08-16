@@ -16,19 +16,22 @@ License: MIT License
 Version: 1.0
 
 """
-
+import configparser
 import itertools
 import json
 import requests
 import sys
-import io
 import time
-import urllib.parse
 import nltk
 import warnings
 import random
 import shutil
 import os.path
+
+from modules import dictionaries as dc
+from modules import file_writer as fw
+from modules import file_reader as fr
+from modules import helper_functions as hf
 
 from sklearn.metrics import f1_score
 from sklearn.metrics import precision_score
@@ -43,9 +46,16 @@ from nltk.tokenize import RegexpTokenizer
 nltk.download('punkt', quiet=True)
 nltk.download('stopwords', quiet=True)
 
-################
+########################
+# GLOBAL FILE SETTINGS
+########################
+config = configparser.ConfigParser()
+config._interpolation = configparser.ExtendedInterpolation()
+config.read('config.ini')
+
+########################
 # GermaNet & WordNet
-################
+########################
 try:
     ger = load_germanet()
 except:
@@ -64,7 +74,9 @@ stop_words = set(german_stopwords)
 # word_tok = TreebankWordTokenizer()
 word_tok = RegexpTokenizer(r'\w+')
 
+########################
 # Sketch Engine
+########################
 s = requests.Session()
 base_url = 'https://api.sketchengine.co.uk/bonito/run.cgi'
 corpname = 'sdewac2'
@@ -84,20 +96,8 @@ api_key: YNSC0B9OXN57XB48T9HWUFFLPY4TZ6OE
 ################
 # PATH SETTINGS
 ################
-DATA_FINAL_PATH = '../data/final/'
-DATA_WSD_PATH = '../data/wsd/'
 DATA_WSD_CORP_SENTENCES_PATH = '../data/wsd/' + corpname + '/sentences/'
 DATA_WSD_CORP_SENTENCES_FINAL = '../data/wsd/' + corpname + '/final/'
-
-################
-# FILE SETTINGS
-################
-FINAL_PREFIXOID_FILE = 'binary_unique_instance_prefixoid_segmentations.txt'
-FINAL_SUFFIXOID_FILE = 'binary_unique_instance_suffixoid_segmentations.txt'
-
-""" WSD Dictionaries """
-PREF_JSON_DICT = 'pref_dictionary.json'
-SUFF_JSON_DICT = 'suff_dictionary.json'
 
 # TODO: add global settings
 settings = {
@@ -135,188 +135,10 @@ class Wsd:
 
         try:
             print('Running...')
-            self.definition_dict = self.read_json_from_file(json_dict)
+            self.definition_dict = fr.read_json_from_file(json_dict)
 
         except FileNotFoundError:
             print('Please set correct paths for data.')
-
-    def create_affixoid_dictionary(self, affixoid_file, class_name):
-        """ This function creates a dictionary with class instances of affixoids
-
-            Args:
-                affixoid_file (file): File with affixoid instances
-                class_name (str): Class label (Y|N)
-
-            Returns:
-                Dictionary with class instances
-
-            Example:
-                >>> self.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE, 'Y')
-
-        """
-        dictionary = {}
-        counter = 0
-
-        with open(affixoid_file, 'r', encoding='utf-8') as f:
-            for line in f:
-                word = line.strip().split()
-                dict_key = word[-3]
-                dictionary.update({dict_key: counter})
-
-        for key in dictionary.keys():
-            with open(affixoid_file, 'r', encoding='utf-8') as f:
-                for line in f:
-                    word = line.strip().split()
-                    if key in word[-3] and class_name in word[-1]:
-                        counter += 1
-                        dictionary.update({key: counter})
-            counter = 0
-
-        return dictionary
-
-    def create_empty_dictionary(self, affixoid_file):
-        """ This function creates a dictionary with class instances of affixoids
-
-            Args:
-                affixoid_file (file): File with affixoid instances
-                class_name (str): Class label (Y|N)
-
-            Returns:
-                Dictionary with class instances
-
-            Example:
-                >>> self.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE, 'Y')
-
-        """
-        dictionary = {}
-
-        with open(affixoid_file, 'r', encoding='utf-8') as f:
-            for line in f:
-                word = line.strip().split()
-                dict_key = word[-3]
-                dictionary.update({dict_key: []})
-
-        return dictionary
-
-    def read_file_to_list(self, affixoid_file):
-        """ This function reads a tab-separated file with affixoids and returns a list of lines from file
-
-            Args:
-                affixoid_file (file): File with affixoid instances
-
-            Returns:
-                List of lines from file
-
-            Example:
-                >>> self.read_file_to_list(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE)
-
-        """
-        file_as_list = []
-
-        with open(affixoid_file, 'r', encoding='utf-8') as f:
-            for line in f:
-                word = line.strip().split()
-                if len(word) > 1:
-                    file_as_list.append(word)
-                else:
-                    file_as_list.append(word[0])
-
-        return file_as_list
-
-    def write_list_to_file(self, input_list, output_file, split_second_word=False):
-        """ This function reads a list with affixoids or features and writes lines to a file
-
-            Args:
-                input_list (list): List with affixoid instances or features
-                output_file (file): Output file
-                split_second_word (bool): Split second word in lists ['Abfalldreck', 'Abfall|Dreck', 'Dreck', 'Schmutz', 'N']
-
-            Returns:
-                Output file
-
-            Example:
-                >>> self.write_list_to_file(['Bilderbuch', 'Absturz'], 'out.txt')
-
-        """
-
-        f = open(output_file, 'w', encoding='utf-8')
-
-        for item in input_list:
-            if split_second_word:
-                split_word = self.split_word_at_pipe(item[1])
-                output_line = item[0] + '\t' + split_word[0] + '\t' + split_word[1]
-
-            else:
-                if type(item) == list:
-                    sublist = item
-                    output_line = '\t'.join([str(x) for x in sublist])
-                else:
-                    output_line = item
-
-            f.write(str(output_line) + '\n')
-
-        print(Style.BOLD + 'File written to:' + Style.END, output_file)
-
-        f.close()
-
-    def write_dict_to_file(self, dictionary, output_file):
-        """ Helper function to write a dictionary as string to a file. Import via ast module """
-
-        with io.open(output_file, 'w', encoding='utf8') as data:
-            data.write(str(dictionary))
-
-        print(Style.BOLD + 'Dictionary written to:' + Style.END, output_file)
-
-    def read_json_from_file(self, json_file):
-        """ Helper function to read a json file. """
-        j = open(json_file, 'r', encoding='utf-8')
-        json_data = json.load(j)
-
-        return json_data
-
-    def transform_class_name_to_binary(self, class_name):
-        """ This function transforms class labels to binary indicators
-
-            Args:
-                class_name (str): Class label (Y|N)
-
-            Returns:
-                Binary indicator for class label [0,1]
-
-            Example:
-                >>> self.transform_class_name_to_binary('Y')
-
-        """
-
-        if class_name == 'Y':
-            return 1
-
-        if class_name == 'N':
-            return 0
-
-        else:
-            print(Style.BOLD + 'Class Label not known. Exiting program' + Style.END)
-            sys.exit()
-
-    def split_word_at_pipe(self, word):
-        """ This function splits a word separated by a | symbol
-
-            Args:
-                word (str): Word with a pipe symbol
-
-            Returns:
-                A list of split items
-
-            Examples:
-                >>> self.split_word_at_pipe('Bilderbuch|Absturz')
-
-        """
-
-        if '|' in word:
-            return word.split('|')
-
-        else:
-            return [word, word]
 
     def is_in_germanet(self, word):
         """ This function parses GermaNet for a word and returns a boolean if the word is found """
@@ -733,7 +555,7 @@ class Wsd:
         for i in inventory_list:
             if i[2] == word and self.has_sentence(i[0]):
                 # print('Line:', str(counter) + ' ===============================', i[0], i[-1])
-                feat_0 = self.transform_class_name_to_binary(i[-1])
+                feat_0 = hf.transform_class_name_to_binary(i[-1])
                 feat_1 = self.lesk(i[2], i[0], n_dict, y_dict, i[-1])
                 feat_2 = random.randint(0, 1)
                 feat_3 = self.return_most_frequent_sense(i[2], n_dict, y_dict)
@@ -887,10 +709,10 @@ if __name__ == "__main__":
     """
         PREFIXOIDS WSD
     """
-    PREF_WSD = Wsd('Prefixoids', DATA_WSD_PATH + PREF_JSON_DICT)
-    pref_inventory_list = PREF_WSD.read_file_to_list(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE)
-    n_pref_dict = PREF_WSD.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE, 'N')
-    y_pref_dict = PREF_WSD.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE, 'Y')
+    PREF_WSD = Wsd('Prefixoids', config.get('WsdDictionaries', 'PrefixoidJsonDictionary'))
+    pref_inventory_list = fr.read_file_to_list(config.get('FileSettings', 'FinalPrefixoidFile'))
+    n_pref_dict = dc.create_affixoid_dictionary(config.get('FileSettings', 'FinalPrefixoidFile'), 'N')
+    y_pref_dict = dc.create_affixoid_dictionary(config.get('FileSettings', 'FinalPrefixoidFile'), 'Y')
 
     print(Style.BOLD + 'Total:' + Style.END)
     print('N:\t', n_pref_dict)
@@ -899,8 +721,8 @@ if __name__ == "__main__":
     # Randomize items so the smaller batch is mixed; keep seed 1395
     random.Random(5).shuffle(pref_inventory_list)
 
-    pref_dictionary_n_context = PREF_WSD.create_empty_dictionary(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE)
-    pref_dictionary_y_context = PREF_WSD.create_empty_dictionary(DATA_FINAL_PATH + FINAL_PREFIXOID_FILE)
+    pref_dictionary_n_context = dc.create_empty_dictionary(config.get('FileSettings', 'FinalPrefixoidFile'))
+    pref_dictionary_y_context = dc.create_empty_dictionary(config.get('FileSettings', 'FinalPrefixoidFile'))
 
     pref_split_dictionary_n = pref_dictionary_n_context.copy()
     pref_split_dictionary_y = pref_dictionary_y_context.copy()
@@ -963,7 +785,7 @@ if __name__ == "__main__":
             if os.path.isfile(DATA_WSD_CORP_SENTENCES_FINAL + p[0] + '.json') and k == p[2]:
                 counter += 1
                 # print('Line:', str(counter) + ' ===============================', p[0], p[-1])
-                f0 = PREF_WSD.transform_class_name_to_binary(p[-1])
+                f0 = hf.transform_class_name_to_binary(p[-1])
                 f1 = PREF_WSD.lesk(p[2], p[0], n_pref_dict, y_pref_dict, class_name=False)
                 f0_pref_wsd_labels.append(f0)
                 f1_pref_wsd_scores.append(f1)
@@ -991,19 +813,19 @@ if __name__ == "__main__":
         PREF_WSD.print_scores(k, f0_item_labels, f1_item_scores, f2_item_random_scores, baseline_type='Random')
 
     PREF_WSD.print_scores('Total', f0_pref_wsd_labels, f1_pref_wsd_scores, f2_pref_random_scores, baseline_type='Random')
-    PREF_WSD.write_dict_to_file(pref_dictionary_n_context, 'modules/pref_n.txt')
-    PREF_WSD.write_dict_to_file(pref_dictionary_y_context, 'modules/pref_y.txt')
-    PREF_WSD.write_list_to_file(f0_pref_wsd_labels, DATA_WSD_PATH + 'f0_pref_wsd_final.txt')
-    PREF_WSD.write_list_to_file(f1_pref_wsd_scores, DATA_WSD_PATH + 'f1_pref_wsd_final.txt')
-    PREF_WSD.write_list_to_file(f2_pref_random_scores, DATA_WSD_PATH + 'f2_pref_wsd_final.txt')
+    fw.write_dict_to_file(pref_dictionary_n_context, config.get('PathSettings', 'DataWsdPath') + corpname + '/pref_n.txt')
+    fw.write_dict_to_file(pref_dictionary_y_context, config.get('PathSettings', 'DataWsdPath') + corpname + '/pref_y.txt')
+    fw.write_list_to_file(f0_pref_wsd_labels, config.get('PathSettings', 'DataWsdPath') + 'f0_pref_wsd_final.txt')
+    fw.write_list_to_file(f1_pref_wsd_scores, config.get('PathSettings', 'DataWsdPath') + 'f1_pref_wsd_final.txt')
+    fw.write_list_to_file(f2_pref_random_scores, config.get('PathSettings', 'DataWsdPath') + 'f2_pref_wsd_final.txt')
 
     """
         SUFFIXOIDS WSD
     """
-    SUFF_WSD = Wsd('Suffixoids', DATA_WSD_PATH + SUFF_JSON_DICT)
-    suff_inventory_list = SUFF_WSD.read_file_to_list(DATA_FINAL_PATH + FINAL_SUFFIXOID_FILE)
-    n_suff_dict = SUFF_WSD.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_SUFFIXOID_FILE, 'N')
-    y_suff_dict = SUFF_WSD.create_affixoid_dictionary(DATA_FINAL_PATH + FINAL_SUFFIXOID_FILE, 'Y')
+    SUFF_WSD = Wsd('Suffixoids', config.get('WsdDictionaries', 'SuffixoidJsonDictionary'))
+    suff_inventory_list = fr.read_file_to_list(config.get('FileSettings', 'FinalSuffixoidFile'))
+    n_suff_dict = dc.create_affixoid_dictionary(config.get('FileSettings', 'FinalSuffixoidFile'), 'N')
+    y_suff_dict = dc.create_affixoid_dictionary(config.get('FileSettings', 'FinalSuffixoidFile'), 'Y')
 
     print(Style.BOLD + 'Total:' + Style.END)
     print('N:\t', n_suff_dict)
@@ -1011,8 +833,8 @@ if __name__ == "__main__":
 
     random.Random(5).shuffle(suff_inventory_list)
 
-    suff_dictionary_n_context = SUFF_WSD.create_empty_dictionary(DATA_FINAL_PATH + FINAL_SUFFIXOID_FILE)
-    suff_dictionary_y_context = SUFF_WSD.create_empty_dictionary(DATA_FINAL_PATH + FINAL_SUFFIXOID_FILE)
+    suff_dictionary_n_context = dc.create_empty_dictionary(config.get('FileSettings', 'FinalSuffixoidFile'))
+    suff_dictionary_y_context = dc.create_empty_dictionary(config.get('FileSettings', 'FinalSuffixoidFile'))
 
     suff_split_dictionary_n = suff_dictionary_n_context.copy()
     suff_split_dictionary_y = suff_dictionary_y_context.copy()
@@ -1071,7 +893,7 @@ if __name__ == "__main__":
             if os.path.isfile(DATA_WSD_CORP_SENTENCES_FINAL + p[0] + '.json') and k == p[2]:
                 counter += 1
                 # print('Line:', str(counter) + ' ===============================', p[0], p[-1])
-                f0 = SUFF_WSD.transform_class_name_to_binary(p[-1])
+                f0 = hf.transform_class_name_to_binary(p[-1])
                 f1 = SUFF_WSD.lesk(p[2], p[0], n_suff_dict, y_suff_dict, class_name=False)
                 f0_suff_wsd_labels.append(f0)
                 f1_suff_wsd_scores.append(f1)
@@ -1099,11 +921,11 @@ if __name__ == "__main__":
         SUFF_WSD.print_scores(k, f0_item_labels, f1_item_scores, f2_item_random_scores, baseline_type='Random')
 
     SUFF_WSD.print_scores('Total', f0_suff_wsd_labels, f1_suff_wsd_scores, f2_suff_random_scores, baseline_type='Random')
-    SUFF_WSD.write_dict_to_file(suff_dictionary_n_context, 'modules/suff_n.txt')
-    SUFF_WSD.write_dict_to_file(suff_dictionary_y_context, 'modules/suff_y.txt')
-    SUFF_WSD.write_list_to_file(f0_suff_wsd_labels, DATA_WSD_PATH + 'f0_suff_wsd_final.txt')
-    SUFF_WSD.write_list_to_file(f1_suff_wsd_scores, DATA_WSD_PATH + 'f1_suff_wsd_final.txt')
-    SUFF_WSD.write_list_to_file(f2_suff_random_scores, DATA_WSD_PATH + 'f2_suff_wsd_final.txt')
+    fw.write_dict_to_file(suff_dictionary_n_context, config.get('PathSettings', 'DataWsdPath') + corpname + '/suff_n.txt')
+    fw.write_dict_to_file(suff_dictionary_y_context, config.get('PathSettings', 'DataWsdPath') + corpname + '/suff_y.txt')
+    fw.write_list_to_file(f0_suff_wsd_labels, config.get('PathSettings', 'DataWsdPath') + 'f0_suff_wsd_final.txt')
+    fw.write_list_to_file(f1_suff_wsd_scores, config.get('PathSettings', 'DataWsdPath') + 'f1_suff_wsd_final.txt')
+    fw.write_list_to_file(f2_suff_random_scores, config.get('PathSettings', 'DataWsdPath') + 'f2_suff_wsd_final.txt')
 
 
     """ NEW """
