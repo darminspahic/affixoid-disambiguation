@@ -10,12 +10,13 @@ Module name:
 dictionaries
 
 Short description:
-This module extracts manipulates various types of dictionaries
+This module manipulates various types of dictionaries
 
 License: MIT License
 Version: 1.0
 
 """
+
 import ast
 import bz2
 import sys
@@ -38,6 +39,7 @@ def create_affixoid_dictionary(affixoid_file, class_name):
             {'Bilderbuch': 1}
 
     """
+
     dictionary = {}
     counter = 0
 
@@ -190,37 +192,73 @@ def create_vector_dictionary(vector_file, multiword=False):
     return dictionary
 
 
-def create_splitword_dictionary(splitword):
-    """ Helper function create a dictionary from splitwords """
+def create_dictionary_from_word(word):
+    """ This function creates a dictionary from splitwords
+
+        Args:
+            splitword (str): Word
+
+        Returns:
+            Dictionary with word as key and 0 as value
+
+        Example:
+            >>> create_dictionary_from_word('Bilderbuch')
+            {'Bilderbuch': 0}
+
+    """
 
     dictionary = {}
-    dict_key = splitword
+    dict_key = word
     dictionary.update({dict_key: 0})
 
     return dictionary
 
 
 def create_polarity_dict(polarity_file):
-    """ Helper function to create a polarity dictionary, where key = word and value = [vector of values] """
+    """ Helper function to create a polarity dictionary, where key = word and value = [vector of values]
+
+        Args:
+            polarity_file (file): File with polarity values from SentiMerge
+
+        Returns:
+            Dictionary with vector values as list
+
+        Example:
+            >>> create_polarity_dict('doctests/polarity.txt')
+            {'Aal': '-0.017532794118768923'}
+
+    """
 
     dictionary = {}
 
     with open(polarity_file, 'r', encoding='utf-8') as f:
         for line in f:
             word = line.strip().split()
-            # dict_key = word[0]
             if word[1] == 'N' or word[1] == 'NE':
                 dict_key = word[0].capitalize()
             else:
                 dict_key = word[0]
-            dict_value = word[2]
+            dict_value = word[2]  # get sentiment value only
             dictionary.update({dict_key: dict_value})
 
     return dictionary
 
 
 def extract_dictionary_values(word, polarity_dict):
-    """ Helper function to extract polarity for a word from dictionary """
+    """ Helper function to extract polarity for a word from dictionary
+
+        Args:
+            word (str):
+            polarity_dict (dictionary): Dictionary with values from SentiMerge
+
+        Returns:
+            Values as list
+
+        Example:
+            >>> extract_dictionary_values('Aal', {'Aal': '-0.017532794118768923'})
+            -0.017532794118768923
+
+    """
 
     if word in polarity_dict.keys():
         value = polarity_dict[word]
