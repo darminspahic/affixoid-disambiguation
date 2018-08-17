@@ -50,7 +50,7 @@ def read_file_to_list(affixoid_file):
         return file_as_list
 
     except FileNotFoundError:
-        print('Error. File not found:', affixoid_file)
+        print('Error! Can\'t find:', affixoid_file)
         sys.exit('File not found')
 
 
@@ -76,7 +76,7 @@ def read_dict_from_file(dictionary_file):
         return dictionary
 
     except FileNotFoundError:
-        print('Error. Dictionary not found:', dictionary_file)
+        print('Error! Can\'t find:', dictionary_file)
         sys.exit('Dictionary not found')
 
 
@@ -102,7 +102,7 @@ def read_json_from_file(json_file):
         return json_data
 
     except FileNotFoundError:
-        print('Error. JSON file not found:', json_file)
+        print('Error! Can\'t find:', json_file)
         sys.exit('JSON file not found')
 
 
@@ -144,7 +144,7 @@ def read_features_from_files(feature_files_list, path):
         return feature_instances
 
     except FileNotFoundError:
-        print('Error. Files not found:', feature_files_list)
+        print('Error! Can\'t find:', feature_files_list)
         sys.exit('Files not found. Please set correct path to feature lists.')
 
 
@@ -176,5 +176,5 @@ def read_labels_from_file(file, path):
         return labels
 
     except FileNotFoundError:
-        print('Error. File with labels not found:', file)
+        print('Error! Can\'t find:', file)
         sys.exit('Files not found. Please set correct path to labels lists.')
