@@ -20,13 +20,12 @@ Version: 1.0
 # import duden
 import configparser
 import math
-import matplotlib.pyplot as plt
-import numpy as np
 
 from modules import dictionaries as dc
 from modules import file_writer as fw
 from modules import file_reader as fr
 from modules import helper_functions as hf
+from modules import statistics as st
 
 from lxml import etree
 from sklearn.metrics.pairwise import cosine_similarity
@@ -69,113 +68,6 @@ class FeatureExtractor:
         print('Initializing dictionary...')
         self.fasttext_similar_words_dict = fr.read_dict_from_file(similar_words_dict)
 
-    def plot_statistics(self, dict_1, dict_2, title):
-        """ This function plots charts with affixoid statistics.
-
-            Args:
-                dict_1 (dict): Dictionary with Y instances
-                dict_2 (dict): Dictionary with N instances
-                title (str): Title of the chart
-
-            Returns:
-                Matplotlib images
-
-            Example:
-                >>> self.plot_statistics(y_pref_dict, n_pref_dict, 'Prefixoids')
-
-        """
-
-        n = len(dict_1.keys())
-
-        y_candidates = dict_1.values()
-
-        ind = np.arange(n)  # the x locations for the groups
-        width = 0.35  # the width of the bars
-
-        fig, ax = plt.subplots()
-        rects1 = ax.bar(ind, y_candidates, width, color='y')
-
-        n_candidates = dict_2.values()
-        rects2 = ax.bar(ind + width, n_candidates, width, color='r')
-
-        # adds text for labels, title and axes ticks
-        ax.set_ylabel('Counts')
-        ax.set_title('Counts per ' + title + ' candidate. Total: ' + str(sum(dict_1.values()) + sum(dict_2.values())) + '')
-        ax.set_xticks(ind + width)
-        ax.set_xticklabels((dict_1.keys()))
-
-        ax.legend((rects1[0], rects2[0]), ('Y', 'N'))
-
-        def autolabel(rects):
-            # attaches text labels
-            for rect in rects:
-                height = rect.get_height()
-                ax.text(rect.get_x() + rect.get_width() / 2., 1.05 * height, '%d' % int(height),
-                        ha='center', va='bottom')
-
-        autolabel(rects1)
-        autolabel(rects2)
-
-        plt.show()
-
-    # def search_duden_frequency(self, words_inventory):
-    #     if type(words_inventory) != list:
-    #         words_inventory = words_inventory.split()
-    #
-    #     def get_first_result(word):
-    #         duden_url = 'http://www.duden.de/suchen/dudenonline/'
-    #         r = requests.get(duden_url + word)
-    #         data = r.text
-    #         soup = BeautifulSoup(data, 'html.parser')
-    #         try:
-    #             main_sec = soup.find('section', id='block-duden-tiles-0')
-    #             a_tags = [h2.a for h2 in main_sec.find_all('h2')]
-    #             # print(a_tags[0].text)
-    #             if a_tags[0].text == word:
-    #                 return a_tags[0].get('href').split('/')[-1]
-    #             else:
-    #                 return 0
-    #         except AttributeError:
-    #             return 0
-    #
-    #     # needed for duden module
-    #     def replace_umlauts(word_list):
-    #         umlaute = {'ä': 'ae', 'ö': 'oe', 'ü': 'ue', 'Ä': 'Ae', 'Ö': 'Oe', 'Ü': 'Ue', 'ß': 'ss'}
-    #         if type(word_list) == list:
-    #             new_list = []
-    #             for word in word_list:
-    #                 no_umlaut = word.translate({ord(k): v for k, v in umlaute.items()})
-    #                 new_list.append(no_umlaut)
-    #
-    #             if len(word_list) == len(new_list):
-    #                 return new_list
-    #             else:
-    #                 print('List error')
-    #         if type(word_list) == str:
-    #             return word_list.translate({ord(k): v for k, v in umlaute.items()})
-    #         else:
-    #             print('Replace Umlauts works only on strings and lists')
-    #
-    #     words_inventory = replace_umlauts(words_inventory)
-    #     frequency_list = []
-    #
-    #     for w in words_inventory:
-    #         words = duden.get(w)
-    #         if words:
-    #             try:
-    #                 frequency_list.append(words.frequency)
-    #             except AttributeError:
-    #                 frequency_list.append(0)
-    #         else:
-    #             first_word = get_first_result(w)
-    #             words = duden.get(first_word)
-    #             try:
-    #                 frequency_list.append(words.frequency)
-    #             except AttributeError:
-    #                 frequency_list.append(0)
-    #
-    #     return frequency_list
-
     def calculate_cosine_similarity(self, word_1, word_2, fast_text_vector_dict):
         """ This function calculates cosine similarity between two words, using vector data from a FastText model
 
@@ -186,9 +78,6 @@ class FeatureExtractor:
 
             Returns:
                 Cosine similarity between word_1 and word_2
-
-            Example:
-                >>> self.calculate_cosine_similarity('Bilderbuchhochzeit', 'Bilderbuch', {'Bilderbuchhochzeit': [1], 'Bilderbuch': [1]}))
 
         """
 
@@ -214,9 +103,6 @@ class FeatureExtractor:
 
             Returns:
                 Vector with length of GN_SUPERSENSES.values()
-
-            Example:
-                >>> self.search_germanet_supersenses('Husky', {'Tier': 0, 'Mensch': 0})
 
         """
 
@@ -271,14 +157,6 @@ class FeatureExtractor:
 
         return False
 
-    def is_in_germanet_fast(self, word):
-        """ A slightly faster version that parses GermaNet for a word and returns a boolean if the word is found """
-
-        if GN_ROOT.xpath('.//orthForm[text()="'+word+'"]') is not None:
-            return True
-        else:
-            return False
-
     def return_similar_words_from_fasttext(self, word):
         """ This function returns a list of similar words from fastText """
         if word in self.fasttext_similar_words_dict.keys():
@@ -315,9 +193,6 @@ class FeatureExtractor:
 
             Returns:
                 Most similar word
-
-            Example:
-                >>> self.return_similar_cosine_word('Bilderbuchhochzeit', fast_text_vector_dict, from_germanet=True, threshold=0.4, polarity_dict={})
 
         """
 
@@ -384,7 +259,7 @@ if __name__ == "__main__":
     print('N:\t', n_pref_dict)
     print('Total:\t', sum(y_pref_dict.values()) + sum(n_pref_dict.values()))
     print(len(pref_inventory_list))
-    # PREF.plot_statistics(y_pref_dict, n_pref_dict, 'Prefixoids')
+    # st.plot_statistics(y_pref_dict, n_pref_dict, 'Prefixoids')
 
     f0_pref_list = []  # prefix coded into dictionary
     f1_pref_list = []  # binary indicator, if affixoid
@@ -632,7 +507,7 @@ if __name__ == "__main__":
     print('N:\t', n_suff_dict)
     print('Total:\t', sum(y_suff_dict.values()) + sum(n_suff_dict.values()))
     print(len(suff_inventory_list))
-    # SUFF.plot_statistics(y_suff_dict, n_suff_dict, 'Suffixoids')
+    # st.plot_statistics(y_suff_dict, n_suff_dict, 'Suffixoids')
 
     f0_suff_list = []  # prefix coded into dictionary
     f1_suff_list = []  # binary indicator, if affixoid
