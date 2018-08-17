@@ -72,7 +72,6 @@ german_stopwords.extend(('dass', 'bzw'))
 stop_words = set(german_stopwords)
 
 # Word Tokenizer
-# word_tok = TreebankWordTokenizer()
 word_tok = RegexpTokenizer(r'\w+')
 
 ########################
@@ -84,14 +83,10 @@ corpname = 'sdewac2'
 corpname = 'detenten13_rft3'
 username = 'spahic'
 api_key = '159b841f61a64092bc630d20b0f56c93'
-# username = 'api_testing'
-# api_key = 'YNSC0B9OXN57XB48T9HWUFFLPY4TZ6OE'
 method = '/view'
 """
 https://www.sketchengine.eu/documentation/api-documentation/
 https://www.sketchengine.eu/documentation/methods-documentation/
-login: api_testing
-api_key: YNSC0B9OXN57XB48T9HWUFFLPY4TZ6OE
 """
 
 ################
@@ -100,7 +95,7 @@ api_key: YNSC0B9OXN57XB48T9HWUFFLPY4TZ6OE
 DATA_WSD_CORP_SENTENCES_PATH = '../data/wsd/' + corpname + '/sentences/'
 DATA_WSD_CORP_SENTENCES_FINAL = '../data/wsd/' + corpname + '/final/'
 
-# TODO: add global settings
+# Lesk settings
 settings = {
     "return_lemmas": True,
     "return_hypernyms": True,
@@ -134,12 +129,8 @@ class Wsd:
         print(Style.BOLD + "Running word sense disambiguation on:" + Style.END, string)
         print('-' * 40)
 
-        try:
-            print('Running...')
-            self.definition_dict = fr.read_json_from_file(json_dict)
-
-        except FileNotFoundError:
-            print('Please set correct paths for data.')
+        print('Running...')
+        self.definition_dict = fr.read_json_from_file(json_dict)
 
     def is_in_germanet(self, word):
         """ This function parses GermaNet for a word and returns a boolean if the word is found """
@@ -211,8 +202,6 @@ class Wsd:
                 print('===')
                 print('Hypernym distances for', word_1, len(p[0].hypernym_distances), sorted(list(p[0].hypernym_distances), key=lambda tup: tup[1]))
                 print('Hypernym distances for:', word_2, len(p[1].hypernym_distances), sorted(list(p[1].hypernym_distances), key=lambda tup: tup[1]))
-                # print(len(p[0].hypernym_paths), p[0].hypernym_paths)
-                # print(len(p[1].hypernym_paths), p[1].hypernym_paths)
                 print('LCH:', p[0], p[1], '=', p[0].sim_lch(p[1]))
                 print('RES:', p[0], p[1], '=', p[0].sim_res(p[1]))
                 print('JCN:', p[0], p[1], '=', p[0].dist_jcn(p[1]))
@@ -231,7 +220,25 @@ class Wsd:
              lemmatize=settings["lemmatize"],
              quiet=True, print_well_performing_items=True):
 
-        """ TODO: optimize this function """
+        """ This function is an implementation of a simple Lesk algorithm
+
+            Args:
+                ambigous_part_of_word (string): 'Bilderbuch'
+                full_word (string): 'Bilderbuchhochzeit'
+                n_dict (dict): Dictionary with non-affixoid counts
+                y_dict (dict): Dictionary with affixoid counts
+                class_name (str or bool): 'Y' or 'N'
+                remove_stopwords (bool): Removes stopwords from definitons and sentence
+                join_sense_and_example (bool): Joins the text from definition and example
+                use_synonyms (bool): Use synonyms for ambigous part of word
+                lemmatize (bool): Lemmatize words in definitons and sentence
+                quiet (bool): Print overlaps, senses etc
+                print_well_performing_items (bool): Print items with high overlaps for analysis
+
+            Returns:
+                Best sense for a given word
+
+        """
 
         score_sense_0 = 0
         score_sense_1 = 0
@@ -407,16 +414,26 @@ class Wsd:
             # return most_frequent_sense
             return 0
 
-    def get_sentence_for_word(self, word,
-                              open_locally=settings["open_locally"],
-                              write_to_file=settings["write_to_file"],
-                              return_keyword=settings["return_keyword"],
-                              return_single_sentence=settings["return_single_sentence"]):
-        """ TODO """
-        """
-            if you want to do fewer than 50 requests, you don’t need to use any waiting,
-            if you want to do up to 900 requests, you need to use the interval of 4 seconds per query,
-            if you want to do more than 2000 requests, you need to use interval ca 44 seconds.
+    def get_sentence_for_word(self, word, open_locally=settings["open_locally"], write_to_file=settings["write_to_file"],
+                              return_keyword=settings["return_keyword"], return_single_sentence=settings["return_single_sentence"]):
+
+        """ This function returns an example sentence for a given word
+
+            Args:
+                word (string): 'Bilderbuchhochzeit'
+                open_locally (bool): Opens the sentence from local folder
+                write_to_file (bool): Writes the JSON response to local folder
+                return_keyword (bool): Returns the word itself with the text
+                return_single_sentence (bool): Returns the first sentence from the response
+
+            Returns:
+                Example sentence for a given word
+
+            NOTE:
+                if you want to do fewer than 50 requests, you don’t need to use any waiting,
+                if you want to do up to 900 requests, you need to use the interval of 4 seconds per query,
+                if you want to do more than 2000 requests, you need to use interval ca 44 seconds.
+
         """
 
         def parse_result(json_obj):
@@ -476,12 +493,6 @@ class Wsd:
                     return parse_result(data)
             except FileNotFoundError:
                 return False
-                # remove this
-                # print('File not found. Trying to load from:', base_url)
-                # self.get_sentence_for_word(word, open_locally=False, write_to_file=True)
-                # with open(DATA_WSD_CORP_SENTENCES_PATH + word + '.json', 'r') as f:
-                #     data = json.load(f)
-                #     return parse_result(data)
 
         else:
             time.sleep(10)
@@ -502,19 +513,14 @@ class Wsd:
                 return parse_result(json_response)
 
     def has_sentence(self, word):
-        """ TODO """
+        """ Helper function to check if a given word has an example sentence """
+
         try:
             with open(DATA_WSD_CORP_SENTENCES_PATH + word + '.json', 'r') as f:
                 data = json.load(f)
                 result_count = int(data.get('concsize', '0'))
         except FileNotFoundError:
             return False
-            # remove this
-            # print('File not found. Trying to load from:', base_url)
-            # self.get_sentence_for_word(word, open_locally=False, write_to_file=True)
-            # with open(DATA_WSD_CORP_SENTENCES_PATH + word + '.json', 'r') as f:
-            #     data = json.load(f)
-            #     result_count = int(data.get('concsize', '0'))
 
         text = ''
         if result_count > 0:
@@ -529,7 +535,8 @@ class Wsd:
             return False
 
     def return_most_frequent_sense(self, word, n_dict, y_dict):
-        """ This function returns the most frequents sense for a word, given two dictionaries with instances. """
+        """ This function returns the most frequent sense for a word, given two dictionaries with instances. """
+
         count_n = n_dict[word]
         count_y = y_dict[word]
 
@@ -540,7 +547,22 @@ class Wsd:
         else:
             return random.randint(0, 1)
 
-    def loop_over_key(self, word, inventory_list, n_dict, y_dict):
+    def loop_over_key(self, word, inventory_list, n_dict, y_dict, print_scores=True):
+        """ This function loops over a word from a dictionary
+            and returns counts of 'N' and 'Y' instances.
+            It checks if there is a sentence and calculates Lesk score.
+
+            Args:
+                word (string): 'Bilderbuch'
+                inventory_list (list): List with item inventory
+                n_dict (dict): Dictionary with non-affixoid counts
+                y_dict (dict): Dictionary with affixoid counts
+                print_scores (bool): Print scores on the go
+
+            Returns:
+                Counts of 'N' and 'Y' instances
+
+        """
 
         c_n = 0
         c_y = 0
@@ -577,14 +599,14 @@ class Wsd:
             else:
                 pass
 
-        self.print_scores(word, wsd_labels, wsd_scores, majority_scores, baseline_type='mfs')
+        if print_scores:
+            self.print_scores(word, wsd_labels, wsd_scores, majority_scores, baseline_type='mfs')
 
         return n_examples_dict, y_examples_dict
 
     def print_scores(self, word, labels, scores, baseline, baseline_type):
-        """ TODO """
-        # print(labels)
-        # print(baseline)
+        """ This function prints scores for labels and instances """
+
         warnings.filterwarnings("ignore")
         print()
         print(Style.BOLD + baseline_type + ' baseline:' + Style.END)
@@ -606,7 +628,18 @@ class Wsd:
         print()
 
     def split_files(self, word, n_count, y_count, inventory_list):
-        """ TODO """
+        """ This function splits files for final test
+
+            Args:
+                word (string): 'Bilderbuchhochzeit'
+                n_count (int): Counts of 'N' instances
+                y_count (int): Counts of 'Y' instances
+                inventory_list (list): List with item inventory
+
+            Returns:
+                Split files for final test
+
+        """
 
         n = n_count
         y = y_count
@@ -648,46 +681,6 @@ class Wsd:
                         copy_files(i[0])
                         split_n.append(0)
                         counter_yy += 1
-
-                """
-                if smaller == n:
-                    if i[-1] == 'N' and counter_n < smaller:
-                        if i[0] in N:
-                            for y in N:
-                                copy_files(i[0])
-                                counter_n += len(N)
-                        else:
-                            copy_files(i[0])
-                            counter_n += 1
-
-                    if i[-1] == 'Y' and counter_nn < smaller:
-                        if i[0] in Y:
-                            for y in Y:
-                                copy_files(i[0])
-                                counter_nn += len(Y)
-                        else:
-                            copy_files(i[0])
-                            counter_nn += 1
-
-                if smaller == y:
-                    if i[-1] == 'Y' and counter_y < smaller:
-                        if i[0] in Y:
-                            for y in Y:
-                                copy_files(i[0])
-                                counter_y += len(Y)
-                        else:
-                            copy_files(i[0])
-                            counter_y += 1
-
-                    if i[-1] == 'N' and counter_yy < smaller:
-                        if i[0] in N:
-                            for y in N:
-                                copy_files(i[0])
-                                counter_yy += len(N)
-                        else:
-                            copy_files(i[0])
-                            counter_yy += 1
-                """
             else:
                 pass
 
@@ -731,16 +724,6 @@ if __name__ == "__main__":
     pref_temp_dictionary_n = pref_dictionary_n_context.copy()
     pref_temp_dictionary_y = pref_dictionary_y_context.copy()
 
-    # print('Parsing', corpname)
-    # counter = 0
-    # for i in pref_inventory_list:
-    #     counter += 1
-    #     if counter < 2009:
-    #         pass
-    #     else:
-    #         print('Line:', str(counter) + ' ===============================', i[0], i[-1])
-    #         print(PREF_WSD.get_sentence_for_word(i[0], open_locally=False, write_to_file=True))
-
     print('Parsing sentences for prefixoids')
     for k in n_pref_dict.keys():
         counts = PREF_WSD.loop_over_key(k, pref_inventory_list, n_pref_dict, y_pref_dict)
@@ -758,10 +741,6 @@ if __name__ == "__main__":
     print('After parsing sentences:')
     print('N:\t', pref_split_dictionary_n)
     print('Y:\t', pref_split_dictionary_y)
-
-    # print(Y)
-    # for i in Y:
-    #     shutil.copy2(DATA_WSD_CORP_SENTENCES_PATH + i + '.json', DATA_WSD_CORP_SENTENCES_FINAL)  # target filename is /dst/dir/file.ext
 
     f0_pref_wsd_labels = []  # wsd labels
     f1_pref_wsd_scores = []  # wsd predicitons
@@ -843,16 +822,6 @@ if __name__ == "__main__":
     suff_temp_dictionary_n = suff_dictionary_n_context.copy()
     suff_temp_dictionary_y = suff_dictionary_y_context.copy()
 
-    # print('Parsing', corpname)
-    # counter = 0
-    # for i in suff_inventory_list:
-    #     counter += 1
-    #     if counter < 1873:
-    #         pass
-    #     else:
-    #         print('Line:', str(counter) + ' ===============================', i[0], i[-1])
-    #         print(SUFF_WSD.get_sentence_for_word(i[0], open_locally=False, write_to_file=True))
-
     print('Parsing sentences for suffixoids')
     for k in n_suff_dict.keys():
         counts = SUFF_WSD.loop_over_key(k, suff_inventory_list, n_suff_dict, y_suff_dict)
@@ -927,12 +896,3 @@ if __name__ == "__main__":
     fw.write_list_to_file(f0_suff_wsd_labels, config.get('PathSettings', 'DataWsdPath') + 'f0_suff_wsd_final.txt')
     fw.write_list_to_file(f1_suff_wsd_scores, config.get('PathSettings', 'DataWsdPath') + 'f1_suff_wsd_final.txt')
     fw.write_list_to_file(f2_suff_random_scores, config.get('PathSettings', 'DataWsdPath') + 'f2_suff_wsd_final.txt')
-
-
-    """ NEW """
-    # for k in n_pref_dict.keys():
-    #     print(PREF_WSD.create_synsets_dictionary(k, return_hypernyms=False, return_hyponyms=False, return_lemmas=False, return_wiktionary_sense=True))
-    #     print('---')
-    #
-    # print(PREF_WSD.create_synsets_dictionary('Traum', return_hypernyms=True, return_hyponyms=False, return_lemmas=True, return_wiktionary_sense=True))
-    # print(PREF_WSD.get_sentence_for_word('Traumhochzeit', open_locally=True, return_keyword=True))
