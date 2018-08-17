@@ -218,7 +218,7 @@ class Wsd:
              join_sense_and_example=settings["join_sense_and_example"],
              use_synonyms=settings["use_synonyms"],
              lemmatize=settings["lemmatize"],
-             quiet=True, print_well_performing_items=True):
+             quiet=True, print_well_performing_items=True, weights=2):
 
         """ This function is an implementation of a simple Lesk algorithm
 
@@ -233,6 +233,7 @@ class Wsd:
                 use_synonyms (bool): Use synonyms for ambigous part of word
                 lemmatize (bool): Lemmatize words in definitons and sentence
                 quiet (bool): Print overlaps, senses etc
+                weights (int): Weights for multiplying scores
                 print_well_performing_items (bool): Print items with high overlaps for analysis
 
             Returns:
@@ -304,8 +305,8 @@ class Wsd:
             # Other Word
             if self.get_sentence_for_word(full_word):
                 full_word_context = self.get_sentence_for_word(full_word)
-                other_word_bedeutung_words_clean = [w for w in word_tok.tokenize(full_word_context) if w.lower() not in stop_words and len(w) > 1]
-                freq_dist = FreqDist(other_word_bedeutung_words_clean)
+                context_words_clean = [w for w in word_tok.tokenize(full_word_context) if w.lower() not in stop_words and len(w) > 1]
+                freq_dist = FreqDist(context_words_clean)
             else:
                 return -1
 
@@ -316,7 +317,7 @@ class Wsd:
                 sense_1_bedeutung_words_lemmatized = [ger.lemmatise(w) for w in sense_1_bedeutung_words_clean]
                 sense_1_beispiel_words_lemmatized = [ger.lemmatise(w) for w in sense_1_beispiel_words_clean]
 
-                other_word_bedeutung_words_lemmatized = [ger.lemmatise(w) for w in other_word_bedeutung_words_clean]
+                other_word_bedeutung_words_lemmatized = [ger.lemmatise(w) for w in context_words_clean]
 
                 sense_0_bedeutung_words_clean = [value for sublist in sense_0_bedeutung_words_lemmatized for value in sublist]
                 sense_0_beispiel_words_clean = [value for sublist in sense_0_beispiel_words_lemmatized for value in sublist]
@@ -324,17 +325,17 @@ class Wsd:
                 sense_1_bedeutung_words_clean = [value for sublist in sense_1_bedeutung_words_lemmatized for value in sublist]
                 sense_1_beispiel_words_clean = [value for sublist in sense_1_beispiel_words_lemmatized for value in sublist]
 
-                other_word_bedeutung_words_clean = [value for sublist in other_word_bedeutung_words_lemmatized for value in sublist]
+                context_words_clean = [value for sublist in other_word_bedeutung_words_lemmatized for value in sublist]
 
             # Calculate overlaps
-            overlap_sense_0 = set(other_word_bedeutung_words_clean).intersection(sense_0_bedeutung_words_clean)
-            overlap_sense_1 = set(other_word_bedeutung_words_clean).intersection(sense_1_bedeutung_words_clean)
+            overlap_sense_0 = set(context_words_clean).intersection(sense_0_bedeutung_words_clean)
+            overlap_sense_1 = set(context_words_clean).intersection(sense_1_bedeutung_words_clean)
 
-            overlap_sense_0_beispiel = set(other_word_bedeutung_words_clean).intersection(sense_0_beispiel_words_clean)
-            overlap_sense_1_beispiel = set(other_word_bedeutung_words_clean).intersection(sense_1_beispiel_words_clean)
+            overlap_sense_0_beispiel = set(context_words_clean).intersection(sense_0_beispiel_words_clean)
+            overlap_sense_1_beispiel = set(context_words_clean).intersection(sense_1_beispiel_words_clean)
 
-            overlap_synonyms_0 = set(other_word_bedeutung_words_clean).intersection(id_0_synonyms)
-            overlap_synonyms_1 = set(other_word_bedeutung_words_clean).intersection(id_1_synonyms)
+            overlap_synonyms_0 = set(context_words_clean).intersection(id_0_synonyms)
+            overlap_synonyms_1 = set(context_words_clean).intersection(id_1_synonyms)
 
             if join_sense_and_example:
                 score_sense_0 += len(overlap_sense_0)
@@ -366,6 +367,9 @@ class Wsd:
                     if len(overlap_synonyms_1) > 2:
                         Y.append(full_word)
 
+            if ambigous_part_of_word in context_words_clean and weights > 1:
+                score_sense_0 += weights * 1
+
             if not quiet:
                 print(class_name)
                 print(Style.BOLD + 'Context:' + Style.END)
@@ -377,7 +381,7 @@ class Wsd:
                 print(Style.BOLD + 'Sense_1 Bedeutung:' + Style.END, sense_1_bedeutung)
                 print(Style.BOLD + 'Sense_1 Beispiel:' + Style.END, sense_1_beispiel)
                 print('-')
-                print(Style.BOLD + 'Example sentence words:' + Style.END, set(other_word_bedeutung_words_clean))
+                print(Style.BOLD + 'Example sentence words:' + Style.END, set(context_words_clean))
                 print(Style.BOLD + '10 most frequent words:' + Style.END, freq_dist.most_common(10))
                 print(Style.BOLD + 'Frequency ambigous word:' + Style.END, freq_dist[ambigous_part_of_word])
                 print('----')
