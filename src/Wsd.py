@@ -60,7 +60,7 @@ config.read('config.ini')
 try:
     ger = load_germanet()
 except:
-    print('Error. Please start mongo on GermaNet xml files: mongod --dbpath ./mongodb or refer to README.md')
+    print('Error! Please start mongodb on GermaNet xml files: mongod --dbpath ./mongodb or refer to README.md')
     sys.exit()
 
 # Sentence tokenizer
