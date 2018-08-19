@@ -79,8 +79,9 @@ word_tok = RegexpTokenizer(r'\w+')
 ########################
 s = requests.Session()
 base_url = 'https://api.sketchengine.co.uk/bonito/run.cgi'
-corpname = 'sdewac2'
-corpname = 'detenten13_rft3'
+sdewac2 = 'sdewac2'
+detenten13_rft3 = 'detenten13_rft3'
+corpname = sdewac2
 username = 'spahic'
 api_key = '159b841f61a64092bc630d20b0f56c93'
 method = '/view'
@@ -92,8 +93,8 @@ https://www.sketchengine.eu/documentation/methods-documentation/
 ################
 # PATH SETTINGS
 ################
-DATA_WSD_CORP_SENTENCES_PATH = '../data/wsd/' + corpname + '/sentences/'
-DATA_WSD_CORP_SENTENCES_FINAL = '../data/wsd/' + corpname + '/final/'
+DATA_WSD_CORP_SENTENCES_PATH = config.get('PathSettings', 'DataWsdPath') + corpname + '/sentences/'
+DATA_WSD_CORP_SENTENCES_FINAL = config.get('PathSettings', 'DataWsdPath') + corpname + '/final/'
 
 # Lesk settings
 settings = {
@@ -108,7 +109,9 @@ settings = {
     "open_locally": True,
     "write_to_file": False,
     "return_keyword": False,
-    "return_single_sentence": False
+    "return_single_sentence": False,
+    "quiet": True,
+    "print_well_performing_items": False
 }
 
 N = []
@@ -127,6 +130,7 @@ class Wsd:
     def __init__(self, string, json_dict):
         print('=' * 40)
         print(Style.BOLD + "Running word sense disambiguation on:" + Style.END, string)
+        print(Style.BOLD + "Corpus:" + Style.END, corpname)
         print('-' * 40)
 
         print('Running...')
@@ -218,7 +222,9 @@ class Wsd:
              join_sense_and_example=settings["join_sense_and_example"],
              use_synonyms=settings["use_synonyms"],
              lemmatize=settings["lemmatize"],
-             quiet=True, print_well_performing_items=True, weights=2):
+             quiet=settings["quiet"],
+             print_well_performing_items=settings["print_well_performing_items"],
+             weights=1):
 
         """ This function is an implementation of a simple Lesk algorithm
 
@@ -233,8 +239,8 @@ class Wsd:
                 use_synonyms (bool): Use synonyms for ambigous part of word
                 lemmatize (bool): Lemmatize words in definitons and sentence
                 quiet (bool): Print overlaps, senses etc
-                weights (int): Weights for multiplying scores
                 print_well_performing_items (bool): Print items with high overlaps for analysis
+                weights (int): Weights for multiplying scores
 
             Returns:
                 Best sense for a given word
@@ -428,7 +434,7 @@ class Wsd:
                 open_locally (bool): Opens the sentence from local folder
                 write_to_file (bool): Writes the JSON response to local folder
                 return_keyword (bool): Returns the word itself with the text
-                return_single_sentence (bool): Returns the first sentence from the response
+                return_single_sentence (bool): Returns one random sentence from the response
 
             Returns:
                 Example sentence for a given word
@@ -451,6 +457,8 @@ class Wsd:
                 if sentences_count > 0:
                     c = 0
                     if return_single_sentence:
+                        random.seed(1)
+                        c = random.randint(0, sentences_count)
                         left = ''
                         kwic = item_dict[c]['Kwic'][0]['str']
                         right = ''
@@ -736,11 +744,12 @@ if __name__ == "__main__":
         pref_split_dictionary_n.update({k: items_n})
         pref_split_dictionary_y.update({k: items_y})
         PREF_WSD.split_files(k, items_n, items_y, pref_inventory_list)
-        print(Style.BOLD + 'Best perfoming items according to dictionary' + Style.END)
-        print('N:', set(N))
-        print('Y:', set(Y))
-        Y = []
-        N = []
+        if settings["print_well_performing_items"]:
+            print(Style.BOLD + 'Best perfoming items according to dictionary' + Style.END)
+            print('N:', set(N))
+            print('Y:', set(Y))
+            Y = []
+            N = []
 
     print('After parsing sentences:')
     print('N:\t', pref_split_dictionary_n)
@@ -834,11 +843,12 @@ if __name__ == "__main__":
         suff_split_dictionary_n.update({k: items_n})
         suff_split_dictionary_y.update({k: items_y})
         SUFF_WSD.split_files(k, items_n, items_y, suff_inventory_list)
-        print(Style.BOLD + 'Best perfoming items according to dictionary' + Style.END)
-        print('N:', set(N))
-        print('Y:', set(Y))
-        Y = []
-        N = []
+        if settings["print_well_performing_items"]:
+            print(Style.BOLD + 'Best perfoming items according to dictionary' + Style.END)
+            print('N:', set(N))
+            print('Y:', set(Y))
+            Y = []
+            N = []
 
     print('After parsing sentences:')
     print('N:\t', suff_split_dictionary_n)
