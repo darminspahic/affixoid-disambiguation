@@ -96,7 +96,7 @@ https://www.sketchengine.eu/documentation/methods-documentation/
 DATA_WSD_CORP_SENTENCES_PATH = config.get('PathSettings', 'DataWsdPath') + corpname + '/sentences/'
 DATA_WSD_CORP_SENTENCES_FINAL = config.get('PathSettings', 'DataWsdPath') + corpname + '/final/'
 
-# Lesk settings
+# Lesk settings; details in docstrings
 settings = {
     "return_lemmas": True,
     "return_hypernyms": True,
@@ -377,7 +377,8 @@ class Wsd:
                 score_sense_0 += weights * 1
 
             if not quiet:
-                print(class_name)
+                if class_name:
+                    print(class_name)
                 print(Style.BOLD + 'Context:' + Style.END)
                 print('"', full_word_context, '"')
                 print('----')
