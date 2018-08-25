@@ -30,13 +30,13 @@ $ pip install -r src/requirements.txt
 ```
 ba-ss18/
 ├── data
-│   ├── features
-│   ├── final
-│   ├── statistics
-│   └── wsd
+│   ├── features        (output path for FeatureExtractor.py)
+│   ├── final           (gold standard data)
+│   ├── statistics      (affixoid statistics)
+│   └── wsd             (data for Lesk)
 │       └── sdewac2
-│           ├── final
-│           └── sentences
+│           ├── final       (output path when splitting data)
+│           └── sentences   (parsed sentences from sketchengine)
 ├── res
 │   ├── AffectiveNorms
 │   ├── EmoLex
@@ -47,6 +47,11 @@ ba-ss18/
 │   ├── SentiMerge
 │   └── SentiWS
 └── src
+    ├── Classifier.py
+    ├── config.ini
+    ├── FeatureExtractor.py
+    ├── requirements.txt
+    ├── Wsd.py
     └── modules
         └── doctests
 ```
@@ -61,24 +66,27 @@ $ src/config.ini
 ## Feature Extraction for word embeddings
 Before extraction, set correct path to the file with normalized pmi values (due to size not in this package) `sdewac_npmi.csv.bz2` in:
 ```bash
-$ src/config.ini
+$ config.ini
 ```
 
 and run:
 ```bash
-$ python src/FeatureExtractor.py
+$ cd src/
+$ python FeatureExtractor.py
 ```
 
 ## Word Sense Disambiguation
 Before running the Word Sense Disambiguation module make sure that the GermaNet resource (available from the University of Tübingen) and `pygermanet` are installed. More info [here](https://github.com/wroberts/pygermanet)
 ```bash
-$ python src/Wsd.py
+$ cd src/
+$ python Wsd.py
 ```
 
 ## Classification and results
 Results from `FeatureExtractor.py` and `Wsd.py` will be written to files set in `config.ini`. Default values are `ba-ss18/data/features/` and `ba-ss18/data/wsd/`. `Classifier.py` does not need GermaNet or PMI values, since the values are all available in the `features` folder. `Classifier.py` will load these features automatically and print results together with the most frequent sense baseline.
 ```bash
-$ python src/Classifier.py
+$ cd src/
+$ python Classifier.py
 ```
 
 ## Contributors
