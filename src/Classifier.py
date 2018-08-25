@@ -28,6 +28,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import ShuffleSplit
 from sklearn.model_selection import learning_curve
+from sklearn.metrics import accuracy_score
 from sklearn.metrics import f1_score
 from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
@@ -96,7 +97,7 @@ def cross_validate(clf, instances, labels):
     print('5-Fold crossvalidation:', scores)
 
 
-def print_scores(score_title, classifier, classifer_results, test_instances, test_labels):
+def print_scores(score_title, test_labels, classifer_results):
     """ Helper function for printing scores """
 
     import warnings
@@ -104,7 +105,7 @@ def print_scores(score_title, classifier, classifer_results, test_instances, tes
 
     print()
     print(Style.BOLD + 'SCORES', score_title + Style.END)
-    print('Classifier score: ', classifier.score(test_instances, test_labels))
+    print('Accuracy score: ', accuracy_score(test_labels, classifer_results))
     print()
     target_names = ['non-affixoid', 'affixoid']
     print(classification_report(test_labels, classifer_results, target_names=target_names))
@@ -301,12 +302,12 @@ if __name__ == "__main__":
 
     """ Crossvalidation """
     """ SCORES """
-    print_scores('Most frequent sense baseline for prefixoids', clf_dummy_pref, results_pref_mfs, X_test_pref, y_test_pref)
-    print_scores('Prefixoids', clf_pref, results_pref, X_test_pref, y_test_pref)
+    print_scores('Most frequent sense baseline for prefixoids', y_test_pref, results_pref_mfs)
+    print_scores('Prefixoids', y_test_pref, results_pref)
     cross_validate(svm.SVC(kernel="rbf", gamma=0.01, C=100), pref_X_scaled, pref_y)
 
-    print_scores('Most frequent sense baseline for suffixoids', clf_dummy_suff, results_suff_mfs, X_test_suff, y_test_suff)
-    print_scores('Suffixoids', clf_suff, results_suff, X_test_suff, y_test_suff)
+    print_scores('Most frequent sense baseline for suffixoids', y_test_suff, results_suff_mfs)
+    print_scores('Suffixoids', y_test_suff, results_suff)
     cross_validate(svm.SVC(kernel="rbf", gamma=0.1, C=10), suff_X_scaled, suff_y)
 
     """ Plot precision recall and learning curve """
@@ -349,7 +350,7 @@ if __name__ == "__main__":
     print()
 
     """ Data for leave-one-out tests: returns [train_instances, train_labels, test_instances, test_labels] """
-    leave_one_out_data_pref = fr.leave_one_out('Glanz', config.get('FileSettings', 'FinalPrefixoidFile'),
+    leave_one_out_data_pref = fr.leave_one_out('Traum', config.get('FileSettings', 'FinalPrefixoidFile'),
                                                ['f2_pref.txt', 'f3_pref.txt', 'f4_pref.txt',
                                                 'f5_pref.txt',
                                                 'f6_pref.txt', 'f7_pref.txt', 'f8_pref.txt',
@@ -359,7 +360,7 @@ if __name__ == "__main__":
                                                 'f18_pref.txt'
                                                 ], path=config.get('PathSettings', 'DataFeaturesPath'))
 
-    leave_one_out_data_suff = fr.leave_one_out('Dreck', config.get('FileSettings', 'FinalSuffixoidFile'),
+    leave_one_out_data_suff = fr.leave_one_out('Schwein', config.get('FileSettings', 'FinalSuffixoidFile'),
                                                ['f2_suff.txt', 'f3_suff.txt', 'f4_suff.txt',
                                                 'f5_suff.txt',
                                                 'f6_suff.txt', 'f7_suff.txt', 'f8_suff.txt',
@@ -395,5 +396,5 @@ if __name__ == "__main__":
     print(Style.BOLD + "Scores for leave-one-out tests" + Style.END)
     print('=' * 40)
 
-    print_scores('Prefixoids leave-one-out', clf_pref_loa, results_pref_loa, pref_X_test_scaled_loa, y_test_pref_loa)
-    print_scores('Suffixoids leave-one-out', clf_suff_loa, results_suff_loa, suff_X_test_scaled_loa, y_test_suff_loa)
+    print_scores('Prefixoids leave-one-out', y_test_pref_loa, results_pref_loa)
+    print_scores('Suffixoids leave-one-out', y_test_suff_loa, results_suff_loa)
