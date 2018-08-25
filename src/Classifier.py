@@ -317,38 +317,6 @@ if __name__ == "__main__":
     # plot_learning_curve(clf_pref, 'Training data prefixoids', X_train_pref, y_train_pref, ylim=(0.65, 1.0), cv=5, n_jobs=4)
     # plot_learning_curve(clf_suff, 'Training data suffixoids', X_train_suff, y_train_suff, ylim=(0.65, 1.0), cv=5, n_jobs=4)
 
-    """ 
-        Scores for: Word Sense Disambiguation 
-    """
-    print()
-    print('=' * 40)
-    print(Style.BOLD + "Scores for Word Sense Disambiguation" + Style.END)
-    print('-' * 40)
-
-    pref_WSD_labels = fr.read_features_from_files(['f0_pref_wsd_final.txt'], path=config.get('PathSettings', 'DataWsdPath'))
-    pref_WSD_scores = fr.read_features_from_files(['f1_pref_wsd_final.txt'], path=config.get('PathSettings', 'DataWsdPath'))
-
-    suff_WSD_labels = fr.read_features_from_files(['f0_suff_wsd_final.txt'], path=config.get('PathSettings', 'DataWsdPath'))
-    suff_WSD_scores = fr.read_features_from_files(['f1_suff_wsd_final.txt'], path=config.get('PathSettings', 'DataWsdPath'))
-
-    print(Style.BOLD + 'WSD SCORES Prefixoids' + Style.END)
-    print('Precision: ', precision_score(pref_WSD_labels, pref_WSD_scores))
-    print('Recall: ', recall_score(pref_WSD_labels, pref_WSD_scores))
-    print('F-1 Score: ', f1_score(pref_WSD_labels, pref_WSD_scores, average='weighted'))
-    print('ROC AUC Score: ', roc_auc_score(pref_WSD_labels, pref_WSD_scores))
-    print('\nConfusion matrix:')
-    print(confusion_matrix(pref_WSD_labels, pref_WSD_scores))
-    print()
-
-    print(Style.BOLD + 'WSD SCORES Suffixoids' + Style.END)
-    print('Precision: ', precision_score(suff_WSD_labels, suff_WSD_scores))
-    print('Recall: ', recall_score(suff_WSD_labels, suff_WSD_scores))
-    print('F-1 Score: ', f1_score(suff_WSD_labels, suff_WSD_scores, average='weighted'))
-    print('ROC AUC Score: ', roc_auc_score(suff_WSD_labels, suff_WSD_scores))
-    print('\nConfusion matrix:')
-    print(confusion_matrix(suff_WSD_labels, suff_WSD_scores))
-    print()
-
     """ Data for leave-one-out tests: returns [train_instances, train_labels, test_instances, test_labels] """
     leave_one_out_data_pref = fr.leave_one_out('Traum', config.get('FileSettings', 'FinalPrefixoidFile'),
                                                ['f2_pref.txt', 'f3_pref.txt', 'f4_pref.txt',
@@ -398,3 +366,35 @@ if __name__ == "__main__":
 
     print_scores('Prefixoids leave-one-out', y_test_pref_loa, results_pref_loa)
     print_scores('Suffixoids leave-one-out', y_test_suff_loa, results_suff_loa)
+
+    """ 
+        Scores for: Word Sense Disambiguation 
+    """
+    print()
+    print('=' * 40)
+    print(Style.BOLD + "Scores for Word Sense Disambiguation" + Style.END)
+    print('-' * 40)
+
+    pref_WSD_labels = fr.read_features_from_files(['f0_pref_wsd_final.txt'], path=config.get('PathSettings', 'DataWsdPath'))
+    pref_WSD_scores = fr.read_features_from_files(['f1_pref_wsd_final.txt'], path=config.get('PathSettings', 'DataWsdPath'))
+
+    suff_WSD_labels = fr.read_features_from_files(['f0_suff_wsd_final.txt'], path=config.get('PathSettings', 'DataWsdPath'))
+    suff_WSD_scores = fr.read_features_from_files(['f1_suff_wsd_final.txt'], path=config.get('PathSettings', 'DataWsdPath'))
+
+    print(Style.BOLD + 'WSD SCORES Prefixoids' + Style.END)
+    print('Precision: ', precision_score(pref_WSD_labels, pref_WSD_scores))
+    print('Recall: ', recall_score(pref_WSD_labels, pref_WSD_scores))
+    print('F-1 Score: ', f1_score(pref_WSD_labels, pref_WSD_scores, average='weighted'))
+    print('ROC AUC Score: ', roc_auc_score(pref_WSD_labels, pref_WSD_scores))
+    print('\nConfusion matrix:')
+    print(confusion_matrix(pref_WSD_labels, pref_WSD_scores))
+    print()
+
+    print(Style.BOLD + 'WSD SCORES Suffixoids' + Style.END)
+    print('Precision: ', precision_score(suff_WSD_labels, suff_WSD_scores))
+    print('Recall: ', recall_score(suff_WSD_labels, suff_WSD_scores))
+    print('F-1 Score: ', f1_score(suff_WSD_labels, suff_WSD_scores, average='weighted'))
+    print('ROC AUC Score: ', roc_auc_score(suff_WSD_labels, suff_WSD_scores))
+    print('\nConfusion matrix:')
+    print(confusion_matrix(suff_WSD_labels, suff_WSD_scores))
+    print()
