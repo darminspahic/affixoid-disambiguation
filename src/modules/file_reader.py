@@ -34,7 +34,7 @@ def read_file_to_list(affixoid_file):
 
         Example:
             >>> read_file_to_list('doctests/affixoid_file.txt')
-            [['Bilderbuchabsturz', 'Bilderbuch|Absturz', 'Bilderbuch', 'Ideal', 'Y']]
+            [['Bilderbuchabsturz', 'Bilderbuch|Absturz', 'Bilderbuch', 'Ideal', 'Y'], ['Blitzabwender', 'Blitz|Abwender', 'Blitz', 'Physik', 'N']]
 
     """
 
@@ -162,7 +162,7 @@ def read_labels_from_file(file, path):
 
         Example:
             >>> read_labels_from_file('f0.txt', path='doctests/')
-            [1]
+            [1, 1]
 
     """
 

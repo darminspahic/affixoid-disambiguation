@@ -36,7 +36,7 @@ def create_affixoid_dictionary(affixoid_file, class_name):
 
         Example:
             >>> create_affixoid_dictionary('doctests/affixoid_file.txt', 'Y')
-            {'Bilderbuch': 1}
+            {'Bilderbuch': 1, 'Blitz': 0}
 
     """
 
@@ -78,7 +78,7 @@ def create_empty_dictionary(affixoid_file):
 
         Example:
             >>> create_empty_dictionary('doctests/affixoid_file.txt')
-            {'Bilderbuch': []}
+            {'Bilderbuch': [], 'Blitz': []}
 
     """
 
