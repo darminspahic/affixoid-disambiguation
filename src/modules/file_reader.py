@@ -20,6 +20,8 @@ import ast
 import json
 import sys
 
+from modules import helper_functions as hf
+
 
 def read_file_to_list(affixoid_file):
     """ This function reads a tab-separated file with affixoids and returns a list of lines from file
@@ -118,7 +120,7 @@ def read_features_from_files(feature_files_list, path):
 
         Example:
             >>> read_features_from_files(['f1.txt', 'f2.txt'], path='doctests/')
-            [[1, 4853]]
+            [[1, 4853], [1, 13200]]
 
     """
 
@@ -178,3 +180,63 @@ def read_labels_from_file(file, path):
     except FileNotFoundError:
         print('Error! Can\'t find:', file)
         sys.exit('Files not found. Please set correct path to labels lists.')
+
+
+def leave_one_out(leave_out, gold_standard_file, feature_files_list, path):
+    """ This function reads features from files, zips them to a list and returns the list leaving one out for testing.
+
+        Args:
+            leave_out (str): Word which is left out for testing
+            gold_standard_file (str): Gold standard file
+            feature_files_list (list): List with features
+            path (path): Path to the folder with features
+
+        Returns:
+            Lists with train and test samples
+
+        Example:
+            >>> leave_one_out('Bilderbuch', 'doctests/affixoid_file.txt', ['f1.txt', 'f2.txt'], path='doctests/')
+            ([[1, 13200]], [0], [[1, 4853]], [1])
+
+    """
+
+    files = []
+    all_instances = []
+    train_instances = []
+    train_labels = []
+    test_instances = []
+    test_labels = []
+
+    try:
+        for file in feature_files_list:
+            f = open(path+file, 'r', encoding='utf-8')
+            files.append(f)
+
+        zipped_files = zip(*files)
+
+        for line in zipped_files:
+            feature_vector = []
+            for t in line:
+                vec = t.split()
+                for v in vec:
+                    item = ast.literal_eval(v)
+                    feature_vector.append(item)
+            all_instances.append(feature_vector)
+
+        with open(gold_standard_file, 'r', encoding='utf-8') as f:
+            c = 0
+            for line in f:
+                words = line.split()
+                if words[-3] == leave_out:
+                    test_instances.append(all_instances[c])
+                    test_labels.append(hf.transform_class_name_to_binary(words[-1]))
+                else:
+                    train_instances.append(all_instances[c])
+                    train_labels.append(hf.transform_class_name_to_binary(words[-1]))
+                c += 1
+
+        return train_instances, train_labels, test_instances, test_labels
+
+    except FileNotFoundError:
+        print('Error! Can\'t find:', feature_files_list)
+        sys.exit('Files not found. Please set correct path to feature lists.')

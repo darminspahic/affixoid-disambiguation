@@ -1,1 +1,2 @@
 Bilderbuchabsturz	Bilderbuch|Absturz	Bilderbuch	Ideal	Y
+Blitzabwender	Blitz|Abwender	Blitz	Physik	N
