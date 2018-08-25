@@ -106,7 +106,7 @@ def print_scores(score_title, classifier, classifer_results, test_instances, tes
     print(Style.BOLD + 'SCORES', score_title + Style.END)
     print('Classifier score: ', classifier.score(test_instances, test_labels))
     print()
-    target_names = ['affixoid', 'non-affixoid']
+    target_names = ['non-affixoid', 'affixoid']
     print(classification_report(test_labels, classifer_results, target_names=target_names))
     print('\nConfusion matrix:')
     print(confusion_matrix(test_labels, classifer_results))
@@ -347,3 +347,53 @@ if __name__ == "__main__":
     print('\nConfusion matrix:')
     print(confusion_matrix(suff_WSD_labels, suff_WSD_scores))
     print()
+
+    """ Data for leave-one-out tests: returns [train_instances, train_labels, test_instances, test_labels] """
+    leave_one_out_data_pref = fr.leave_one_out('Glanz', config.get('FileSettings', 'FinalPrefixoidFile'),
+                                               ['f2_pref.txt', 'f3_pref.txt', 'f4_pref.txt',
+                                                'f5_pref.txt',
+                                                'f6_pref.txt', 'f7_pref.txt', 'f8_pref.txt',
+                                                'f9_pref.txt', 'f10_pref.txt', 'f11_pref.txt',
+                                                'f12_pref.txt', 'f13_pref.txt', 'f14_pref.txt',
+                                                'f15_pref.txt', 'f16_pref.txt', 'f17_pref.txt',
+                                                'f18_pref.txt'
+                                                ], path=config.get('PathSettings', 'DataFeaturesPath'))
+
+    leave_one_out_data_suff = fr.leave_one_out('Dreck', config.get('FileSettings', 'FinalSuffixoidFile'),
+                                               ['f2_suff.txt', 'f3_suff.txt', 'f4_suff.txt',
+                                                'f5_suff.txt',
+                                                'f6_suff.txt', 'f7_suff.txt', 'f8_suff.txt',
+                                                'f9_suff.txt', 'f10_suff.txt', 'f11_suff.txt',
+                                                'f12_suff.txt', 'f13_suff.txt', 'f14_suff.txt',
+                                                'f15_suff.txt', 'f16_suff.txt', 'f17_suff.txt',
+                                                'f18_suff.txt'
+                                                ], path=config.get('PathSettings', 'DataFeaturesPath'))
+
+    X_train_pref_loa = leave_one_out_data_pref[0]
+    y_train_pref_loa = leave_one_out_data_pref[1]
+    X_test_pref_loa = leave_one_out_data_pref[2]
+    y_test_pref_loa = leave_one_out_data_pref[3]
+
+    X_train_suff_loa = leave_one_out_data_suff[0]
+    y_train_suff_loa = leave_one_out_data_suff[1]
+    X_test_suff_loa = leave_one_out_data_suff[2]
+    y_test_suff_loa = leave_one_out_data_suff[3]
+
+    pref_X_train_scaled_loa = scaler_m.fit_transform(X_train_pref_loa)
+    pref_X_test_scaled_loa = scaler_m.fit_transform(X_test_pref_loa)
+
+    suff_X_train_scaled_loa = scaler_m.fit_transform(X_train_suff_loa)
+    suff_X_test_scaled_loa = scaler_m.fit_transform(X_test_suff_loa)
+
+    """ SVM leave-one-out """
+    clf_pref_loa = svm.SVC(kernel="rbf", gamma=0.01, C=100).fit(pref_X_train_scaled_loa, y_train_pref_loa)
+    clf_suff_loa = svm.SVC(kernel="rbf", gamma=0.1, C=10).fit(suff_X_train_scaled_loa, y_train_suff_loa)
+    results_pref_loa = clf_pref.predict(pref_X_test_scaled_loa)
+    results_suff_loa = clf_suff.predict(suff_X_test_scaled_loa)
+
+    print('=' * 40)
+    print(Style.BOLD + "Scores for leave-one-out tests" + Style.END)
+    print('=' * 40)
+
+    print_scores('Prefixoids leave-one-out', clf_pref_loa, results_pref_loa, pref_X_test_scaled_loa, y_test_pref_loa)
+    print_scores('Suffixoids leave-one-out', clf_suff_loa, results_suff_loa, suff_X_test_scaled_loa, y_test_suff_loa)
