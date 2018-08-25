@@ -57,7 +57,7 @@ class FeatureExtractor:
 
         Returns: Files with feature vectors
 
-        Example: PREF = FeatureExtractor('Prefixoids', DATA_RESSOURCES_PATH + PREFIXOID_DICTIONARY)
+        Example: PREF = FeatureExtractor('Prefixoids', config.get('FastTextSimilarities', 'PrefixoidDictionary'))
 
     """
 
