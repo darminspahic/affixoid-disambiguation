@@ -67,11 +67,10 @@ def create_affixoid_dictionary(affixoid_file, class_name):
 
 
 def create_empty_dictionary(affixoid_file):
-    """ This function creates a dictionary with class instances of affixoids
+    """ This function creates an empty dictionary with affixoids
 
         Args:
             affixoid_file (file): File with affixoid instances
-            class_name (str): Class label (Y|N)
 
         Returns:
             Dictionary with class instances
