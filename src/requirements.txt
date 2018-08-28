@@ -6,4 +6,4 @@ pygermanet
 requests
 scipy
 scikit-learn
-# duden
+duden

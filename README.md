@@ -12,6 +12,7 @@ Requirements
 - [MongoDB](https://www.mongodb.com/)
 - [pygermanet](https://github.com/wroberts/pygermanet)
 - [pymongo](http://api.mongodb.com/python/current/)
+- [duden](https://github.com/radomirbosak/duden)
 - [requests](http://docs.python-requests.org/en/master/)
 - [scipy](https://www.scipy.org/)
 - [sklearn](http://scikit-learn.org/stable/)
@@ -51,6 +52,7 @@ ba-ss18/
     ├── config.ini
     ├── FeatureExtractor.py
     ├── requirements.txt
+    ├── StatisticsExtractor.py
     ├── Wsd.py
     └── modules
         └── doctests
@@ -87,6 +89,13 @@ Results from `FeatureExtractor.py` and `Wsd.py` will be written to files set in 
 ```bash
 $ cd src/
 $ python Classifier.py
+```
+
+## Statistics and lexical data coverage
+To obtain lexical coverage for affixoids from dlexdb, Wiktionary, GermaNet, SentiMerge and Duden
+```bash
+$ cd src/
+$ python StatisticsExtractor.py
 ```
 
 ## Contributors
