@@ -25,7 +25,6 @@ from modules import dictionaries as dc
 from modules import file_writer as fw
 from modules import file_reader as fr
 from modules import helper_functions as hf
-from modules import statistics as st
 
 from lxml import etree
 from sklearn.metrics.pairwise import cosine_similarity
@@ -259,7 +258,6 @@ if __name__ == "__main__":
     print('N:\t', n_pref_dict)
     print('Total:\t', sum(y_pref_dict.values()) + sum(n_pref_dict.values()))
     print(len(pref_inventory_list))
-    # st.plot_statistics(y_pref_dict, n_pref_dict, 'Prefixoids')
 
     f0_pref_list = []  # prefix coded into dictionary
     f1_pref_list = []  # binary indicator, if affixoid
@@ -507,7 +505,6 @@ if __name__ == "__main__":
     print('N:\t', n_suff_dict)
     print('Total:\t', sum(y_suff_dict.values()) + sum(n_suff_dict.values()))
     print(len(suff_inventory_list))
-    # st.plot_statistics(y_suff_dict, n_suff_dict, 'Suffixoids')
 
     f0_suff_list = []  # prefix coded into dictionary
     f1_suff_list = []  # binary indicator, if affixoid
