@@ -110,7 +110,7 @@ settings = {
     "write_to_file": False,
     "return_keyword": False,
     "return_single_sentence": False,
-    "quiet": True,
+    "quiet": False,
     "print_well_performing_items": False
 }
 
@@ -377,8 +377,10 @@ class Wsd:
                 score_sense_0 += weights * 1
 
             if not quiet:
-                if class_name:
-                    print(class_name)
+                print('----')
+                print('Word:', Style.BOLD + full_word + Style.END)
+                print('class:', hf.transform_class_name_to_binary(class_name) if class_name else '')
+                print()
                 print(Style.BOLD + 'Context:' + Style.END)
                 print('"', full_word_context, '"')
                 print('----')
@@ -388,9 +390,9 @@ class Wsd:
                 print(Style.BOLD + 'Sense_1 Bedeutung:' + Style.END, sense_1_bedeutung)
                 print(Style.BOLD + 'Sense_1 Beispiel:' + Style.END, sense_1_beispiel)
                 print('-')
-                print(Style.BOLD + 'Example sentence words:' + Style.END, set(context_words_clean))
+                print(Style.BOLD + 'Words from example sentence:' + Style.END, set(context_words_clean))
                 print(Style.BOLD + '10 most frequent words:' + Style.END, freq_dist.most_common(10))
-                print(Style.BOLD + 'Frequency ambigous word:' + Style.END, freq_dist[ambigous_part_of_word])
+                print(Style.BOLD + 'Frequency of the ambigous part of word:' + Style.END, freq_dist[ambigous_part_of_word])
                 print('----')
                 print(Style.BOLD + 'Synonyms_0:' + Style.END, set(id_0_synonyms))
                 print(Style.BOLD + 'Synonyms_1:' + Style.END, set(id_1_synonyms))
