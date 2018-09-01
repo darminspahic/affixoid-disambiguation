@@ -80,7 +80,6 @@ word_tok = RegexpTokenizer(r'\w+')
 s = requests.Session()
 base_url = 'https://api.sketchengine.co.uk/bonito/run.cgi'
 sdewac2 = 'sdewac2'
-detenten13_rft3 = 'detenten13_rft3'
 corpname = sdewac2
 username = 'spahic'
 api_key = '159b841f61a64092bc630d20b0f56c93'
@@ -110,7 +109,7 @@ settings = {
     "write_to_file": False,
     "return_keyword": False,
     "return_single_sentence": False,
-    "quiet": False,
+    "quiet": True,
     "print_well_performing_items": False
 }
 
@@ -727,7 +726,7 @@ if __name__ == "__main__":
     print('N:\t', n_pref_dict)
     print('Y:\t', y_pref_dict)
 
-    # Randomize items so the smaller batch is mixed; keep seed 1395
+    # Randomize items so the smaller batch is mixed; keep seed
     random.Random(5).shuffle(pref_inventory_list)
 
     pref_dictionary_n_context = dc.create_empty_dictionary(config.get('FileSettings', 'FinalPrefixoidFile'))
