@@ -104,7 +104,7 @@ def print_scores(score_title, test_labels, classifer_results):
     warnings.filterwarnings("ignore")
 
     print()
-    print('SCORES', score_title)
+    print('SCORES:', score_title)
     print('Accuracy score: ', accuracy_score(test_labels, classifer_results))
     print()
     target_names = ['non-affixoid', 'affixoid']
@@ -296,10 +296,11 @@ if __name__ == "__main__":
 
     """ Crossvalidation """
     """ SCORES """
+    print('=' * 40)
     print_scores('Most frequent sense baseline for prefixoids', y_test_pref, results_pref_mfs)
     print_scores('Prefixoids', y_test_pref, results_pref)
     cross_validate(svm.SVC(kernel="rbf", gamma=0.01, C=100), pref_X_scaled, pref_y)
-
+    print('=' * 40)
     print_scores('Most frequent sense baseline for suffixoids', y_test_suff, results_suff_mfs)
     print_scores('Suffixoids', y_test_suff, results_suff)
     cross_validate(svm.SVC(kernel="rbf", gamma=0.1, C=10), suff_X_scaled, suff_y)
