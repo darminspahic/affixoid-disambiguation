@@ -57,7 +57,7 @@ class FeatureExtractor:
 
     def __init__(self, string, similar_words_dict):
         print('=' * 40)
-        print(Style.BOLD + "Running FeatureExtractor on:" + Style.END, string)
+        print("Running FeatureExtractor on:", string)
         print('-' * 40)
         print('Initializing dictionary...')
         self.fasttext_similar_words_dict = fr.read_dict_from_file(similar_words_dict)
@@ -81,7 +81,7 @@ class FeatureExtractor:
             return cosine_similarity([word_1_vec], [word_2_vec])[0][0]
 
         except KeyError:
-            print(Style.BOLD + 'Words not found in fastText vector dictionary' + Style.END)
+            print('Words not found in fastText vector dictionary')
             return 0
 
     def search_germanet_supersenses(self, word, fast_text_vector_dict):
@@ -110,7 +110,7 @@ class FeatureExtractor:
                 orthforms = synset.findall('.//orthForm')
                 for item in orthforms:
                     if word == item.text or word == item.text.lower() or word == item.text.lower().capitalize():
-                        print(Style.BOLD + item.text + Style.END, 'supersense >', Style.BOLD + classes + Style.END)
+                        print(item.text, 'supersense >', classes)
                         gn_supersenses_dict_copy.update({classes: 1})
             return list(gn_supersenses_dict_copy.values())
 
@@ -123,7 +123,7 @@ class FeatureExtractor:
                 for result in similar_words_from_fasttext:
                     print(result)
                     if self.is_in_germanet(result[0]):
-                        print(Style.BOLD + result[0] + Style.END, 'found in GermaNet!')
+                        print(result[0], 'found in GermaNet!')
                         supersense = self.search_germanet_supersenses(result[0], fast_text_vector_dict)
                         similar_word_supersense = supersense
                         # return similar_word_supersense
@@ -166,7 +166,7 @@ class FeatureExtractor:
         if similar_words_from_fasttext is not None:
             for result in similar_words_from_fasttext:
                 if word in dictionary.keys():
-                    print(Style.BOLD + result[0] + Style.END, 'found in dictionary!')
+                    print(result[0], 'found in dictionary!')
                     return result[0]
 
         return 0
@@ -208,27 +208,17 @@ class FeatureExtractor:
             for x in sorted_cosine_similarity_dict:
                 if x[0] in fast_text_vector_dict.keys():
                     if self.is_in_germanet(x[0]):
-                        print(Style.BOLD + x[0] + Style.END, 'Found in GermaNet!')
-                        print(Style.BOLD + 'Cosine similarity:' + Style.END, x[1])
+                        print(x[0], 'Found in GermaNet!')
+                        print('Cosine similarity:', x[1])
                         return x[0]
 
         else:
             print('Searching in PolarityDict')
             for x in sorted_cosine_similarity_dict:
                 if x[0] in polarity_dict.keys():
-                    print(Style.BOLD + x[0] + Style.END, 'Found in PolarityDict!')
-                    print(Style.BOLD + 'Cosine similarity:' + Style.END, x[1])
+                    print(x[0], 'Found in PolarityDict!')
+                    print('Cosine similarity:', x[1])
                     return x[0]
-
-
-class Style:
-    """ Helper class for nicer coloring """
-    BLUE = '\033[94m'
-    GREEN = '\033[92m'
-    WARNING = '\033[93m'
-    UNDERLINE = '\033[4m'
-    BOLD = '\033[1m'
-    END = '\033[0m'
 
 
 def sigmoid(x):

@@ -10,7 +10,7 @@ Module name:
 Wsd
 
 Short description:
-TODO
+Lesk algorithm for word sense disambiguation
 
 License: MIT License
 Version: 1.0
@@ -128,8 +128,8 @@ class Wsd:
 
     def __init__(self, string, json_dict):
         print('=' * 40)
-        print(Style.BOLD + "Running word sense disambiguation on:" + Style.END, string)
-        print(Style.BOLD + "Corpus:" + Style.END, corpname)
+        print("Running word sense disambiguation on:", string)
+        print("Corpus:", corpname)
         print('-' * 40)
 
         print('Running...')
@@ -152,7 +152,7 @@ class Wsd:
                                   return_hypernyms=settings["return_hypernyms"],
                                   return_hyponyms=settings["return_hyponyms"],
                                   return_wiktionary_sense=settings["return_wiktionary_sense"]):
-        """ TODO """
+        """ Helper function for creating dictionary with Synsets """
 
         synsets = ger.synsets(word)
         synset_dict = {}
@@ -377,24 +377,24 @@ class Wsd:
 
             if not quiet:
                 print('----')
-                print('Word:', Style.BOLD + full_word + Style.END)
+                print('Word:', full_word)
                 print('class:', hf.transform_class_name_to_binary(class_name) if class_name else '')
                 print()
-                print(Style.BOLD + 'Context:' + Style.END)
+                print('Context:')
                 print('"', full_word_context, '"')
                 print('----')
-                print(Style.BOLD + 'Sense_0 Bedeutung:' + Style.END, sense_0_bedeutung)
-                print(Style.BOLD + 'Sense_0 Beispiel:' + Style.END, sense_0_beispiel)
+                print('Sense_0 Bedeutung:', sense_0_bedeutung)
+                print('Sense_0 Beispiel:', sense_0_beispiel)
                 print('-')
-                print(Style.BOLD + 'Sense_1 Bedeutung:' + Style.END, sense_1_bedeutung)
-                print(Style.BOLD + 'Sense_1 Beispiel:' + Style.END, sense_1_beispiel)
+                print('Sense_1 Bedeutung:', sense_1_bedeutung)
+                print('Sense_1 Beispiel:', sense_1_beispiel)
                 print('-')
-                print(Style.BOLD + 'Words from example sentence:' + Style.END, set(context_words_clean))
-                print(Style.BOLD + '10 most frequent words:' + Style.END, freq_dist.most_common(10))
-                print(Style.BOLD + 'Frequency of the ambigous part of word:' + Style.END, freq_dist[ambigous_part_of_word])
+                print('Words from example sentence:', set(context_words_clean))
+                print('10 most frequent words:', freq_dist.most_common(10))
+                print('Frequency of the ambigous part of word:', freq_dist[ambigous_part_of_word])
                 print('----')
-                print(Style.BOLD + 'Synonyms_0:' + Style.END, set(id_0_synonyms))
-                print(Style.BOLD + 'Synonyms_1:' + Style.END, set(id_1_synonyms))
+                print('Synonyms_0:', set(id_0_synonyms))
+                print('Synonyms_1:', set(id_1_synonyms))
                 print()
                 print('Overlap in sense_0:', len(overlap_sense_0), overlap_sense_0)
                 print('Overlap in sense_1:', len(overlap_sense_1), overlap_sense_1)
@@ -409,20 +409,20 @@ class Wsd:
 
         if score_sense_0 > score_sense_1:
             if not quiet:
-                print(Style.BOLD + 'Assigning class: 0' + Style.END)
+                print('Assigning class: 0')
             return 0
         if score_sense_1 > score_sense_0:
             if not quiet:
-                print(Style.BOLD + 'Assigning class: 1' + Style.END)
+                print('Assigning class: 1')
             return 1
         if score_sense_0 == 0 and score_sense_1 == 0:
             if not quiet:
-                print(Style.BOLD + 'Assigning class: 1' + Style.END)
+                print('Assigning class: 1')
             return 1
         else:
             most_frequent_sense = self.return_most_frequent_sense(ambigous_part_of_word, n_dict, y_dict)
             if not quiet:
-                print(Style.BOLD + 'Assigning mfs:' + Style.END, most_frequent_sense)
+                print('Assigning mfs:', most_frequent_sense)
             # return most_frequent_sense
             return 0
 
@@ -536,7 +536,6 @@ class Wsd:
         except FileNotFoundError:
             return False
 
-        text = ''
         if result_count > 0:
             response = json.dumps(data["Lines"], sort_keys=True, indent=4, ensure_ascii=False)
             item_dict = json.loads(response)
@@ -623,20 +622,20 @@ class Wsd:
 
         warnings.filterwarnings("ignore")
         print()
-        print(Style.BOLD + baseline_type + ' baseline:' + Style.END)
+        print(baseline_type + ' baseline:')
         print('Scores for:', word)
-        print('Precision: ', precision_score(labels, baseline))
-        print('Recall: ', recall_score(labels, baseline))
-        print('F-1 Score: ', f1_score(labels, baseline, average='weighted'))
-        print('ROC AUC Score: ', roc_auc_score(labels, baseline))
+        print('Precision:', precision_score(labels, baseline))
+        print('Recall:', recall_score(labels, baseline))
+        print('F-1 Score:', f1_score(labels, baseline, average='weighted'))
+        print('ROC AUC Score:', roc_auc_score(labels, baseline))
         print()
 
-        print(Style.BOLD + 'Scores:' + Style.END)
+        print('Scores:')
         print('Scores for:', word)
-        print('Precision: ', precision_score(labels, scores))
-        print('Recall: ', recall_score(labels, scores))
-        print('F-1 Score: ', f1_score(labels, scores, average='weighted'))
-        print('ROC AUC Score: ', roc_auc_score(labels, scores))
+        print('Precision:', precision_score(labels, scores))
+        print('Recall:', recall_score(labels, scores))
+        print('F-1 Score:', f1_score(labels, scores, average='weighted'))
+        print('ROC AUC Score:', roc_auc_score(labels, scores))
         print('\nConfusion matrix:')
         print(confusion_matrix(labels, scores))
         print()
@@ -703,16 +702,6 @@ class Wsd:
         print()
 
 
-class Style:
-    """ Helper class for nicer coloring """
-    BLUE = '\033[94m'
-    GREEN = '\033[92m'
-    WARNING = '\033[93m'
-    UNDERLINE = '\033[4m'
-    BOLD = '\033[1m'
-    END = '\033[0m'
-
-
 if __name__ == "__main__":
     """
         PREFIXOIDS WSD
@@ -722,7 +711,7 @@ if __name__ == "__main__":
     n_pref_dict = dc.create_affixoid_dictionary(config.get('FileSettings', 'FinalPrefixoidFile'), 'N')
     y_pref_dict = dc.create_affixoid_dictionary(config.get('FileSettings', 'FinalPrefixoidFile'), 'Y')
 
-    print(Style.BOLD + 'Total:' + Style.END)
+    print('Total:')
     print('N:\t', n_pref_dict)
     print('Y:\t', y_pref_dict)
 
@@ -747,7 +736,7 @@ if __name__ == "__main__":
         pref_split_dictionary_y.update({k: items_y})
         PREF_WSD.split_files(k, items_n, items_y, pref_inventory_list)
         if settings["print_well_performing_items"]:
-            print(Style.BOLD + 'Best perfoming items according to dictionary' + Style.END)
+            print('Best perfoming items according to dictionary')
             print('N:', set(N))
             print('Y:', set(Y))
             Y = []
@@ -763,7 +752,7 @@ if __name__ == "__main__":
 
     """ Loop """
     print()
-    print(Style.BOLD + 'Running on balanced prefixoid data...' + Style.END)
+    print('Running on balanced prefixoid data...')
     for k in n_pref_dict.keys():
 
         counter = 0
@@ -822,7 +811,7 @@ if __name__ == "__main__":
     n_suff_dict = dc.create_affixoid_dictionary(config.get('FileSettings', 'FinalSuffixoidFile'), 'N')
     y_suff_dict = dc.create_affixoid_dictionary(config.get('FileSettings', 'FinalSuffixoidFile'), 'Y')
 
-    print(Style.BOLD + 'Total:' + Style.END)
+    print('Total:')
     print('N:\t', n_suff_dict)
     print('Y:\t', y_suff_dict)
 
@@ -846,7 +835,7 @@ if __name__ == "__main__":
         suff_split_dictionary_y.update({k: items_y})
         SUFF_WSD.split_files(k, items_n, items_y, suff_inventory_list)
         if settings["print_well_performing_items"]:
-            print(Style.BOLD + 'Best perfoming items according to dictionary' + Style.END)
+            print('Best perfoming items according to dictionary')
             print('N:', set(N))
             print('Y:', set(Y))
             Y = []
@@ -862,7 +851,7 @@ if __name__ == "__main__":
 
     """ Loop """
     print()
-    print(Style.BOLD + 'Running on balanced suffixoid data...' + Style.END)
+    print('Running on balanced suffixoid data...')
     for k in n_suff_dict.keys():
 
         counter = 0

@@ -104,7 +104,7 @@ def print_scores(score_title, test_labels, classifer_results):
     warnings.filterwarnings("ignore")
 
     print()
-    print(Style.BOLD + 'SCORES', score_title + Style.END)
+    print('SCORES', score_title)
     print('Accuracy score: ', accuracy_score(test_labels, classifer_results))
     print()
     target_names = ['non-affixoid', 'affixoid']
@@ -202,12 +202,6 @@ def plot_learning_curve(estimator, title, X, y, ylim=None, cv=None, n_jobs=1, tr
 
     plt.legend(loc="best")
     plt.show()
-
-
-class Style:
-    """ Helper class for nicer coloring """
-    BOLD = '\033[1m'
-    END = '\033[0m'
 
 
 if __name__ == "__main__":
@@ -361,7 +355,7 @@ if __name__ == "__main__":
     results_suff_loa = clf_suff.predict(suff_X_test_scaled_loa)
 
     print('=' * 40)
-    print(Style.BOLD + "Scores for leave-one-out tests" + Style.END)
+    print("Scores for leave-one-out tests")
     print('=' * 40)
 
     print_scores('Prefixoids leave-one-out', y_test_pref_loa, results_pref_loa)
@@ -372,7 +366,7 @@ if __name__ == "__main__":
     """
     print()
     print('=' * 40)
-    print(Style.BOLD + "Scores for Word Sense Disambiguation" + Style.END)
+    print("Scores for Word Sense Disambiguation")
     print('-' * 40)
 
     pref_WSD_labels = fr.read_features_from_files(['f0_pref_wsd_final.txt'], path=config.get('PathSettings', 'DataWsdPath'))
@@ -381,7 +375,7 @@ if __name__ == "__main__":
     suff_WSD_labels = fr.read_features_from_files(['f0_suff_wsd_final.txt'], path=config.get('PathSettings', 'DataWsdPath'))
     suff_WSD_scores = fr.read_features_from_files(['f1_suff_wsd_final.txt'], path=config.get('PathSettings', 'DataWsdPath'))
 
-    print(Style.BOLD + 'WSD SCORES Prefixoids' + Style.END)
+    print('WSD SCORES Prefixoids')
     print('Precision: ', precision_score(pref_WSD_labels, pref_WSD_scores))
     print('Recall: ', recall_score(pref_WSD_labels, pref_WSD_scores))
     print('F-1 Score: ', f1_score(pref_WSD_labels, pref_WSD_scores, average='weighted'))
@@ -390,7 +384,7 @@ if __name__ == "__main__":
     print(confusion_matrix(pref_WSD_labels, pref_WSD_scores))
     print()
 
-    print(Style.BOLD + 'WSD SCORES Suffixoids' + Style.END)
+    print('WSD SCORES Suffixoids')
     print('Precision: ', precision_score(suff_WSD_labels, suff_WSD_scores))
     print('Recall: ', recall_score(suff_WSD_labels, suff_WSD_scores))
     print('F-1 Score: ', f1_score(suff_WSD_labels, suff_WSD_scores, average='weighted'))
