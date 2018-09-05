@@ -43,7 +43,13 @@ GN_ROOT = TREE.getroot()
 GN_WORDS = GN_ROOT.findall('.//orthForm')
 
 """ GermaNet Supersenses """
-GN_SUPERSENSES = {'Allgemein': 0, 'Bewegung': 0, 'Gefuehl': 0, 'Geist': 0, 'Gesellschaft': 0, 'Koerper': 0, 'Menge': 0, 'natPhaenomen': 0, 'Ort': 0, 'Pertonym': 0, 'Perzeption': 0, 'privativ': 0, 'Relation': 0, 'Substanz': 0, 'Verhalten': 0, 'Zeit': 0, 'Artefakt': 0, 'Attribut': 0, 'Besitz': 0, 'Form': 0, 'Geschehen': 0, 'Gruppe': 0, 'Kognition': 0, 'Kommunikation': 0, 'Mensch': 0, 'Motiv': 0, 'Nahrung': 0, 'natGegenstand': 0, 'Pflanze': 0, 'Tier': 0, 'Tops': 0, 'Koerperfunktion': 0, 'Konkurrenz': 0, 'Kontakt': 0, 'Lokation': 0, 'Schoepfung': 0, 'Veraenderung': 0, 'Verbrauch': 0}
+GN_SUPERSENSES = {'Allgemein': 0, 'Bewegung': 0, 'Gefuehl': 0, 'Geist': 0, 'Gesellschaft': 0, 'Koerper': 0,
+                  'Menge': 0, 'natPhaenomen': 0, 'Ort': 0, 'Pertonym': 0, 'Perzeption': 0, 'privativ': 0,
+                  'Relation': 0, 'Substanz': 0, 'Verhalten': 0, 'Zeit': 0, 'Artefakt': 0, 'Attribut': 0,
+                  'Besitz': 0, 'Form': 0, 'Geschehen': 0, 'Gruppe': 0, 'Kognition': 0, 'Kommunikation': 0,
+                  'Mensch': 0, 'Motiv': 0, 'Nahrung': 0, 'natGegenstand': 0, 'Pflanze': 0, 'Tier': 0,
+                  'Tops': 0, 'Koerperfunktion': 0, 'Konkurrenz': 0, 'Kontakt': 0, 'Lokation': 0, 'Schoepfung': 0,
+                  'Veraenderung': 0, 'Verbrauch': 0}
 
 
 class FeatureExtractor:
@@ -171,7 +177,8 @@ class FeatureExtractor:
 
         return 0
 
-    def return_similar_cosine_word(self, word, fast_text_vector_dict, from_germanet=True, polarity_dict=None, threshold=0.4):
+    def return_similar_cosine_word(self, word, fast_text_vector_dict,
+                                   from_germanet=True, polarity_dict=None, threshold=0.4):
         """ This function calculates cosine similarity between the input word, and all other words
             from fast_text_vector_dict. It returns the most similar word based on cosine similarity.
 
@@ -284,6 +291,7 @@ if __name__ == "__main__":
 
     counter = 0
     for i in pref_inventory_list:
+        print()
         counter += 1
         print('Line:', str(counter) + ' ===============================', i[0], i[-1])
 
@@ -531,6 +539,7 @@ if __name__ == "__main__":
 
     counter = 0
     for i in suff_inventory_list:
+        print()
         counter += 1
         print('Line:', str(counter) + ' ===============================', i[0], i[-1])
 
