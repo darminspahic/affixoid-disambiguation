@@ -1,4 +1,4 @@
-# Bachelorarbeit 
+# Affixoid disambiguation
 Collection of modules for feature extraction, Lesk algorithm and classification for the bachelor thesis titled "Disambiguating nominal prefixoid and suffixoid formations from compounds"
 
 ## Installation
@@ -19,7 +19,7 @@ Requirements
 
 Clone the repository
 ```bash
-$ git clone https://gitlab.cl.uni-heidelberg.de/spahic/ba-ss18.git
+$ git clone https://github.com/darminspahic/affixoid-disambiguation.git
 ```
 
 Install requirements
